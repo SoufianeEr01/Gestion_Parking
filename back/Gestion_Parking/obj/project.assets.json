@@ -4395,19 +4395,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\LarbiFaddani\\.nuget\\packages\\": {}
+    "C:\\Users\\Erraad\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LarbiFaddani\\Downloads\\gestion_parking-main\\back\\Gestion_Parking\\Gestion_Parking.csproj",
+      "projectUniqueName": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Gestion_Parking.csproj",
       "projectName": "Gestion_Parking",
-      "projectPath": "C:\\Users\\LarbiFaddani\\Downloads\\gestion_parking-main\\back\\Gestion_Parking\\Gestion_Parking.csproj",
-      "packagesPath": "C:\\Users\\LarbiFaddani\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LarbiFaddani\\Downloads\\gestion_parking-main\\back\\Gestion_Parking\\obj\\",
+      "projectPath": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Gestion_Parking.csproj",
+      "packagesPath": "C:\\Users\\Erraad\\.nuget\\packages\\",
+      "outputPath": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\LarbiFaddani\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Erraad\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
