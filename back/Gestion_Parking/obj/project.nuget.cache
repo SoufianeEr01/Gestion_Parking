@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "gwClH9LjeBY=",
+  "dgSpecHash": "fStMX528sAI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\LarbiFaddani\\Downloads\\gestion_parking-main\\back\\Gestion_Parking\\Gestion_Parking.csproj",
+  "projectFilePath": "C:\\Users\\LarbiFaddani\\Downloads\\gestion_parking\\back\\Gestion_Parking\\Gestion_Parking.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LarbiFaddani\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\LarbiFaddani\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

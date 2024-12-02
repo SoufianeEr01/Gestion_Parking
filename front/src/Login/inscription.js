@@ -63,16 +63,7 @@ const SignUpPage = () => {
       setErrorMessageEmail("L'email doit se terminer par @emsi-edu.ma");
       return;
     }
-    try {
-      const isEmailTaken = await SignApi.checkEmail(formData.email);
-      if (isEmailTaken) {
-        setErrorMessageEmail("Cet email est déjà utilisé.");
-      } else {
-        setErrorMessageEmail("");
-      }
-    } catch {
-      setErrorMessageEmail("Erreur lors de la vérification de l'email.");
-    }
+    
   };
 
   const validatePassword = (password) => {

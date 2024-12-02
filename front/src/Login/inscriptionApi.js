@@ -40,6 +40,20 @@ const SignApi = {
       throw error.response?.data || error.message;
     }
   },
+
+  createLogin: async (loginData) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/Auth/Login`, loginData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data; // Succès de la connexion
+    } catch (error) {
+      console.error("Erreur lors de la connexion :", error);
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default SignApi;

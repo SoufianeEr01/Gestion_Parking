@@ -8,7 +8,7 @@ using BCrypt.Net;
 namespace Gestion_Parking.Controllers
 {
 
-    [Authorize(Policy = "EtudiantOuAdmin")]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class EtudiantController : ControllerBase
@@ -21,7 +21,7 @@ namespace Gestion_Parking.Controllers
         }
 
         // Créer un Étudiant
-        [AllowAnonymous]
+        
         [HttpPost]
 
         public IActionResult CreateEtudiant(Etudiant etudiant)
@@ -79,6 +79,7 @@ namespace Gestion_Parking.Controllers
 
 
         // Lire tous les enregistrements d'Étudiants
+        [Authorize(Policy = "Admin")]
         [HttpGet]
         public IActionResult GetAllEtudiants()
         {
@@ -115,7 +116,7 @@ namespace Gestion_Parking.Controllers
             }
         }
 
-
+        [Authorize(Policy = "EtudiantOuAdmin")]
         // Lire un Étudiant par son ID
         [HttpGet("{id}")]
         public IActionResult GetEtudiantById(int id)
@@ -158,6 +159,7 @@ namespace Gestion_Parking.Controllers
         }
 
         // Mettre à jour un Étudiant
+        [Authorize(Policy = "EtudiantOuAdmin")]
         [HttpPut("{id}")]
         public IActionResult UpdateEtudiant(int id, Etudiant etudiant)
         {
@@ -192,6 +194,7 @@ namespace Gestion_Parking.Controllers
         }
 
         // Supprimer un Étudiant
+        [Authorize(Policy = "EtudiantOuAdmin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteEtudiant(int id)
         {
