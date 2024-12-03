@@ -46,8 +46,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, new { erreur = ex.Message });
             }
         }
-
-        [Authorize(Policy = "EtudiantOuAdmin")]
+        
         [HttpGet]
         public IActionResult GetAllGroups()
         {
