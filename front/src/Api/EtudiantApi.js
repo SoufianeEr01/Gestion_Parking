@@ -91,6 +91,28 @@ const EtudiantApi = {
       throw error.response?.data || error.message;
     }
   },
+
+  // Supprimer un groupe
+  deleteEtudiant: async (id) => {
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+
+      if (!token) {
+        throw new Error("Token d'authentification manquant");
+      }
+
+      await axios.delete(`${BASE_URL}/Etudiant/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      // Rien à retourner, la suppression est réussie
+    } catch (error) {
+      console.error(`Erreur lors de la suppression du groupe ${id} :`, error);
+      throw error.response?.data || error.message;
+    }
+  }
 };
 
 export default EtudiantApi;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   Box,
   Typography,
@@ -16,33 +15,35 @@ import {
   TableRow,
   IconButton,
   Snackbar,
-  Divider,
+  FormControl,
+  InputLabel,
   Select,
   MenuItem,
   Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import PlaceParkingApi from "../../Api/PlaceParkingApi";
 
-const API_PLACE_PARKING = "https://localhost:7031/api/PlaceParking";
-
-function PlaceParking() {
+const PlaceParking = () => {
+  // State management
   const [places, setPlaces] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // for confirmation dialog
   const [editingPlace, setEditingPlace] = useState(null);
-  const [newPlace, setNewPlace] = useState({ numero: "", etat: "VIDE" });
-  const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [placeData, setPlaceData] = useState({ numero: "", etat: "" });
+  const [feedbackMessage, setFeedbackMessage] = useState({ success: "", error: "" });
   const [page, setPage] = useState(1);
-  const [placesPerPage] = useState(5);
+  const placesPerPage = 5;
+  const [placeToDelete, setPlaceToDelete] = useState(null); // store the place to be deleted
 
-  // Récupérer les places de parking
+  // Fetch parking places
   const fetchPlaces = async () => {
     try {
-      const response = await axios.get(API_PLACE_PARKING);
-      setPlaces(response.data);
+      const data = await PlaceParkingApi.fetchPlaceParkings();
+      setPlaces(data);
     } catch (error) {
-      console.error("Erreur lors de la récupération des places de parking:", error);
+      setFeedbackMessage({ success: "", error: "Erreur lors de la récupération des places." });
     }
   };
 
@@ -50,165 +51,147 @@ function PlaceParking() {
     fetchPlaces();
   }, []);
 
-  // Gestion des changements dans le formulaire
+  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (editingPlace) {
-      setEditingPlace({ ...editingPlace, [name]: value });
-    } else {
-      setNewPlace({ ...newPlace, [name]: value });
-    }
+    setPlaceData((prevData) => ({
+      ...prevData,
+      [name]: name === "numero" ? String(value) : value,
+    }));
   };
 
-  // Ajouter une place de parking
-  const addPlace = async () => {
-    if (!newPlace.numero) {
-      alert("Le numéro de la place est obligatoire !");
+  // Add or update a parking place
+  const handleSubmit = async () => {
+    const { numero, etat } = placeData;
+
+    if (!String(numero).trim() || !String(etat).trim()) {
+      setFeedbackMessage({ success: "", error: "Tous les champs sont obligatoires !" });
       return;
     }
-    setLoading(true);
+
     try {
-      await axios.post(API_PLACE_PARKING, newPlace);
-      fetchPlaces(); // Actualiser les données après l'ajout
-      setNewPlace({ numero: "", etat: "VIDE" });
-      setSuccessMessage("Place ajoutée avec succès !");
+      if (editingPlace) {
+        await PlaceParkingApi.updatePlaceParking(editingPlace.id, { numero: String(numero), etat });
+        setFeedbackMessage({ success: "Place modifiée avec succès !", error: "" });
+      } else {
+        await PlaceParkingApi.createPlaceParking({ numero: String(numero), etat });
+        setFeedbackMessage({ success: "Place ajoutée avec succès !", error: "" });
+      }
       setOpenDialog(false);
-    } catch (error) {
-      console.error("Erreur lors de l'ajout de la place:", error);
-    } finally {
-      setLoading(false);
+      setPlaceData({ numero: "", etat: "" });
+      fetchPlaces();
+    } catch {
+      setFeedbackMessage({ success: "", error: "Erreur lors de l'opération." });
     }
   };
 
-  // Modifier une place de parking
-  const updatePlace = async () => {
-    if (!editingPlace.numero) {
-      alert("Le numéro de la place est obligatoire !");
-      return;
-    }
-    setLoading(true);
-    try {
-      await axios.put(`${API_PLACE_PARKING}/${editingPlace.id}`, editingPlace);
-      fetchPlaces(); // Actualiser les données après la modification
-      setEditingPlace(null);
-      setSuccessMessage("Place modifiée avec succès !");
-      setOpenDialog(false);
-    } catch (error) {
-      console.error("Erreur lors de la modification de la place:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Supprimer une place de parking
-  const deletePlace = async (id) => {
-    try {
-      await axios.delete(`${API_PLACE_PARKING}/${id}`);
-      fetchPlaces(); // Actualiser les données après la suppression
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la place:", error);
-    }
-  };
-
-  // Ouvrir le formulaire en mode modification
-  const openEditDialog = (place) => {
+  // Open the dialog for adding/editing a place
+  const openDialogForEdit = (place) => {
     setEditingPlace(place);
+    setPlaceData(place || { numero: "", etat: "" });
     setOpenDialog(true);
   };
 
-  // Pagination: calculer les places à afficher
+  // Delete a parking place (trigger confirmation dialog)
+  const handleDelete = (place) => {
+    setPlaceToDelete(place); // Set the place to delete
+    setOpenConfirmDialog(true); // Open the confirmation dialog
+  };
+
+  // Confirm the deletion
+  const handleConfirmDelete = async () => {
+    if (placeToDelete) {
+      try {
+        await PlaceParkingApi.deletePlaceParking(placeToDelete.id);
+        setFeedbackMessage({ success: "Place supprimée avec succès !", error: "" });
+        fetchPlaces();
+      } catch {
+        setFeedbackMessage({ success: "", error: "Erreur lors de la suppression de la place." });
+      }
+    }
+    setOpenConfirmDialog(false); // Close the confirmation dialog
+  };
+
+  // Cancel the deletion
+  const handleCancelDelete = () => {
+    setOpenConfirmDialog(false); // Close the confirmation dialog
+    setPlaceToDelete(null); // Reset the place to delete
+  };
+
+  // Pagination calculations
   const indexOfLastPlace = page * placesPerPage;
   const indexOfFirstPlace = indexOfLastPlace - placesPerPage;
   const currentPlaces = places.slice(indexOfFirstPlace, indexOfLastPlace);
 
-  // Changer de page
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
-
   return (
     <Box sx={{ padding: 3 }}>
-      {/* <Typography variant="h4" fontWeight="bold" gutterBottom textAlign="center">
-        Gestion des Places de Parking
-      </Typography>
-      <Divider sx={{ width: "100%", my: 2 }} /> */}
-
       <Button
         variant="contained"
         color="success"
-        onClick={() => {
-          setEditingPlace(null);
-          setOpenDialog(true);
-        }}
+        onClick={() => openDialogForEdit(null)}
       >
         + Ajouter une Place
       </Button>
 
+      {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth>
         <DialogTitle textAlign="center">
-          {editingPlace ? "Modifier une Place de Parking" : "Ajouter une Place de Parking"}
+          {editingPlace ? "Modifier une Place" : "Ajouter une Place"}
         </DialogTitle>
         <DialogContent>
-          <Box
-            component="form"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              mt: 2,
-            }}
-          >
-            <TextField
-              label="Numéro"
-              name="numero"
-              value={editingPlace ? editingPlace.numero : newPlace.numero}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              required
-            />
+          <TextField
+          color="success"
+            label="Numéro"
+            name="numero"
+            value={placeData.numero}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            required
+            sx={{ mt: 2 }}
+          />
+          <FormControl fullWidth required sx={{ mt: 2 }}>
+            <InputLabel>État</InputLabel>
             <Select
+            color="success"
               name="etat"
-              value={editingPlace ? editingPlace.etat : newPlace.etat}
+              value={placeData.etat}
               onChange={handleChange}
-              variant="outlined"
-              fullWidth
+              label="État"
               required
             >
-              <MenuItem value="VIDE">VIDE</MenuItem>
-              <MenuItem value="OCCUPÉ">OCCUPÉ</MenuItem>
-              <MenuItem value="RÉSERVÉ">RÉSERVÉ</MenuItem>
+              <MenuItem value="Libre">Libre</MenuItem>
+              <MenuItem value="Occupée">Occupée</MenuItem>
             </Select>
-          </Box>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">
             Annuler
           </Button>
           <Button
-            onClick={editingPlace ? updatePlace : addPlace}
-            color="primary"
+            onClick={handleSubmit}
+            color="success"
             variant="contained"
-            disabled={loading}
+            
           >
-            {loading ? "Chargement..." : editingPlace ? "Modifier" : "Ajouter"}
+            {editingPlace ? "Modifier" : "Ajouter"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {successMessage && (
-        <Snackbar
-          open={!!successMessage}
-          autoHideDuration={6000}
-          onClose={() => setSuccessMessage("")}
-          message={successMessage}
-        />
-      )}
+      {/* Feedback Snackbar */}
+      <Snackbar
+        open={!!(feedbackMessage.success || feedbackMessage.error)}
+        autoHideDuration={6000}
+        onClose={() => setFeedbackMessage({ success: "", error: "" })}
+        message={feedbackMessage.success || feedbackMessage.error}
+      />
 
-      <Table sx={{ mt: 3 }}>
+      {/* Parking Places Table */}
+      <Table sx={{ mt: 3.5 }}>
         <TableHead>
           <TableRow>
-            <TableCell style={{ fontWeight: "bold" }}>ID</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Numéro</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>État</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
@@ -217,14 +200,13 @@ function PlaceParking() {
         <TableBody>
           {currentPlaces.map((place) => (
             <TableRow key={place.id}>
-              <TableCell>{place.id}</TableCell>
               <TableCell>{place.numero}</TableCell>
               <TableCell>{place.etat}</TableCell>
               <TableCell>
-                <IconButton color="primary" onClick={() => openEditDialog(place)}>
+                <IconButton color="primary" onClick={() => openDialogForEdit(place)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton color="error" onClick={() => deletePlace(place.id)}>
+                <IconButton color="error" onClick={() => handleDelete(place)}>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
@@ -233,14 +215,33 @@ function PlaceParking() {
         </TableBody>
       </Table>
 
-      <Pagination
-        count={Math.ceil(places.length / placesPerPage)}
-        page={page}
-        onChange={handlePageChange}
-        sx={{ mt: 2, display: "flex", justifyContent: "center" }}
-      />
+      {/* Pagination */}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Pagination
+          count={Math.ceil(places.length / placesPerPage)}
+          page={page}
+          onChange={(e, newPage) => setPage(newPage)}
+          color="success"
+        />
+      </Box>
+
+      {/* Confirmation Delete Dialog */}
+      <Dialog open={openConfirmDialog} onClose={handleCancelDelete}>
+        <DialogTitle>Confirmation de suppression</DialogTitle>
+        <DialogContent>
+          <Typography>Êtes-vous sûr de vouloir supprimer cette place ?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="inherit">
+            Annuler
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained">
+            Confirmer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
-}
+};
 
 export default PlaceParking;

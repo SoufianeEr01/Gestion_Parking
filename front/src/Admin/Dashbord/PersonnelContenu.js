@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   Box,
   Typography,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
   Table,
   TableBody,
@@ -11,217 +14,263 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Select,
-  MenuItem,
   Snackbar,
   Pagination,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import PersonnelApi from "../../Api/PersonnelApi";
 
-const API_PERSONNEL = "https://localhost:7031/api/Personnel";
-
-function Personnel() {
-  const [personnel, setPersonnel] = useState([]);
-  const [newPersonnel, setNewPersonnel] = useState({
+const Personnele = () => {
+  const [personnels, setPersonnels] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingPersonnel, setEditingPersonnel] = useState(null);
+  const [personnelData, setPersonnelData] = useState({
     nom: "",
     prenom: "",
     email: "",
     motdepasse: "",
     role: "",
   });
-  const [openDialog, setOpenDialog] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [formError, setFormError] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); // Added success message state
-  const [page, setPage] = useState(1); // Current page
-  const [placesPerPage, setPlacesPerPage] = useState(5); // Number of items per page
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [page, setPage] = useState(1);
+  const personnelsPerPage = 5;
 
-  // Récupérer le personnel depuis l'API
-  const fetchPersonnel = async () => {
+  // État pour la confirmation de suppression
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [personnelToDelete, setPersonnelToDelete] = useState(null);
+
+  const fetchPersonnels = async () => {
     try {
-      const response = await axios.get(API_PERSONNEL);
-      setPersonnel(response.data);
+      const data = await PersonnelApi.fetchPersonnels();
+      setPersonnels(data);
     } catch (error) {
-      console.error("Erreur lors de la récupération du personnel:", error);
-    }
-  };
-
-  // Ajouter un personnel via l'API
-  const addPersonnel = async () => {
-    setFormError(""); // Réinitialiser l'erreur de formulaire
-    setEmailError(""); // Réinitialiser l'erreur email
-    // Vérification des champs requis
-    if (!newPersonnel.nom || !newPersonnel.prenom || !newPersonnel.email || !newPersonnel.motdepasse || !newPersonnel.role) {
-      setFormError("Tous les champs sont obligatoires.");
-      return;
-    }
-    // Vérifier si l'email est valide
-    if (!newPersonnel.email.includes("@edu-emsi.ma")) {
-      setEmailError("L'email doit contenir @edu-emsi.ma");
-      return;
-    }
-
-    try {
-      await axios.post(API_PERSONNEL, newPersonnel);
-      setNewPersonnel({ nom: "", prenom: "", email: "", motdepasse: "", role: "" });
-      setSuccessMessage("Personnel ajouté avec succès !");
-      setOpenDialog(false); // Fermer la boîte de dialogue après ajout
-      fetchPersonnel(); // Actualiser la liste du personnel
-    } catch (error) {
-      console.error("Erreur lors de l'ajout du personnel:", error);
-    }
-  };
-
-  // Supprimer un personnel via l'API
-  const deletePersonnel = async (id) => {
-    try {
-      await axios.delete(`${API_PERSONNEL}/${id}`);
-      fetchPersonnel(); // Actualiser la liste du personnel
-    } catch (error) {
-      console.error("Erreur lors de la suppression du personnel:", error);
+      setErrorMessage("Erreur lors de la récupération des personnels.");
     }
   };
 
   useEffect(() => {
-    fetchPersonnel();
+    fetchPersonnels();
   }, []);
 
-  // Gestion des changements dans le formulaire
+  const validateEmail = (email) => email.endsWith("@emsi-edu.ma");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewPersonnel({ ...newPersonnel, [name]: value });
+    setPersonnelData({ ...personnelData, [name]: value });
   };
 
-  // Pagination handler
-  const handlePageChange = (event, value) => {
-    setPage(value);
+  const handleSubmit = async () => {
+    const { nom, prenom, email, motdepasse, role } = personnelData;
+
+    if (!nom.trim() || !prenom.trim() || !email.trim() || (!editingPersonnel && !motdepasse.trim()) || !role.trim()) {
+      setErrorMessage("Tous les champs sont obligatoires !");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setErrorMessage("L'email doit contenir '@emsi-edu.ma'.");
+      return;
+    }
+
+    try {
+      if (editingPersonnel) {
+        await PersonnelApi.updatePersonnel(editingPersonnel.id, personnelData);
+        setSuccessMessage("Personnel modifié avec succès !");
+      } else {
+        await PersonnelApi.createPersonnel(personnelData);
+        setSuccessMessage("Personnel ajouté avec succès !");
+      }
+
+      setOpenDialog(false);
+      setPersonnelData({ nom: "", prenom: "", email: "", motdepasse: "", role: "" });
+      fetchPersonnels();
+    } catch (error) {
+      setErrorMessage("Erreur lors de l'opération.");
+    }
   };
 
-  // Calculer les personnels à afficher en fonction de la page actuelle
-  const currentPersonnel = personnel.slice((page - 1) * placesPerPage, page * placesPerPage);
+  const confirmDelete = (personnel) => {
+    setPersonnelToDelete(personnel);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await PersonnelApi.deletePersonnel(personnelToDelete.id);
+      setSuccessMessage("Personnel supprimé avec succès !");
+      fetchPersonnels();
+    } catch (error) {
+      setErrorMessage("Erreur lors de la suppression du personnel.");
+    } finally {
+      setOpenDeleteDialog(false);
+      setPersonnelToDelete(null);
+    }
+  };
+
+  const openEditDialog = (personnel) => {
+    setEditingPersonnel(personnel);
+    setPersonnelData({ ...personnel, motdepasse: "" });
+    setOpenDialog(true);
+  };
+
+  const indexOfLastPersonnel = page * personnelsPerPage;
+  const indexOfFirstPersonnel = indexOfLastPersonnel - personnelsPerPage;
+  const currentPersonnels = personnels.slice(indexOfFirstPersonnel, indexOfLastPersonnel);
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Button variant="contained" color="success" onClick={() => setOpenDialog(true)}>
-        +Ajouter un personnel
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => {
+          setEditingPersonnel(null);
+          setPersonnelData({ nom: "", prenom: "", email: "", motdepasse: "", role: "" });
+          setOpenDialog(true);
+        }}
+      >
+        + Ajouter un Personnel
       </Button>
 
-      {/* Dialog pour le formulaire d'ajout */}
+      {/* Dialog pour Ajouter/Modifier */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth>
-        <DialogTitle textAlign="center">Ajouter un personnel</DialogTitle>
+        <DialogTitle textAlign="center">
+          {editingPersonnel ? "Modifier un Personnel" : "Ajouter un Personnel"}
+        </DialogTitle>
         <DialogContent>
-          <Box
-            component="form"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              mt: 2,
-            }}
-          >
+          {/* Champs */}
+          <TextField
+          color="success"
+            label="Nom"
+            name="nom"
+            value={personnelData.nom}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            required
+            sx={{ mt: 2 }}
+          />
+          <TextField
+          color="success"
+            label="Prénom"
+            name="prenom"
+            value={personnelData.prenom}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            required
+            sx={{ mt: 2 }}
+          />
+          <TextField
+          color="success"
+            label="Email"
+            name="email"
+            value={personnelData.email}
+            onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            required
+            sx={{ mt: 2 }}
+            error={!validateEmail(personnelData.email)}
+            helperText={!validateEmail(personnelData.email) ? "L'email doit contenir '@emsi-edu.ma'." : ""}
+          />
+          {!editingPersonnel && (
             <TextField
-              label="Nom"
-              name="nom"
-              value={newPersonnel.nom}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              required
-              error={!!formError}
-              helperText={formError}
-            />
-            <TextField
-              label="Prénom"
-              name="prenom"
-              value={newPersonnel.prenom}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              required
-              error={!!formError}
-              helperText={formError}
-            />
-            <TextField
-              label="Email"
-              name="email"
-              value={newPersonnel.email}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              error={!!emailError}
-              helperText={emailError}
-              required
-            />
-            <TextField
-              label="Mot de passe"
+            color="success"
+              label="Mot de Passe"
               name="motdepasse"
-              value={newPersonnel.motdepasse}
-              onChange={handleChange}
               type="password"
-              variant="outlined"
-              fullWidth
-              required
-            />
-            <Select
-              name="role"
-              value={newPersonnel.role}
+              value={personnelData.motdepasse}
               onChange={handleChange}
-              displayEmpty
               variant="outlined"
               fullWidth
               required
-            >
-              <MenuItem value="" disabled>Sélectionnez un rôle</MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
-              <MenuItem value="Staff">Staff</MenuItem>
-              <MenuItem value="Teacher">Teacher</MenuItem>
-            </Select>
-          </Box>
+              sx={{ mt: 2 }}
+            />
+          )}
+          <Select
+          color="success"
+            name="role"
+            value={personnelData.role}
+            onChange={handleChange}
+            fullWidth
+            required
+            displayEmpty
+            sx={{ mt: 2 }}
+          >
+            <MenuItem value="" disabled>
+              Sélectionnez un rôle
+            </MenuItem>
+            <MenuItem value="ADMINISTRATION">ADMINISTRATION</MenuItem>
+            <MenuItem value="ENSEIGNANT">ENSEIGNANT</MenuItem>
+          </Select>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="black">
             Annuler
           </Button>
-          <Button onClick={addPersonnel} color="primary" variant="contained">
-            Ajouter
+          <Button onClick={handleSubmit} color="success" variant="contained" >
+            {editingPersonnel ? "Modifier" : "Ajouter"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {successMessage && (
-        <Snackbar
-          open={!!successMessage}
-          autoHideDuration={6000}
-          onClose={() => setSuccessMessage("")}
-          message={successMessage}
-        />
-      )}
+      {/* Dialog de confirmation de suppression */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          Êtes-vous sûr de vouloir supprimer ce personnel ?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteDialog(false)} color="inherit">
+            Annuler
+          </Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-      <Table sx={{ mt: 3 }}>
+      {/* Snackbar pour les messages */}
+      <Snackbar
+        open={!!successMessage || !!errorMessage}
+        autoHideDuration={6000}
+        onClose={() => {
+          setSuccessMessage("");
+          setErrorMessage("");
+        }}
+        message={successMessage || errorMessage}
+      />
+
+      {/* Tableau des personnels */}
+      <Table sx={{ mt: 3.5 }}>
         <TableHead>
           <TableRow>
-            <TableCell style={{ fontWeight: 'bold' }}>ID</TableCell>
-            <TableCell style={{ fontWeight: 'bold' }}>Nom</TableCell>
-            <TableCell style={{ fontWeight: 'bold' }}>Prénom</TableCell>
-            <TableCell style={{ fontWeight: 'bold' }}>Email</TableCell>
-            <TableCell style={{ fontWeight: 'bold' }}>Rôle</TableCell>
-            <TableCell style={{ fontWeight: 'bold' }}>Supprimer</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Nom</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Prénom</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Email</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Rôle</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {currentPersonnel.map((personnelItem) => (
-            <TableRow key={personnelItem.id}>
-              <TableCell>{personnelItem.id}</TableCell>
-              <TableCell>{personnelItem.nom}</TableCell>
-              <TableCell>{personnelItem.prenom}</TableCell>
-              <TableCell>{personnelItem.email}</TableCell>
-              <TableCell>{personnelItem.role}</TableCell>
+          {currentPersonnels.map((personnel) => (
+            <TableRow key={personnel.id}>
+              <TableCell>{personnel.nom}</TableCell>
+              <TableCell>{personnel.prenom}</TableCell>
+              <TableCell>{personnel.email}</TableCell>
+              <TableCell>{personnel.role}</TableCell>
               <TableCell>
-                <IconButton color="error" onClick={() => deletePersonnel(personnelItem.id)}>
+                <IconButton color="primary" onClick={() => openEditDialog(personnel)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton color="error" onClick={() => confirmDelete(personnel)}>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
@@ -230,18 +279,15 @@ function Personnel() {
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       <Pagination
-        count={Math.ceil(personnel.length / placesPerPage)}
+        count={Math.ceil(personnels.length / personnelsPerPage)}
         page={page}
-        onChange={handlePageChange}
-        sx={{ mt: 2, display: "flex", justifyContent: "center" 
-        }}
+        onChange={(event, value) => setPage(value)}
         color="success"
-
+        sx={{ mt: 3, justifyContent: "center", display: "flex" }}
       />
     </Box>
   );
-}
+};
 
-export default Personnel;
+export default Personnele;

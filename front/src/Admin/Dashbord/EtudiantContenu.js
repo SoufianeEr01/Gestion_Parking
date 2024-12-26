@@ -17,7 +17,6 @@ import {
   Pagination,
   Select,
   MenuItem,
-  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,24 +24,24 @@ import GroupApi from "../../Api/GroupApi";
 import EtudiantApi from "../../Api/EtudiantApi";
 
 function Etudiant() {
+  const defaultEtudiant = { nom: "", prenom: "", email: "", motdepasse: "", groupeId: "" };
   const [etudiants, setEtudiants] = useState([]);
   const [groupes, setGroupes] = useState([]);
-  const [newEtudiant, setNewEtudiant] = useState({
-    nom: "",
-    prenom: "",
-    email: "",
-    motdepasse: "",
-    groupeId: "",
-  });
+  const [newEtudiant, setNewEtudiant] = useState(defaultEtudiant);
   const [selectedEtudiant, setSelectedEtudiant] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [dialogs, setDialogs] = useState({ add: false, edit: false, confirm: false });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [etudiantToDelete, setEtudiantToDelete] = useState(null);
   const [page, setPage] = useState(1);
-  const placesPerPage = 5;
+  const [placesPerPage, setPlacesPerPage] = useState(5);
 
-  // Fetch students
+  // Fetch etudiants and groupes
+  useEffect(() => {
+    fetchEtudiants();
+    fetchGroupes();
+  }, []);
+
   const fetchEtudiants = async () => {
     try {
       const data = await EtudiantApi.fetchEtudiants();
@@ -52,7 +51,6 @@ function Etudiant() {
     }
   };
 
-  // Fetch groups
   const fetchGroupes = async () => {
     try {
       const data = await GroupApi.fetchGroups();
@@ -62,79 +60,131 @@ function Etudiant() {
     }
   };
 
-  // Add a student
-  const addEtudiant = async () => {
-    try {
-      await EtudiantApi.createEtudiant(newEtudiant);
-      setSuccessMessage("Étudiant ajouté avec succès !");
-      setOpenDialog(false);
-      setNewEtudiant({ nom: "", prenom: "", email: "", motdepasse: "", groupeId: "" });
-      fetchEtudiants();
-    } catch (error) {
-      setErrorMessage("Erreur lors de l'ajout de l'étudiant.");
-    }
+  const getGroupName = (id) => {
+    const groupe = groupes.find((g) => g.id === id);
+    return groupe ? groupe.nom : "Non attribué";
   };
 
-  // Update a student
+  const validateFields = () => {
+    const { nom, prenom, email, motdepasse, groupeId } = newEtudiant;
+    if (!nom || !prenom || !email || !motdepasse || !groupeId) {
+      setErrorMessage("Tous les champs sont obligatoires.");
+      return false;
+    }
+    if (!email.endsWith("@emsi-edu.ma")) {
+      setErrorMessage("L'email doit contenir '@emsi-edu.ma'.");
+      return false;
+    }
+    return true;
+  };
+
+  const addEtudiant = async () => {
+    if (!validateFields()) return;
+  
+    try {
+      // Assurez-vous que les données sont envoyées dans le bon format
+      const response = await EtudiantApi.createEtudiant(newEtudiant);
+      setSuccessMessage("Étudiant ajouté avec succès !");
+      // Vérification si la réponse est bien reçue
+    
+        setDialogs({ ...dialogs, add: false });
+        setNewEtudiant(defaultEtudiant);
+        fetchEtudiants(); // Rafraîchir la liste des étudiants    
+    } catch (error) {
+      // Afficher l'erreur complète pour le débogage
+      setErrorMessage(error.response ? error.response.data.message : "Erreur inconnue lors de la création de l'étudiant.");
+    }
+  };
+  
+  
+
   const updateEtudiant = async () => {
+    if (!validateFields()) return;
     try {
       await EtudiantApi.updateEtudiant(selectedEtudiant.id, newEtudiant);
       setSuccessMessage("Étudiant mis à jour avec succès !");
-      setOpenEditDialog(false);
+      setDialogs({ ...dialogs, edit: false });
       fetchEtudiants();
     } catch (error) {
       setErrorMessage("Erreur lors de la mise à jour de l'étudiant.");
     }
   };
 
-  // Delete a student
-  const deleteEtudiant = async (id) => {
+  const deleteEtudiant = async () => {
     try {
-      await EtudiantApi.deleteEtudiant(id);
+      await EtudiantApi.deleteEtudiant(etudiantToDelete.id);
+      setSuccessMessage("Étudiant supprimé avec succès !");
+      setDialogs({ ...dialogs, confirm: false });
       fetchEtudiants();
     } catch (error) {
       setErrorMessage("Erreur lors de la suppression de l'étudiant.");
     }
   };
 
-  // Handle page change
-  const handlePageChange = (event, value) => setPage(value);
-
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewEtudiant((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const openEditForm = (etudiant) => {
-    setSelectedEtudiant(etudiant);
-    setNewEtudiant(etudiant);
-    setOpenEditDialog(true);
-  };
-
-  useEffect(() => {
-    fetchEtudiants();
-    fetchGroupes();
-  }, []);
-
   return (
     <Box sx={{ padding: 3 }}>
-      <Button variant="contained" color="success" onClick={() => setOpenDialog(true)}>
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => setDialogs({ ...dialogs, add: true })}
+      >
         + Ajouter un étudiant
       </Button>
 
-      {/* Add Student Dialog */}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth>
-        <DialogTitle textAlign="center">Ajouter un étudiant</DialogTitle>
+      {/* Dialog: Add/Edit Etudiant */}
+      <Dialog
+        open={dialogs.add || dialogs.edit}
+        onClose={() => setDialogs({ ...dialogs, add: false, edit: false })}
+      >
+        <DialogTitle>
+          {dialogs.edit ? "Modifier l'Étudiant" : "Ajouter un Étudiant"}
+        </DialogTitle>
         <DialogContent>
-          <TextField name="nom" label="Nom" value={newEtudiant.nom} onChange={handleChange} fullWidth margin="dense" />
-          <TextField name="prenom" label="Prénom" value={newEtudiant.prenom} onChange={handleChange} fullWidth margin="dense" />
-          <TextField name="email" label="Email" value={newEtudiant.email} onChange={handleChange} fullWidth margin="dense" />
-          <TextField name="motdepasse" label="Mot de passe" value={newEtudiant.motdepasse} onChange={handleChange} fullWidth margin="dense" />
-          <Select name="groupeId" value={newEtudiant.groupeId} onChange={handleChange} fullWidth>
-            <MenuItem value="" disabled>
-              Choisissez un groupe
-            </MenuItem>
+          <TextField
+          color="success"
+            label="Nom"
+            value={newEtudiant.nom}
+            onChange={(e) => setNewEtudiant({ ...newEtudiant, nom: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <TextField
+          color="success"
+            label="Prénom"
+            value={newEtudiant.prenom}
+            onChange={(e) => setNewEtudiant({ ...newEtudiant, prenom: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <TextField
+          color="success"
+            label="Email"
+            value={newEtudiant.email}
+            onChange={(e) => setNewEtudiant({ ...newEtudiant, email: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <TextField
+          color="success"
+            label="Mot de Passe"
+            type="password"
+            value={newEtudiant.motdepasse}
+            onChange={(e) => setNewEtudiant({ ...newEtudiant, motdepasse: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <Select
+          color="success"
+            value={newEtudiant.groupeId}
+            onChange={(e) => setNewEtudiant({ ...newEtudiant, groupeId: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+          >
             {groupes.map((groupe) => (
               <MenuItem key={groupe.id} value={groupe.id}>
                 {groupe.nom}
@@ -143,47 +193,46 @@ function Etudiant() {
           </Select>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Annuler</Button>
-          <Button color="success" onClick={addEtudiant} variant="contained">
-            Ajouter
+          <Button onClick={() => setDialogs({ ...dialogs, add: false, edit: false })}
+          color="black">
+            Annuler
+          </Button>
+          <Button
+            onClick={dialogs.edit ? updateEtudiant : addEtudiant}
+            color="success"
+            variant="contained"
+          >
+            {dialogs.edit ? "Mettre à Jour" : "Ajouter"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Edit Student Dialog */}
-      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)} fullWidth>
-        <DialogTitle textAlign="center">Modifier un étudiant</DialogTitle>
+      {/* Dialog: Confirm Delete */}
+      <Dialog
+        open={dialogs.confirm}
+        onClose={() => setDialogs({ ...dialogs, confirm: false })}
+      >
+        <DialogTitle>Confirmer la suppression</DialogTitle>
         <DialogContent>
-          <TextField name="nom" label="Nom" value={newEtudiant.nom} onChange={handleChange} fullWidth margin="dense" />
-          <TextField name="prenom" label="Prénom" value={newEtudiant.prenom} onChange={handleChange} fullWidth margin="dense" />
-          <TextField name="email" label="Email" value={newEtudiant.email} onChange={handleChange} fullWidth margin="dense" />
-          <Select name="groupeId" value={newEtudiant.groupeId} onChange={handleChange} fullWidth>
-            <MenuItem value="" disabled>
-              Choisissez un groupe
-            </MenuItem>
-            {groupes.map((groupe) => (
-              <MenuItem key={groupe.id} value={groupe.id}>
-                {groupe.nom}
-              </MenuItem>
-            ))}
-          </Select>
+          Voulez-vous vraiment supprimer cet étudiant ?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Annuler</Button>
-          <Button color="success" onClick={updateEtudiant} variant="contained">
-            Mettre à jour
+          <Button onClick={() => setDialogs({ ...dialogs, confirm: false })}>Annuler</Button>
+          <Button onClick={deleteEtudiant} color="error" variant="contained">
+            Supprimer
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Table>
+      {/* Table */}
+      <Table sx={{ mt: 3 }}>
         <TableHead>
           <TableRow>
-            <TableCell>Nom</TableCell>
-            <TableCell>Prénom</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Groupe</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Nom</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Prénom</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Email</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Groupe</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -192,12 +241,27 @@ function Etudiant() {
               <TableCell>{etudiant.nom}</TableCell>
               <TableCell>{etudiant.prenom}</TableCell>
               <TableCell>{etudiant.email}</TableCell>
-              <TableCell>{etudiant.groupeId}</TableCell>
+              <TableCell>{getGroupName(etudiant.groupeId)}</TableCell>
               <TableCell>
-                <IconButton color="primary" onClick={() => openEditForm(etudiant)}>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    setNewEtudiant(etudiant);
+                    setSelectedEtudiant(etudiant);
+                    setDialogs({ ...dialogs, edit: true });
+                  }}
+                  aria-label="Modifier"
+                >
                   <EditIcon />
                 </IconButton>
-                <IconButton color="error" onClick={() => deleteEtudiant(etudiant.id)}>
+                <IconButton
+                  color="error"
+                  onClick={() => {
+                    setEtudiantToDelete(etudiant);
+                    setDialogs({ ...dialogs, confirm: true });
+                  }}
+                  aria-label="Supprimer"
+                >
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
@@ -206,16 +270,29 @@ function Etudiant() {
         </TableBody>
       </Table>
 
+      {/* Pagination */}
       <Pagination
         count={Math.ceil(etudiants.length / placesPerPage)}
         page={page}
-        onChange={handlePageChange}
+        onChange={(e, value) => setPage(value)}
         color="success"
         sx={{ mt: 2, display: "flex", justifyContent: "center" }}
       />
 
-      <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage("")} message={successMessage} />
-      <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage("")} message={errorMessage} />
+      {/* Snackbar Messages */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={3000}
+        onClose={() => setSuccessMessage("")}
+        message={successMessage}
+      />
+      <Snackbar
+        open={!!errorMessage}
+        autoHideDuration={3000}
+        onClose={() => setErrorMessage("")}
+        message={errorMessage}
+        color="error"
+      />
     </Box>
   );
 }

@@ -23,8 +23,11 @@ namespace Gestion_Parking.Migrations
 
             modelBuilder.Entity("Gestion_Parking.Models.Emploi", b =>
                 {
-                    b.Property<string>("Jour")
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<TimeSpan>("DateDebut")
                         .HasColumnType("time");
@@ -35,7 +38,11 @@ namespace Gestion_Parking.Migrations
                     b.Property<int>("Groupe_Id")
                         .HasColumnType("int");
 
-                    b.HasKey("Jour");
+                    b.Property<string>("Jour")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("Groupe_Id");
 

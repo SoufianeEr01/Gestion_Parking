@@ -30,6 +30,8 @@ const Groupe = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [page, setPage] = useState(1);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState(null); // Pour garder la trace du groupe à supprimer
   const groupsPerPage = 5;
 
   // Fetch all groups
@@ -93,14 +95,19 @@ const Groupe = () => {
     }
   };
 
-  // Delete a group
-  const deleteGroup = async (id) => {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce groupe ?")) {
-      return;
-    }
+  // Handle delete confirmation
+  const confirmDelete = (group) => {
+    setGroupToDelete(group);
+    setOpenDeleteDialog(true);
+  };
+
+  const deleteGroup = async () => {
+    if (!groupToDelete) return;
     try {
-      await GroupApi.deleteGroup(id);
+      await GroupApi.deleteGroup(groupToDelete.id);
       setSuccessMessage("Groupe supprimé avec succès !");
+      setOpenDeleteDialog(false);
+      setGroupToDelete(null);
       fetchGroups();
     } catch (error) {
       setErrorMessage("Erreur lors de la suppression du groupe.");
@@ -125,11 +132,6 @@ const Groupe = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom textAlign="center">
-        Gestion des Groupes
-      </Typography>
-      <Divider sx={{ width: "100%", my: 2 }} />
-
       <Button
         variant="contained"
         color="success"
@@ -149,6 +151,7 @@ const Groupe = () => {
         </DialogTitle>
         <DialogContent>
           <TextField
+          color="success"
             label="Nom du Groupe"
             name="nom"
             value={editingGroup ? editingGroup.nom : newGroup.nom}
@@ -165,10 +168,38 @@ const Groupe = () => {
           </Button>
           <Button
             onClick={editingGroup ? updateGroup : addGroup}
-            color="primary"
+            color="success"
             variant="contained"
+            
           >
             {editingGroup ? "Modifier" : "Ajouter"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <DialogTitle>Confirmation de suppression</DialogTitle>
+        <DialogContent>
+          Êtes-vous sûr de vouloir supprimer le groupe{" "}
+          <b>{groupToDelete?.nom}</b> ?
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenDeleteDialog(false)}
+            color="inherit"
+          >
+            Annuler
+          </Button>
+          <Button
+            onClick={deleteGroup}
+            color="error"
+            variant="contained"
+          >
+            Supprimer
           </Button>
         </DialogActions>
       </Dialog>
@@ -197,31 +228,32 @@ const Groupe = () => {
       />
 
       {/* Group Table */}
-      <Table sx={{ mt: 3 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell style={{ fontWeight: "bold" }}>ID</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Nom</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {currentGroups.map((group) => (
-            <TableRow key={group.id}>
-              <TableCell>{group.id}</TableCell>
-              <TableCell>{group.nom}</TableCell>
-              <TableCell>
-                <IconButton color="primary" onClick={() => openEditDialog(group)}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton color="error" onClick={() => deleteGroup(group.id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+  <Table sx={{ mt: 3.5, width: '70%' }}>
+    <TableHead>
+      <TableRow>
+        <TableCell style={{ fontWeight: "bold" }}>ID</TableCell>
+        <TableCell style={{ fontWeight: "bold" }}>Nom</TableCell>
+        <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {currentGroups.map((group) => (
+        <TableRow key={group.id}>
+          <TableCell>{group.id}</TableCell>
+          <TableCell>{group.nom}</TableCell>
+          <TableCell>
+            <IconButton color="primary" onClick={() => openEditDialog(group)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color="error" onClick={() => confirmDelete(group)}>
+              <DeleteIcon />
+            </IconButton>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+
 
       {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>

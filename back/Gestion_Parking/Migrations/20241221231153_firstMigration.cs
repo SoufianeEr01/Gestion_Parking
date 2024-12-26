@@ -42,14 +42,16 @@ namespace Gestion_Parking.Migrations
                 name: "Emplois",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Groupe_Id = table.Column<int>(type: "int", nullable: false),
                     Jour = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     DateDebut = table.Column<TimeSpan>(type: "time", nullable: false),
-                    DateFin = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Groupe_Id = table.Column<int>(type: "int", nullable: false)
+                    DateFin = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Emplois", x => x.Jour);
+                    table.PrimaryKey("PK_Emplois", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Emplois_Groupes_Groupe_Id",
                         column: x => x.Groupe_Id,

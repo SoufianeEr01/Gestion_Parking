@@ -112,32 +112,6 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.EmploisController",
-    "Method": "GetAllEmplois",
-    "RelativePath": "api/Emplois",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
-    "Method": "GetEmploiByJour",
-    "RelativePath": "api/Emplois/{jour}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "jour",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
     "Method": "UpdateEmploi",
     "RelativePath": "api/Emplois/{jour}",
     "HttpMethod": "PUT",
@@ -168,6 +142,43 @@
       {
         "Name": "jour",
         "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "confirm",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
+    "Method": "GetEmploiByIdEtudiant",
+    "RelativePath": "api/Emplois/etudiant/{idEtudiant}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idEtudiant",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
+    "Method": "GetEmploisByGroupe",
+    "RelativePath": "api/Emplois/group/{groupeId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

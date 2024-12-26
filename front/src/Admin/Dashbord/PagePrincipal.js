@@ -1,29 +1,35 @@
 import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography  from '@mui/material/Typography';
-import {Box  , Menu} from '@mui/material';
+import Typography from '@mui/material/Typography';
+import { Box, Menu, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import SchoolIcon from '@mui/icons-material/School';
-import PeopleIcon from '@mui/icons-material/People';
+import PersonIcon from '@mui/icons-material/Person';
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
-import GroupIcon from '@mui/icons-material/Group'; // Import de l'icône "Groupe"
+import GroupIcon from '@mui/icons-material/Group';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from "react-router-dom";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 // Import des composants
 import Etudiant from './EtudiantContenu';
 import Personnel from './PersonnelContenu';
 import PlaceParking from './PlaceParking';
 import EmploisContenu from './EmploisContenu';
-import Groupe from './Groupe'; // Assurez-vous que le composant Groupe est importé
+import Groupe from './Groupe';
+import ProfilePage from '../../Admin/Dashbord/Profil';
+import AdminApi from "../../Api/AdminApi";
+import { useEffect, useState } from 'react';
+
+
 
 const theme = createTheme({
   palette: {
@@ -56,19 +62,61 @@ function Dashboard() {
   const [currentPage, setCurrentPage] = React.useState('Accueil');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [menuOpen, setMenuOpen] = React.useState(true);
+  const [openDialog, setOpenDialog] = React.useState(false); 
+    const [adminData, setAdminData] = useState({ id: 0, nom: "", prenom: "", email: "" });
+  // État pour le dialogue
 
   const isMenuOpen = Boolean(anchorEl);
+
+
+  //
+  const adminId = JSON.parse(sessionStorage.getItem("userData"))?.id;
+
+  useEffect(() => {
+    const fetchAdmin = async () => {
+      if (!adminId) return;
+
+      try {
+        const data = await AdminApi.fetchAdminById(adminId);
+        setAdminData(data);
+      } catch (error) {
+        console.log(" Erreur lors de la récupération des données.");
+      }
+    };
+    fetchAdmin();
+  }, [adminId]);
+  //
+  
+  const navigate = useNavigate();
+
+
+  function handleLogout() {
+
+    sessionStorage.clear();
+    navigate("/login");
+  }
+
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+ 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+    handleMenuClose();
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const renderPageContent = () => {
@@ -90,8 +138,7 @@ function Dashboard() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#fff' ,position:'relative',top: 0,
-  left: 0}}>
+      <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#fff', position: 'relative', top: 0, left: 0 }}>
         {/* Menu latéral */}
         <Box
           sx={{
@@ -128,7 +175,7 @@ function Dashboard() {
               { label: 'Personnels', icon: <PersonIcon /> },
               { label: 'Places Parking', icon: <LocalParkingIcon /> },
               { label: 'Emplois', icon: <CalendarTodayIcon /> },
-              { label: 'Groupes', icon: <GroupIcon /> }, // Ajout du bouton "Groupe"
+              { label: 'Groupes', icon: <GroupIcon /> },
             ].map((item, index) => (
               <React.Fragment key={item.label}>
                 <Button
@@ -160,12 +207,12 @@ function Dashboard() {
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static">
             <Toolbar>
-              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              <Typography variant="h6" sx={{ flexGrow: 1 }} color="Black">
                 Gestion des - {currentPage}
               </Typography>
-              <IconButton color="inherit" onClick={handleMenuOpen}>
-                <Avatar alt="Admin" />
-              </IconButton>
+                <Button onClick={handleMenuOpen} color="inherit" sx={{ backgroundColor: 'inherit', '&:hover': {backgroundColor: 'white',color: 'black' }}} >
+                  {adminData.nom} {adminData.prenom} <ArrowDropDownIcon />
+                </Button>
               <Menu
                 anchorEl={anchorEl}
                 open={isMenuOpen}
@@ -175,14 +222,20 @@ function Dashboard() {
                   horizontal: 'right',
                 }}
               >
-                <MenuItem onClick={handleMenuClose}>Profil</MenuItem>
-                <MenuItem onClick={handleMenuClose}>Paramètres</MenuItem>
-                <MenuItem onClick={handleMenuClose}>Déconnexion</MenuItem>
+                <MenuItem onClick={handleOpenDialog}>Profil</MenuItem>
+                <MenuItem onClick={handleLogout}>Déconnexion</MenuItem>
               </Menu>
             </Toolbar>
           </AppBar>
           <Box sx={{ padding: 3 }}>{renderPageContent()}</Box>
         </Box>
+
+        {/* Dialogue pour le profil */}
+        <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+          
+            <ProfilePage />
+          
+        </Dialog>
       </Box>
     </ThemeProvider>
   );
