@@ -22,7 +22,7 @@ const pages = [
 const Header = () => {
   const [etudiant, setEtudiant] = useState({});
   const [loading, setLoading] = useState(true);
-  // Récupérer les données utilisateur depuis localStorage
+  // Récupérer les données utilisateur depuis sessionStorage
   
     
   // Vérifier si les données existent et si l'utilisateur est un admin

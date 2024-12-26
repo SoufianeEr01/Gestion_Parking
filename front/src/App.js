@@ -15,6 +15,7 @@ import Dashboard from './Admin/dashboard';
 import Error403Page from './error/error403';
 import EtudiantDetailPage from './EtudiantDetailPage';
 import Error404Page from './error/error404';
+import Emploi from './Reservation/Emploi';
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function AppWithRouter() {
             <ProtectedRoute><Acceuil /></ProtectedRoute>} />
         <Route path="/about" element={
             <ProtectedRoute><About /></ProtectedRoute>} />
+        <Route path="/emploi" element={
+            <Emploi />} />
         <Route path="/error403" element={
             <Error403Page />} />
           <Route path="*" element={<Error404Page />} />

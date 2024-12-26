@@ -36,7 +36,7 @@ const LoginPage = () => {
         const response = await SignApi.createLogin(loginData);
         console.log('Login successful:', response);
 
-        // Sauvegarde des informations dans le localStorage pour maintenir la session
+        // Sauvegarde des informations dans le sessionStorage pour maintenir la session
         const userData = {
             discriminator: response.discriminator,
             email: response.email,
@@ -45,9 +45,9 @@ const LoginPage = () => {
             token: response.token,  // Token d'authentification pour les requêtes sécurisées
         };
 
-        // Sauvegarde dans localStorage
-        localStorage.setItem('userData', JSON.stringify(userData));
-        localStorage.setItem('jwtToken', response.token);
+        // Sauvegarde dans sessionStorage
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        sessionStorage.setItem('jwtToken', response.token);
         console.log('Utilisateur connecté avec succès:', userData);
         setErrorMessage("");
 

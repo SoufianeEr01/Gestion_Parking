@@ -1,8 +1,8 @@
 import React from 'react'
 
 function Dashboard() {
-  // Récupérer les données utilisateur depuis localStorage
-  const userData = localStorage.getItem('userData');
+  // Récupérer les données utilisateur depuis sessionStorage
+  const userData = sessionStorage.getItem('userData');
     
   // Vérifier si les données existent et si l'utilisateur est un admin
   

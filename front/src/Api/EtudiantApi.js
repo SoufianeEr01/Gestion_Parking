@@ -5,8 +5,8 @@ const BASE_URL = "https://localhost:7031/api";
 const EtudiantApi = {
     fetchEtudiants: async () => {
         try {
-          // Récupérer le token depuis le localStorage
-          const token = localStorage.getItem('jwtToken');  // ou 'userData.token' si vous stockez le token dans 'userData'
+          // Récupérer le token depuis le sessionStorage
+          const token = sessionStorage.getItem('jwtToken');  // ou 'userData.token' si vous stockez le token dans 'userData'
     
           // Si le token n'est pas disponible, vous pouvez lancer une erreur ou gérer cela différemment
           if (!token) {
@@ -30,7 +30,7 @@ const EtudiantApi = {
  // Méthode pour récupérer un étudiant par son ID depuis userData
  fetchEtudiantById: async () => {
     try {
-      const userData = localStorage.getItem('userData');
+      const userData = sessionStorage.getItem('userData');
       
       // Vérifier que l'userData existe et que le token est présent
       if (!userData) {
@@ -38,7 +38,7 @@ const EtudiantApi = {
       }
 
       const parsedUserData = JSON.parse(userData);
-      const token = localStorage.getItem('jwtToken');
+      const token = sessionStorage.getItem('jwtToken');
 
       if (!token) {
         throw new Error("Token d'authentification manquant");

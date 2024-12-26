@@ -54,6 +54,8 @@ namespace Gestion_Parking.Controllers
             }
         }
 
+
+
         // Récupérer tous les emplois
         [Authorize(Policy = "EtudiantOuAdmin")]
         [HttpGet]
@@ -125,6 +127,57 @@ namespace Gestion_Parking.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, "Une erreur est survenue lors de la récupération de l'emploi.");
+            }
+        }
+
+        // Nouvelle fonction : Récupérer les emplois par ID d'étudiant
+        [Authorize(Policy = "EtudiantOuAdmin")]
+        [HttpGet("etudiant/{idEtudiant}")]
+        public IActionResult GetEmploiByIdEtudiant(int idEtudiant)
+        {
+            var emplois = new List<Emploi>();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sql = @"SELECT P.id AS IdEtudiant, E.* 
+                                     FROM Emplois E 
+                                     JOIN Groupes G ON E.Groupe_Id = G.Id 
+                                     JOIN Personnes P ON G.Id = P.GroupeId 
+                                     WHERE P.id = @idEtudiant";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@idEtudiant", idEtudiant);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var emploi = new Emploi
+                                {
+                                    Jour = Enum.Parse<Jour>(reader.GetString(1)), // Supposant que la colonne Jour est en position 1
+                                    DateDebut = reader.GetTimeSpan(2),
+                                    DateFin = reader.GetTimeSpan(3),
+                                    Groupe_Id = reader.GetInt32(4)
+                                };
+                                emplois.Add(emploi);
+                            }
+                        }
+                    }
+                }
+
+                if (emplois.Count == 0)
+                {
+                    return NotFound("Aucun emploi trouvé pour cet étudiant.");
+                }
+
+                return Ok(emplois);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { erreur = ex.Message });
             }
         }
 

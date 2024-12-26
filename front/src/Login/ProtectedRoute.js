@@ -2,10 +2,10 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-    const userData = localStorage.getItem('userData');
+    const userData = sessionStorage.getItem('userData');
     const location = useLocation();  // Utilisation de useLocation pour obtenir le chemin actuel
 
-    // Si les données de l'utilisateur n'existent pas dans le localStorage
+    // Si les données de l'utilisateur n'existent pas dans le sessionStorage
     if (!userData) {
         return <Navigate to="/login" />;
     }
