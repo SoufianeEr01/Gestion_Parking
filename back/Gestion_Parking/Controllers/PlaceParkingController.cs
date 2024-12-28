@@ -49,7 +49,7 @@ namespace Gestion_Parking.Controllers
         }
 
         // Lire toutes les Places de Parking
-        [Authorize(Policy = "EtudiantOuAdmin")]
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetAllPlaceParkings()
         {

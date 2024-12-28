@@ -15,7 +15,7 @@ import AdminApi from "../../Api/AdminApi";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import EmailIcon from "@mui/icons-material/Email";
 
-const ProfilePage = () => {
+const ProfilePage = ({ onClose }) => {
   const [adminData, setAdminData] = useState({ id: 0, nom: "", prenom: "", email: "" });
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -53,22 +53,28 @@ const ProfilePage = () => {
       setError("Veuillez remplir tous les champs.");
       return;
     }
-  
+
     if (!validateEmail(adminData.email)) {
       setError("L'email doit contenir '@emsi-edu.ma'.");
       return;
     }
-  
+
     try {
       await AdminApi.updateAdmin(adminId, adminData);
       setSuccessMessage("Mise à jour réussie !");
       setError(null);
+
+      // Fermer le profil après la mise à jour réussie
+      setTimeout(() => {
+        if (onClose) {
+          onClose();
+        }
+      }, 2000); // Attend 2 secondes avant de fermer
     } catch (error) {
       setError("Erreur lors de la mise à jour des données.");
       console.error("Erreur :", error);
     }
   };
-  
 
   if (loading) {
     return (
@@ -154,7 +160,7 @@ const ProfilePage = () => {
       {activeTab === 1 && (
         <Box component="form" sx={{ mt: 3 }}>
           <TextField
-          required
+            required
             fullWidth
             color="success"
             label="Nom"
@@ -184,13 +190,16 @@ const ProfilePage = () => {
           />
           <Button
             variant="contained"
-            sx={{ backgroundColor: "rgb(0, 141, 54)", color: "#FFFFFF" }}
+            sx={{ backgroundColor: "rgb(0, 141, 54)", color: "#FFFFFF", mr: 2 }}
             onClick={handleUpdate}
           >
             Mettre à jour
           </Button>
-          <Button  color="black">
-                      Annuler
+          <Button
+            color="black"
+            onClick={() => onClose && onClose()}
+          >
+            Annuler
           </Button>
         </Box>
       )}
@@ -201,7 +210,6 @@ const ProfilePage = () => {
           sx={{
             mt: 2,
             p: 3,
-            
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -219,23 +227,19 @@ const ProfilePage = () => {
           >
             Votre Information
           </Typography>
-          {/* Display profile information */}
           <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Nom */}
             <Box sx={{ display: "flex", alignItems: "center", p: 2, borderRadius: 3, backgroundColor: "rgb(245, 245, 245)" }}>
               <PersonOutlineIcon sx={{ color: "rgb(0, 141, 54)", mr: 2 }} />
               <Typography>
                 <strong>Nom :</strong> {adminData.nom}
               </Typography>
             </Box>
-            {/* Prénom */}
             <Box sx={{ display: "flex", alignItems: "center", p: 2, borderRadius: 3, backgroundColor: "rgb(245, 245, 245)" }}>
               <PersonOutlineIcon sx={{ color: "rgb(0, 141, 54)", mr: 2 }} />
               <Typography>
                 <strong>Prénom :</strong> {adminData.prenom}
               </Typography>
             </Box>
-            {/* Email */}
             <Box sx={{ display: "flex", alignItems: "center", p: 2, borderRadius: 3, backgroundColor: "rgb(245, 245, 245)" }}>
               <EmailIcon sx={{ color: "rgb(0, 141, 54)", mr: 2 }} />
               <Typography>

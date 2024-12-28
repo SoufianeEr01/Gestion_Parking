@@ -85,6 +85,17 @@ function Dashboard() {
     };
     fetchAdmin();
   }, [adminId]);
+
+
+  const handleCloseDialog = async () => {
+    setOpenDialog(false);
+    try {
+      const data = await AdminApi.fetchAdminById(adminId);
+      setAdminData(data);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour des données après fermeture :", error);
+    }
+  };
   //
   
   const navigate = useNavigate();
@@ -115,9 +126,7 @@ function Dashboard() {
     handleMenuClose();
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
+
 
   const renderPageContent = () => {
     switch (currentPage) {
@@ -233,7 +242,7 @@ function Dashboard() {
         {/* Dialogue pour le profil */}
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
           
-            <ProfilePage />
+            <ProfilePage onClose={handleCloseDialog} />
           
         </Dialog>
       </Box>

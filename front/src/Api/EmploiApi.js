@@ -74,14 +74,19 @@ const EmploiApi = {
     return EmploiApi.get(`${BASE_URL}/Emplois/${jour}`);
   },
 
+  // Récupérer les emplois par étudiant
+  fetchEmploiByIdEtudiant: (idEtudiant) => {
+    return EmploiApi.get(`${BASE_URL}/Emplois/etudiant/${idEtudiant}`);
+  },
+
   // Mettre à jour un emploi
   updateEmploi: (jour, emploiData) => {
     return EmploiApi.put(`${BASE_URL}/Emplois/${jour}`, emploiData);
   },
 
   // Supprimer un emploi
-  deleteEmploi: (jour) => {
-    return EmploiApi.delete(`${BASE_URL}/Emplois/${jour}`);
+  deleteEmploi: (jour, confirm) => {
+    return EmploiApi.delete(`${BASE_URL}/Emplois/${jour}?confirm=${confirm}`);
   }
 };
 

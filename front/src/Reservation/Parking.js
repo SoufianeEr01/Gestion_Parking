@@ -220,12 +220,12 @@ const Parking = () => {
             color: '#555',
           }}
         >
-          Places Réservées : {reserved.join(', ') || 'Aucune'}
+          {/* Places Réservées : {reserved.join(', ') || 'Aucune'} */}
         </Typography>
       </Box>
 
       {/* Dialog for place reservation */}
-      <Emploi
+      <Emploi 
         open={dialogOpen}
         place={selectedPlace}
         onClose={() => setDialogOpen(false)} // Close the dialog

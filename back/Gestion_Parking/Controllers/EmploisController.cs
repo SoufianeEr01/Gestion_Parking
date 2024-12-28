@@ -135,11 +135,12 @@ namespace Gestion_Parking.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = @"SELECT P.id AS IdEtudiant, E.* 
-                                     FROM Emplois E 
-                                     JOIN Groupes G ON E.Groupe_Id = G.Id 
-                                     JOIN Personnes P ON G.Id = P.GroupeId 
-                                     WHERE P.id = @idEtudiant";
+                    string sql = @"
+        SELECT E.Id, E.Jour, E.DateDebut, E.DateFin, E.Groupe_Id 
+        FROM Emplois E 
+        JOIN Groupes G ON E.Groupe_Id = G.Id 
+        JOIN Personnes P ON G.Id = P.GroupeId 
+        WHERE P.Id = @idEtudiant";
 
                     using (var command = new SqlCommand(sql, connection))
                     {
@@ -151,10 +152,11 @@ namespace Gestion_Parking.Controllers
                             {
                                 var emploi = new Emploi
                                 {
-                                    Jour = Enum.Parse<Jour>(reader.GetString(1)), // Supposant que la colonne Jour est en position 1
-                                    DateDebut = reader.GetTimeSpan(2),
-                                    DateFin = reader.GetTimeSpan(3),
-                                    Groupe_Id = reader.GetInt32(4)
+                                    Id = reader.GetInt32(0), // Colonne 'Id'
+                                    Jour = Enum.TryParse<Jour>(reader.GetString(1), out var jour) ? jour : throw new InvalidCastException("Jour invalide."), // Conversion sécurisée pour Enum
+                                    DateDebut = reader.GetTimeSpan(2), // Colonne 'DateDebut'
+                                    DateFin = reader.GetTimeSpan(3),   // Colonne 'DateFin'
+                                    Groupe_Id = reader.GetInt32(4)    // Colonne 'Groupe_Id'
                                 };
                                 emplois.Add(emploi);
                             }
@@ -169,9 +171,17 @@ namespace Gestion_Parking.Controllers
 
                 return Ok(emplois);
             }
+            catch (SqlException ex)
+            {
+                // Gestion des erreurs SQL
+                _logger.LogError(ex, "Erreur SQL lors de la récupération des emplois.");
+                return StatusCode(500, new { erreur = $"Erreur SQL : {ex.Message}" });
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, new { erreur = ex.Message });
+                // Gestion des erreurs générales
+                _logger.LogError(ex, "Erreur lors de la récupération des emplois.");
+                return StatusCode(500, new { erreur = $"Erreur : {ex.Message}" });
             }
         }
 
