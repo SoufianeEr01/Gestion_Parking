@@ -25,8 +25,11 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import EmploiApi from "../Api/EmploiApi";
+<<<<<<< HEAD
 import EtudiantApi from "../Api/EtudiantApi";
 import ReservationApi from "../Api/ReservationApi";
+=======
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
 
 const steps = [
   "Afficher l'emploi du temps",
@@ -44,14 +47,21 @@ const paymentOptions = [
 function Emploi({ open, onClose, place }) {
   const [activeStep, setActiveStep] = useState(0);
   const [emplois, setEmplois] = useState(null);
+<<<<<<< HEAD
   const [dataE, setDataE] = useState(null);
   const [reservations, setReservations] = useState(null);
+=======
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
+<<<<<<< HEAD
     const fetchData = async () => {
+=======
+    const fetchEmploiForEtudiant = async () => {
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
       const userData = JSON.parse(sessionStorage.getItem("userData"));
       const idEtudiant = userData?.id;
 
@@ -61,6 +71,7 @@ function Emploi({ open, onClose, place }) {
       }
 
       setLoading(true);
+<<<<<<< HEAD
 
       try {
         const [emploisData, etudiantData, reservationsData] = await Promise.all([
@@ -79,29 +90,59 @@ function Emploi({ open, onClose, place }) {
       } catch (err) {
         console.error("Erreur lors de la récupération des données:", err);
         setError("Une erreur s'est produite lors de la récupération des données.");
+=======
+      setEmplois(null);
+      try {
+        const data = await EmploiApi.fetchEmploiByIdEtudiant(idEtudiant);
+        setEmplois(data);
+        setError("");
+        if (data.length > 0) {
+          setActiveStep(1);
+        }
+      } catch (err) {
+        console.error("Erreur lors du chargement des emplois:", err);
+        setError("Les emplois pour cet étudiant ne sont pas disponibles.");
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
       } finally {
         setLoading(false);
       }
     };
 
+<<<<<<< HEAD
     fetchData();
+=======
+    fetchEmploiForEtudiant();
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
   }, []);
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
   const handleReset = () => {
     setActiveStep(0);
+<<<<<<< HEAD
     setSelectedOption(null);
+=======
+    setSelectedOption(null); // Réinitialisation de l'option sélectionnée lors du reset
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+<<<<<<< HEAD
       <DialogTitle style={{ textAlign: "center", fontWeight: "bold", color: "#1976d2" }}>
         Réservation de Place - Étapes
       </DialogTitle>
       <DialogContent>
         <Typography variant="h6" textAlign="center" sx={{ mb: 2, color: "#1976d2" }}>
           Place sélectionnée : <strong>{place}</strong>
+=======
+      <DialogTitle style={{ textAlign: "center", fontWeight: "bold" }}>
+        Réservation de Place - Étapes
+      </DialogTitle>
+      <DialogContent>
+        <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
+          Place sélectionnée : <strong>{place}</strong> {/* Assure-toi que 'place' est correctement passé en prop */}
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
         </Typography>
 
         <Stepper activeStep={activeStep} alternativeLabel>
@@ -113,7 +154,10 @@ function Emploi({ open, onClose, place }) {
         </Stepper>
 
         <Box sx={{ mt: 4 }}>
+<<<<<<< HEAD
           {/* Étape 1: Afficher l'emploi du temps */}
+=======
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
           {activeStep === 0 && (
             <>
               {loading ? (
@@ -157,7 +201,10 @@ function Emploi({ open, onClose, place }) {
             </>
           )}
 
+<<<<<<< HEAD
           {/* Étape 2: Options de paiement */}
+=======
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
           {activeStep === 1 && (
             <Box>
               <Typography variant="h6" textAlign="center" sx={{ mb: 2 }}>
@@ -171,8 +218,11 @@ function Emploi({ open, onClose, place }) {
                       minWidth: 275,
                       border: selectedOption === index ? "2px solid #1976d2" : "1px solid #ccc",
                       transition: "0.3s",
+<<<<<<< HEAD
                       cursor: "pointer",
                       "&:hover": { boxShadow: 3 },
+=======
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
                     }}
                     onClick={() => setSelectedOption(index)}
                   >
@@ -200,6 +250,7 @@ function Emploi({ open, onClose, place }) {
             </Box>
           )}
 
+<<<<<<< HEAD
           {/* Étape 3: Validation des informations */}
           {activeStep === 2 && (
             <Box>
@@ -225,6 +276,14 @@ function Emploi({ open, onClose, place }) {
           )}
 
           {/* Étape 4: Confirmation finale */}
+=======
+          {activeStep === 2 && (
+            <Typography textAlign="center" variant="body1">
+              Vérifiez vos informations avant la confirmation.
+            </Typography>
+          )}
+
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
           {activeStep === steps.length - 1 && (
             <Box textAlign="center" mt={2}>
               <CheckCircleIcon fontSize="large" color="success" />
@@ -249,11 +308,22 @@ function Emploi({ open, onClose, place }) {
             onClick={handleNext}
             variant="contained"
             color="primary"
+<<<<<<< HEAD
             disabled={!selectedOption && activeStep === 1}
           >
             {activeStep === steps.length - 2 ? "Terminer" : "Suivant"}
           </Button>
         )}
+=======
+            disabled={activeStep === 1 && selectedOption === null}
+          >
+            Suivant
+          </Button>
+        )}
+        <Button onClick={onClose} color="secondary" variant="contained">
+          Fermer
+        </Button>
+>>>>>>> 2282b23f6d85e93ef3875ed03e4a9ee39c82b81e
       </DialogActions>
     </Dialog>
   );

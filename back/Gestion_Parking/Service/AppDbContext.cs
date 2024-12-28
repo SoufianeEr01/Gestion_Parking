@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Emploi> Emplois { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<PlaceParking> PlaceParkings { get; set; }
-
+    public DbSet<Contact> Contacts { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Configuration de la relation entre Reservation et Personne

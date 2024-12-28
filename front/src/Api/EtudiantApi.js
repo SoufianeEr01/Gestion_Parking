@@ -3,6 +3,7 @@ import axios from "axios";
 const BASE_URL = "https://localhost:7031/api";
 
 const EtudiantApi = {
+
   fetchEtudiants: async () => {
     try {
       // Récupérer le token depuis le sessionStorage

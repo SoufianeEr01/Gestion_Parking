@@ -50,6 +50,8 @@ function AppWithRouter() {
             <ProtectedRoute><Acceuil /></ProtectedRoute>} />
         <Route path="/about" element={
             <ProtectedRoute><About /></ProtectedRoute>} />
+        <Route path="/emploi" element={
+            <Emploi />} />
         <Route path="/error403" element={
             <Error403Page />} />
           <Route path="*" element={<Error404Page />} />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Acceuil.css";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate,Link as RouterLink } from "react-router-dom";
 import {
   Stack,
   Toolbar,
@@ -8,6 +8,7 @@ import {
   Container,
   AppBar,
   Box,
+  Button,
 } from "@mui/material";
 import EtudiantApi from "../Api/EtudiantApi";
 
@@ -21,6 +22,7 @@ const pages = [
 const Header = () => {
   const [etudiant, setEtudiant] = useState({});
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchEtudiantById = async () => {
@@ -36,6 +38,14 @@ const Header = () => {
     };
     fetchEtudiantById();
   }, []);
+
+  
+const navigate = useNavigate();
+  function handleLogout() {
+
+    sessionStorage.clear();
+    navigate("/login");
+  }
 
   return (
     <AppBar position="fixed" style={{ backgroundColor: "rgb(0, 141, 54)" }}>
@@ -99,6 +109,10 @@ const Header = () => {
                   </Typography>
                 </RouterLink>
               ))}
+                  <Button style={{ backgroundColor: 'white', color: 'black' }} onClick={handleLogout}>
+  Déconnexion
+</Button>
+
             </Stack>
           </Stack>
         </Toolbar>
