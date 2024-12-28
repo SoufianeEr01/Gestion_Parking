@@ -1,54 +1,71 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import { Box, Button, Typography } from '@mui/material';
-import { Margin } from '@mui/icons-material';
 
 function ImageCarousel() {
   const images = [
     '/images/img3.jpg',
     '/images/img2.jpeg',
-    '/images/img5.jpeg', // Remplace par le nom de tes images dans le dossier public
+    '/images/img5.jpeg', // Replace with the names of your images in the public folder
   ];
 
   return (
     <Carousel
-      indicators={true}           // Montre les indicateurs de pagination
-      navButtonsAlwaysVisible={true} // Affiche toujours les boutons de navigation (flèches)
-      autoPlay={true}             // Active le défilement automatique
-      interval={3000}             // Définit la durée de chaque image (en ms)
-      animation="slide"           // Animation de type "slide" (ou "fade")
+      indicators={true}           // Show pagination indicators
+      navButtonsAlwaysVisible={true} // Always show navigation buttons (arrows)
+      autoPlay={true}             // Enable automatic scrolling
+      interval={3000}             // Set duration for each image (in ms)
+      animation="fade"           // Smooth "fade" animation for transitions
     >
       {images.map((src, index) => (
         <Box
           key={index}
           sx={{
             position: 'relative',
-            height: '400px',               // Ajuste la hauteur selon tes préférences
+            height: '500px',               // Adjust height as needed
             backgroundImage: `url(${src})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-end',       // Align content at the bottom
             justifyContent: 'center',
+            boxShadow: 'inset 0 0 100px rgba(0, 0, 0, 0.7)', // Dark overlay effect
           }}
         >
-          <Button
-            variant="contained"
+          <Box
             sx={{
-              backgroundColor: 'rgb(8, 151, 66)',      // Couleur bleue par défaut
-              '&:hover': {
-                transform: 'scale(1.1)',
-              },
+              backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent overlay for text
               color: 'white',
-              padding: '10px 20px',
-              fontSize: '18px',
-              marginTop: '250px',
-              borderRadius: '5px',
-              transition: 'all 0.3s ease',
+              padding: '20px',
+              textAlign: 'center',
+              borderRadius: '10px',
+              marginBottom: '30px',
             }}
           >
-            Reserver
-          </Button>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Découvrez nos services
+            </Typography>
+            <Typography variant="body1" sx={{ fontSize: '1.2rem', mb: 2 }}>
+              Réservez votre place dès maintenant pour profiter d'un service exceptionnel !
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: 'rgb(8, 151, 66)',
+                '&:hover': {
+                  backgroundColor: 'rgb(6, 120, 52)',
+                  transform: 'scale(1.1)',
+                },
+                color: 'white',
+                padding: '10px 20px',
+                fontSize: '18px',
+                borderRadius: '5px',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              Réserver
+            </Button>
+          </Box>
         </Box>
       ))}
     </Carousel>

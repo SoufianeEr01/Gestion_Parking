@@ -11,7 +11,7 @@ import Parking from './Reservation/Parking';
 import LoginPage from './Login/login';
 import SignUpPage from './Login/inscription';
 import ProtectedRoute from './Login/ProtectedRoute';
-import Dashboard from './Admin/dashboard';
+import Dashboard from './Admin/Dashbord/PagePrincipal';
 import Error403Page from './error/error403';
 import EtudiantDetailPage from './EtudiantDetailPage';
 import Error404Page from './error/error404';

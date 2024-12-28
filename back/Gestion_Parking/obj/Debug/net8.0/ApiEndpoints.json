@@ -95,6 +95,85 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Gestion_Parking.Controllers.ContactController",
+    "Method": "CreateContact",
+    "RelativePath": "api/Contact",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "contact",
+        "Type": "Gestion_Parking.Models.Contact",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ContactController",
+    "Method": "GetAllContacts",
+    "RelativePath": "api/Contact",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ContactController",
+    "Method": "GetContactById",
+    "RelativePath": "api/Contact/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ContactController",
+    "Method": "UpdateContact",
+    "RelativePath": "api/Contact/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "contact",
+        "Type": "Gestion_Parking.Models.Contact",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ContactController",
+    "Method": "DeleteContact",
+    "RelativePath": "api/Contact/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Gestion_Parking.Controllers.EmploisController",
     "Method": "CreateEmploi",
     "RelativePath": "api/Emplois",
@@ -105,32 +184,6 @@
       {
         "Name": "emploi",
         "Type": "Gestion_Parking.Models.Emploi",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
-    "Method": "GetAllEmplois",
-    "RelativePath": "api/Emplois",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
-    "Method": "GetEmploiByJour",
-    "RelativePath": "api/Emplois/{jour}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "jour",
-        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -169,6 +222,11 @@
         "Name": "jour",
         "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "confirm",
+        "Type": "System.Boolean",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -183,6 +241,22 @@
     "Parameters": [
       {
         "Name": "idEtudiant",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
+    "Method": "GetEmploisByGroupe",
+    "RelativePath": "api/Emplois/group/{groupeId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
         "Type": "System.Int32",
         "IsRequired": true
       }

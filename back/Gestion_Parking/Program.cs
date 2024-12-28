@@ -174,5 +174,32 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+
+        // Assurez-vous que la base est mise à jour
+        context.Database.Migrate();
+
+        // Appelez la méthode de Seed
+        DataSeeder.SeedContacts(context);
+        DataSeeder.SeedGroupes(context); // Appeler le seeder des groupes
+        DataSeeder.SeedPlacesParking(context);
+        DataSeeder.SeedAdmins(context);
+        DataSeeder.SeedEtudiants(context);
+        DataSeeder.SeedPersonnels(context);
+        DataSeeder.SeedEmplois(context);
+
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erreur lors de l'initialisation des données : {ex.Message}");
+    }
+}
+
 // Lancer l'application
 app.Run();

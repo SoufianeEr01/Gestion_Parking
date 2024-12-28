@@ -1,24 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { useSwipeable } from 'react-swipeable'; // Gestion des glissements
+import { useSwipeable } from 'react-swipeable';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-const Parking = () => {
-  const [reserved, setReserved] = useState([]);
-  const [currentFloor, setCurrentFloor] = useState(1); // Gestion de l'étage courant
-  const totalFloors = 4; // Nombre total d'étages
-  const placesPerFloor = 20;
+import PlaceParkingApi from '../Api/PlaceParkingApi';
+import LocalParkingIcon from '@mui/icons-material/LocalParking';
+import Emploi from './Emploi';
 
-  // Gérer la réservation ou l'annulation d'une place
+const Parking = () => {
+  const [reserved, setReserved] = useState([]); // Reserved places
+  const [availablePlaces, setAvailablePlaces] = useState([]); // Available places
+  const [currentFloor, setCurrentFloor] = useState(1); // Current floor
+  const totalFloors = 4; // Total floors
+  const placesPerFloor = 20; // Places per floor
+
+  const [dialogOpen, setDialogOpen] = useState(false); // Dialog open state
+  const [selectedPlace, setSelectedPlace] = useState(null); // Selected place
+
+  // Fetch parking places data from API
+  useEffect(() => {
+    const fetchAvailablePlaces = async () => {
+      try {
+        const allPlaces = await PlaceParkingApi.fetchPlaceParkings();
+        setAvailablePlaces(allPlaces);
+      } catch (error) {
+        console.error('Error fetching available parking places:', error);
+      }
+    };
+    fetchAvailablePlaces();
+  }, []);
+
+  // Handle reservation
   const handleReservation = (placeNumber) => {
-    setReserved((prev) =>
-      prev.includes(placeNumber)
-        ? prev.filter((p) => p !== placeNumber)
-        : [...prev, placeNumber]
-    );
+    setSelectedPlace(placeNumber);
+    setDialogOpen(true); // Open the dialog
   };
 
-  // Changer d'étage
+  // Handle floor change (next/previous)
   const handleFloorChange = (direction) => {
     setCurrentFloor((prev) =>
       direction === 'next'
@@ -27,58 +45,68 @@ const Parking = () => {
     );
   };
 
-  // Gérer le glissement
+  // Handle swipe gestures for floor navigation
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => handleFloorChange('next'), // Glissement vers la gauche -> étage suivant
-    onSwipedRight: () => handleFloorChange('prev'), // Glissement vers la droite -> étage précédent
-    trackMouse: true, // Permet de détecter aussi les glissements avec la souris
+    onSwipedLeft: () => handleFloorChange('next'),
+    onSwipedRight: () => handleFloorChange('prev'),
+    trackMouse: true,
   });
 
-  // Générer les places de parking pour l'étage courant
+  // Get places on the current floor
+  const currentFloorPlaces = availablePlaces.filter(
+    (place) =>
+      place.id > (currentFloor - 1) * placesPerFloor &&
+      place.id <= currentFloor * placesPerFloor
+  );
+
+  const isCurrentFloorEmpty = currentFloorPlaces.length === 0;
+
+  // Generate the parking grid
   const renderParking = () => {
     const rows = [];
     const startPlace = (currentFloor - 1) * placesPerFloor + 1;
     const endPlace = currentFloor * placesPerFloor;
-    const neutralColor = '#089742';
+    const neutralColor = 'WHite';
     const reservedColor = 'red';
 
-    for (let row = 1; row <= 2; row++) {
+    for (let row = 0; row < 2; row++) {
       const places = [];
       for (let col = 1; col <= 10; col++) {
-        const placeNumber = startPlace + (row - 1) * 10 + col - 1;
+        const placeNumber = startPlace + row * 10 + col - 1;
+        const isAvailable = currentFloorPlaces.some(
+          (place) => place.id === placeNumber
+        );
 
-        const boxStyles = {
-          width: 120,
-          height: 220,
-          backgroundColor: reserved.includes(placeNumber)
-            ? reservedColor
-            : neutralColor,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: reserved.includes(placeNumber) ? '#FFF' : '#333',
-          fontWeight: 'bold',
-          fontSize: '24px',
-          cursor: 'pointer',
-          borderRadius: '8px',
-          border: '2px solid #CCC',
-          transition: 'all 0.3s ease-in-out',
-          transform: 'skew(-10deg)', // Inclinaison pour effet italique
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          ':hover': {
-            backgroundColor: '#005f32',
-            transform: 'skew(-10deg) scale(1.05)',
-          },
-        };
+        if (isAvailable) {
+          const boxStyles = {
+            width: 120,
+            height: 220,
+            backgroundColor: reserved.includes(placeNumber)
+              ? reservedColor
+              : neutralColor,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: reserved.includes(placeNumber) ? '#FFF' : '#333',
+            fontWeight: 'bold',
+            fontSize: '24px',
+            cursor: 'pointer',
+            borderRadius: '8px',
+            border: '2px solid ',
+            transition: 'all 0.3s ease-in-out',
+            transform: 'skew(+10deg)',
+            ':hover': {
+              transform: 'skew(+10deg) scale(1.05)',
+            },
+          };
 
-        if (placeNumber <= endPlace) {
           places.push(
             <Box
               key={placeNumber}
               onClick={() => handleReservation(placeNumber)}
               sx={boxStyles}
             >
-              {placeNumber}
+              <LocalParkingIcon /> {placeNumber}
             </Box>
           );
         }
@@ -90,7 +118,7 @@ const Parking = () => {
         </Box>
       );
 
-      if (row === 1) {
+      if (row === 0) {
         rows.push(
           <Box
             key="middle-line"
@@ -113,76 +141,74 @@ const Parking = () => {
 
   return (
     <Box
-      {...swipeHandlers} // Appliquer les gestionnaires de glissement au conteneur principal
+      {...swipeHandlers}
       sx={{
         padding: 4,
-        backgroundColor: '#F7F7F7',
+        backgroundColor: 'white',
         minHeight: '100vh',
         marginTop: 5,
-        overflow: 'hidden', // Empêche le défilement non voulu
+        overflow: 'hidden',
       }}
     >
-       <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          maxWidth: '100%',
-        }}
-      >
-      <Button
-          variant="contained"
-          onClick={() => handleFloorChange('prev')}
-          disabled={currentFloor === 1}
+      {!isCurrentFloorEmpty && (
+        <Box
           sx={{
-            color: 'white',
-            backgroundColor: currentFloor === 1 ? 'grey' : '#089742',
-            height: 40,
-            width: 40,
-            minWidth: 40,
             display: 'flex',
-            justifyContent: 'center',
             alignItems: 'center',
-            
+            justifyContent: 'space-between',
+            maxWidth: '100%',
           }}
         >
-          <ArrowBackIosIcon />
-        </Button>
+          <Button
+            variant="contained"
+            onClick={() => handleFloorChange('prev')}
+            disabled={currentFloor === 1}
+            sx={{
+              color: 'white',
+              height: 40,
+              width: 40,
+              minWidth: 40,
+            }}
+          >
+            <ArrowBackIosIcon />
+          </Button>
 
+          <Box
+            sx={{
+              maxWidth: 1150,
+              margin: '0 auto',
+              padding: 3,
+            }}
+          >
+            {renderParking()}
+          </Box>
 
-      <Box
-        sx={{
-          maxWidth: 1150,
-          margin: '0 auto',
-          padding: 3,
-          borderRadius: 4,
-          backgroundColor: '#FFF',
-          boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-       
-        {renderParking()}
-        
-      </Box>
-      <Button
-          variant="contained"
-          onClick={() => handleFloorChange('next')}
-          disabled={currentFloor === totalFloors}
-          sx={{
-            color: 'white',
-            backgroundColor: currentFloor === totalFloors ? 'grey' : '#089742',
-            height: 40,
-            width: 40,
-            minWidth: 40,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <ArrowForwardIosIcon />
-        </Button>
+          <Button
+            variant="contained"
+            onClick={() => handleFloorChange('next')}
+            disabled={currentFloor === totalFloors}
+            sx={{
+              color: 'white',
+              backgroundColor: currentFloor === totalFloors ? 'grey' : '#089742',
+              height: 40,
+              width: 40,
+              minWidth: 40,
+            }}
+          >
+            <ArrowForwardIosIcon />
+          </Button>
         </Box>
-        <Box sx={{ marginTop: 3, textAlign: 'center' }}>
+      )}
+
+      {isCurrentFloorEmpty && (
+        <Box sx={{ padding: 4, textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#555' }}>
+            Aucun parking disponible à l'étage {currentFloor}.
+          </Typography>
+        </Box>
+      )}
+
+      <Box sx={{ marginTop: 3, textAlign: 'center' }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
           Étage {currentFloor} / {totalFloors}
         </Typography>
@@ -194,11 +220,21 @@ const Parking = () => {
             color: '#555',
           }}
         >
-          Places Réservées : {reserved.join(', ') || 'Aucune'}
+          {/* Places Réservées : {reserved.join(', ') || 'Aucune'} */}
         </Typography>
       </Box>
+
+      {/* Dialog for place reservation */}
+      <Emploi 
+        open={dialogOpen}
+        place={selectedPlace}
+        onClose={() => setDialogOpen(false)} // Close the dialog
+        onReserve={(placeNumber) => {
+          setReserved((prev) => [...prev, placeNumber]);
+          setDialogOpen(false); // Close after reserving
+        }}
+      />
     </Box>
-      
   );
 };
 
