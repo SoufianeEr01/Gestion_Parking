@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241227161108_5thMigration")]
-    partial class _5thMigration
+    [Migration("20241228230435_firstMigratioNAfterC")]
+    partial class firstMigratioNAfterC
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -3,36 +3,24 @@
   "WorkspaceRootPath": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\service\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\service\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\controllers\\reservationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\controllers\\reservationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\migrations\\20241227154201_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\migrations\\20241227154201_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\migrations\\20241227154806_addcontacttable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\migrations\\20241227154806_addcontacttable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\migrations\\20241227155541_3thmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\migrations\\20241227155541_3thmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\migrations\\20241227161108_5thmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\migrations\\20241227161108_5thmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\migrations\\20241227160830_4thmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\migrations\\20241227160830_4thmigration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\service\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\service\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\service\\dataseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -45,14 +33,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|solutionrelative:gestion_parking\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D2FA39A4-5EAF-4E97-BF84-FE4D7D561634}|Gestion_Parking\\Gestion_Parking.csproj|c:\\gestion_parking_final\\gestion_parking\\back\\gestion_parking\\controllers\\emploiscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -145,7 +125,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -157,7 +137,44 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Program.cs",
+              "RelativeDocumentMoniker": "Gestion_Parking\\Program.cs",
+              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Program.cs",
+              "RelativeToolTip": "Gestion_Parking\\Program.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAALkAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-26T12:36:02.509Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\appsettings.json",
+              "RelativeDocumentMoniker": "Gestion_Parking\\appsettings.json",
+              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\appsettings.json",
+              "RelativeToolTip": "Gestion_Parking\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAACpAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-11-27T20:20:17.154Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Service\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Gestion_Parking\\Service\\AppDbContext.cs",
+              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Service\\AppDbContext.cs",
+              "RelativeToolTip": "Gestion_Parking\\Service\\AppDbContext.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAQwBAAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-28T10:00:44.107Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": ".gitignore",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\.gitignore",
               "RelativeDocumentMoniker": "Gestion_Parking\\.gitignore",
@@ -165,64 +182,11 @@
               "RelativeToolTip": "Gestion_Parking\\.gitignore",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-28T22:43:49.527Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "20241227154201_InitialCreate.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227154201_InitialCreate.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Migrations\\20241227154201_InitialCreate.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227154201_InitialCreate.cs",
-              "RelativeToolTip": "Gestion_Parking\\Migrations\\20241227154201_InitialCreate.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:34.864Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "20241227154806_AddContactTable.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227154806_AddContactTable.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Migrations\\20241227154806_AddContactTable.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227154806_AddContactTable.cs",
-              "RelativeToolTip": "Gestion_Parking\\Migrations\\20241227154806_AddContactTable.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:33.939Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-28T22:43:49.527Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "20241227155541_3thMigration.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227155541_3thMigration.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Migrations\\20241227155541_3thMigration.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227155541_3thMigration.cs",
-              "RelativeToolTip": "Gestion_Parking\\Migrations\\20241227155541_3thMigration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:33.144Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "20241227161108_5thMigration.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227161108_5thMigration.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Migrations\\20241227161108_5thMigration.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227161108_5thMigration.cs",
-              "RelativeToolTip": "Gestion_Parking\\Migrations\\20241227161108_5thMigration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:31.662Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "ReservationController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\ReservationController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\ReservationController.cs",
@@ -230,25 +194,11 @@
               "RelativeToolTip": "Gestion_Parking\\Controllers\\ReservationController.cs",
               "ViewState": "AgIAAI0AAAAAAAAAAAAowMkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-29T21:52:18.714Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T21:52:18.714Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "20241227160830_4thMigration.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227160830_4thMigration.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Migrations\\20241227160830_4thMigration.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Migrations\\20241227160830_4thMigration.cs",
-              "RelativeToolTip": "Gestion_Parking\\Migrations\\20241227160830_4thMigration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:29.732Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 5,
               "Title": "DataSeeder.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Service\\DataSeeder.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Service\\DataSeeder.cs",
@@ -256,12 +206,11 @@
               "RelativeToolTip": "Gestion_Parking\\Service\\DataSeeder.cs",
               "ViewState": "AgIAALsAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:18.89Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-28T22:41:18.89Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 6,
               "Title": "Reservation.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Reservation.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Reservation.cs",
@@ -269,25 +218,11 @@
               "RelativeToolTip": "Gestion_Parking\\Models\\Reservation.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-28T22:41:14.243Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-28T22:41:14.243Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Program.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Program.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Program.cs",
-              "RelativeToolTip": "Gestion_Parking\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAALkAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-26T12:36:02.509Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 9,
               "Title": "Emploi.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Emploi.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Emploi.cs",
@@ -299,20 +234,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Service\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "Gestion_Parking\\Service\\AppDbContext.cs",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Service\\AppDbContext.cs",
-              "RelativeToolTip": "Gestion_Parking\\Service\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-28T10:00:44.107Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 11,
               "Title": "PlaceParkingController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\PlaceParkingController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\PlaceParkingController.cs",
@@ -324,20 +246,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\appsettings.json",
-              "RelativeDocumentMoniker": "Gestion_Parking\\appsettings.json",
-              "ToolTip": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\appsettings.json",
-              "RelativeToolTip": "Gestion_Parking\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABCAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-11-27T20:20:17.154Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Gestion_Parking\\appsettings.Development.json",
@@ -345,12 +254,11 @@
               "RelativeToolTip": "Gestion_Parking\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-12-02T15:57:42.829Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-02T15:57:42.829Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 10,
               "Title": "Gestion_Parking.csproj",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Gestion_Parking.csproj",
               "RelativeDocumentMoniker": "Gestion_Parking\\Gestion_Parking.csproj",
@@ -358,12 +266,11 @@
               "RelativeToolTip": "Gestion_Parking\\Gestion_Parking.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-12-02T21:19:27.503Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-02T21:19:27.503Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 8,
               "Title": "EmploisController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\EmploisController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\EmploisController.cs",
@@ -375,7 +282,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 12,
               "Title": "AdminController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\AdminController.cs",
@@ -387,7 +294,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 13,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\AuthController.cs",
@@ -399,7 +306,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 15,
               "Title": "EtudiantController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\EtudiantController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\EtudiantController.cs",
@@ -411,7 +318,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 14,
               "Title": "PersonnelController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\PersonnelController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\PersonnelController.cs",
@@ -423,7 +330,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 16,
               "Title": "Microsoft.Common.CurrentVersion.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
@@ -431,12 +338,11 @@
               "RelativeToolTip": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAANMVAAAAAAAAAAAjwN8VAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2024-12-02T21:30:37.629Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-02T21:30:37.629Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 17,
               "Title": "GroupeController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\GroupeController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\GroupeController.cs",
@@ -448,7 +354,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 18,
               "Title": "PlaceParking.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\PlaceParking.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\PlaceParking.cs",
@@ -460,7 +366,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 19,
               "Title": "JwtHelper.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\JwtHelper.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\JwtHelper.cs",
@@ -472,7 +378,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 21,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\HomeController.cs",
@@ -484,7 +390,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 20,
               "Title": "Groupe.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Groupe.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Groupe.cs",
@@ -496,7 +402,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 22,
               "Title": "PersonnesController.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Controllers\\PersonnesController.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Controllers\\PersonnesController.cs",
@@ -508,7 +414,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 23,
               "Title": "LoginRequest.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\LoginRequest.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\LoginRequest.cs",
@@ -520,7 +426,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 26,
               "Title": "Admin.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Admin.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Admin.cs",
@@ -532,7 +438,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 24,
               "Title": "Personne.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Personne.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Personne.cs",
@@ -544,7 +450,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 25,
               "Title": "Etudiant.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Etudiant.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Etudiant.cs",
@@ -556,7 +462,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 27,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Gestion_Parking\\Properties\\launchSettings.json",
@@ -568,7 +474,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 28,
               "Title": "Personnel.cs",
               "DocumentMoniker": "C:\\Gestion_Parking_Final\\gestion_parking\\back\\Gestion_Parking\\Models\\Personnel.cs",
               "RelativeDocumentMoniker": "Gestion_Parking\\Models\\Personnel.cs",
