@@ -25,7 +25,7 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import EmploiApi from "../Api/EmploiApi";
-import ReservationApi from "../Api/reservationApi";
+import ReservationApi from "../Api/ReservationApi";
 
 const steps = [
   "Afficher l'emploi du temps",

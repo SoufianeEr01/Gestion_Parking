@@ -89,6 +89,7 @@ deleteEmploi: (jour, confirm) => {
   return EmploiApi.delete(`${BASE_URL}/Emplois/${jour}?confirm=${confirm}`); // Use backticks
 }
 
+
 };
 
 export default EmploiApi;
