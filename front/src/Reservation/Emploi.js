@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import EmploiApi from "../Api/EmploiApi";
+import EmploiApi from "../Api/EmploiApi";  
 import ReservationApi from "../Api/ReservationApi";
 
 const steps = [
@@ -39,6 +39,7 @@ const paymentOptions = [
   { title: "Mensuel", price: "59.99 MAD / mois", description: "Idéal pour un usage régulier." },
   { title: "Semestriel", price: "199.99 MAD / trimestre", description: "Pour un engagement prolongé." },
 ];
+const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
 function Emploi({ open, onClose, place }) {
   const [activeStep, setActiveStep] = useState(0);
@@ -192,7 +193,7 @@ function Emploi({ open, onClose, place }) {
                     <TableBody>
                       {emplois.map((emploi) => (
                         <TableRow key={emploi.id}>
-                          <TableCell align="center">{emploi.jour}</TableCell>
+                          <TableCell align="center">{jours[emploi.jour]}</TableCell>
                           <TableCell align="center">{emploi.dateDebut}</TableCell>
                           <TableCell align="center">{emploi.dateFin}</TableCell>
                         </TableRow>
