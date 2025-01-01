@@ -5,7 +5,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import PlaceParkingApi from '../Api/PlaceParkingApi';
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
-import Emploi from './Emploi';
+import PlaceReservationDialog from './PlaceReservationDialog';
 
 const Parking = () => {
   const [reserved, setReserved] = useState([]); // Reserved places
@@ -225,7 +225,7 @@ const Parking = () => {
       </Box>
 
       {/* Dialog for place reservation */}
-      <Emploi 
+      <PlaceReservationDialog 
         open={dialogOpen}
         place={selectedPlace}
         onClose={() => setDialogOpen(false)} // Close the dialog

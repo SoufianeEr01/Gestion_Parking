@@ -171,5 +171,52 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue lors de la suppression du groupe.");
             }
         }
+
+        [Authorize(Policy = "EtudiantOuAdmin")]
+        [HttpGet("personne/{personneId}")]
+        public IActionResult GetGroupByPersonneId(int personneId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // SQL pour récupérer le groupe de la personne
+                    string sql = @"
+                        SELECT g.id, g.nom
+                        FROM Groupes g
+                        JOIN Personnes p ON p.GroupeId = g.id
+                        WHERE p.id = @PersonneId";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@PersonneId", personneId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                var group = new Groupe
+                                {
+                                    id = reader.GetInt32(0),  // ID du groupe
+                                    nom = reader.GetString(1) // Nom du groupe
+                                };
+                                return Ok(group);
+                            }
+                            else
+                            {
+                                return NotFound(new { erreur = "Groupe non trouvé pour cette personne, vérifier s'il s'agit bien d'un étudiant." });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { erreur = ex.Message });
+            }
+        }
+
     }
 }

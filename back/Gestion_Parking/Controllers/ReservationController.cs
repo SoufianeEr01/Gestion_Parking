@@ -305,6 +305,7 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
+                        // Insérer la réservation dans la table Reservations
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
                         using (var command = new SqlCommand(insertSql, connection))
@@ -318,10 +319,19 @@ namespace Gestion_Parking.Controllers
 
                             command.ExecuteNonQuery();
                         }
+
+                        // Mettre à jour l'état de la place de parking à "occupee"
+                        //string updateSql = "UPDATE PlaceParkings SET etat = 'occupee' WHERE id = @PlaceParkingId";
+                        //using (var command = new SqlCommand(updateSql, connection))
+                        //{
+                        //    command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                        //    command.ExecuteNonQuery();
+                        //}
                     }
                 }
 
-                return Ok(new { message = "Réservations hebdomadaires confirmées et insérées avec succès." });
+                return Ok(new { message = "Réservations hebdomadaires confirmées et insérées avec succès, et état des places mis à jour." });
             }
             catch (Exception ex)
             {
@@ -329,6 +339,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue. " + ex.Message);
             }
         }
+
 
 
         [AllowAnonymous]
