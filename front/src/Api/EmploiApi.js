@@ -10,10 +10,11 @@ const getAuthHeaders = () => {
     throw new Error("Token d'authentification manquant");
   }
   return {
-    'Authorization': `Bearer ${token}`,
+    'Authorization': `Bearer ${token}`, // Use backticks here
     'Content-Type': 'application/json',
   };
 };
+
 
 const EmploiApi = {
   // Fonction générique pour effectuer des appels GET
@@ -58,31 +59,36 @@ const EmploiApi = {
       throw error.response?.data || error.message;
     }
   },
+// Récupérer les emplois par groupe
+fetchEmploisByGroupe: (groupeId) => {
+  return EmploiApi.get(`${BASE_URL}/Emplois/group/${groupeId}`); // Use backticks
+},
 
-  // Récupérer les emplois par groupe
-  fetchEmploisByGroupe: (groupeId) => {
-    return EmploiApi.get(`${BASE_URL}/Emplois/group/${groupeId}`);
-  },
+// Créer un emploi
+createEmploi: (emploiData) => {
+  return EmploiApi.post(`${BASE_URL}/Emplois`, emploiData); // Use backticks
+},
 
-  // Créer un emploi
-  createEmploi: (emploiData) => {
-    return EmploiApi.post(`${BASE_URL}/Emplois`, emploiData);
-  },
+// Récupérer un emploi par jour
+fetchEmploiByJour: (jour) => {
+  return EmploiApi.get(`${BASE_URL}/Emplois/${jour}`); // Fix incorrect backticks
+},
 
-  // Récupérer un emploi par jour
-  fetchEmploiByJour: (jour) => {
-    return EmploiApi.get(`${BASE_URL}/Emplois/${jour}`);
-  },
+// Récupérer les emplois par étudiant
+fetchEmploiByIdEtudiant: (idEtudiant) => {
+  return EmploiApi.get(`${BASE_URL}/Emplois/etudiant/${idEtudiant}`); // Use backticks
+},
 
-  // Mettre à jour un emploi
-  updateEmploi: (jour, emploiData) => {
-    return EmploiApi.put(`${BASE_URL}/Emplois/${jour}`, emploiData);
-  },
+// Mettre à jour un emploi
+updateEmploi: (jour, emploiData) => {
+  return EmploiApi.put(`${BASE_URL}/Emplois/${jour}`, emploiData); // Use backticks
+},
 
-  // Supprimer un emploi
-  deleteEmploi: (jour) => {
-    return EmploiApi.delete(`${BASE_URL}/Emplois/${jour}`);
-  }
+// Supprimer un emploi
+deleteEmploi: (jour, confirm) => {
+  return EmploiApi.delete(`${BASE_URL}/Emplois/${jour}?confirm=${confirm}`); // Use backticks
+}
+
 };
 
 export default EmploiApi;

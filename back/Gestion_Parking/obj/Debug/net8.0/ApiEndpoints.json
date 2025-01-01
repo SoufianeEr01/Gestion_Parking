@@ -657,5 +657,131 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ConfirmerReservationHebdomadaire",
+    "RelativePath": "api/Reservation/ReservationHebdomadaire/Confirmer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservations",
+        "Type": "System.Collections.Generic.List\u00601[[Reservation, Gestion_Parking, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "PrevisualiserReservationHebdomadaire",
+    "RelativePath": "api/Reservation/ReservationHebdomadaire/Previsualiser/{groupeId}/{placeParkingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "placeParkingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "reservationRequest",
+        "Type": "Reservation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ConfirmerReservationMensuelle",
+    "RelativePath": "api/Reservation/ReservationMensuelle/Confirmer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservations",
+        "Type": "System.Collections.Generic.List\u00601[[Reservation, Gestion_Parking, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "PrevisualiserReservationMensuelle",
+    "RelativePath": "api/Reservation/ReservationMensuelle/Previsualiser/{groupeId}/{placeParkingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "placeParkingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "reservationRequest",
+        "Type": "Reservation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ConfirmerReservationSemestrielle",
+    "RelativePath": "api/Reservation/ReservationSemestrielle/Confirmer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservations",
+        "Type": "System.Collections.Generic.List\u00601[[Reservation, Gestion_Parking, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "PrevisualiserReservationSemestrielle",
+    "RelativePath": "api/Reservation/ReservationSemestrielle/Previsualiser/{groupeId}/{placeParkingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "placeParkingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "reservationRequest",
+        "Type": "Reservation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

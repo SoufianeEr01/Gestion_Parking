@@ -19,7 +19,7 @@ public static class DataSeeder
                 .RuleFor(c => c.DateEnvoi, f => f.Date.Recent(30));
 
             // Génère 50 contacts fictifs
-            var fakeContacts = faker.Generate(50);
+            var fakeContacts = faker.Generate(20);
 
             // Ajoutez ces contacts à la base de données
             context.Contacts.AddRange(fakeContacts);
