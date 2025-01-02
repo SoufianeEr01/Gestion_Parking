@@ -16,6 +16,8 @@ import Error403Page from './error/error403';
 import EtudiantDetailPage from './EtudiantDetailPage';
 import Error404Page from './error/error404';
 import Emploi from './Reservation/Emploi';
+import ContactPage from './Acceuil/Contact';
+import ProfilePageUti from './Acceuil/ProfilUti';
 
 function App() {
   return (
@@ -52,9 +54,13 @@ function AppWithRouter() {
             <ProtectedRoute><About /></ProtectedRoute>} />
         <Route path="/emploi" element={
             <Emploi />} />
+        <Route path="/profil" element={
+            <ProfilePageUti />} />
         <Route path="/error403" element={
             <Error403Page />} />
           <Route path="*" element={<Error404Page />} />
+        <Route path="/contact" element={<ContactPage />} />
+
         {/* Route protégée */}
         <Route
           path="/parking"

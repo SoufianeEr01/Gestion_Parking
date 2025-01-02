@@ -232,7 +232,7 @@ const LoginPage = () => {
           <Typography variant="body2" color="textSecondary">
             Pas de compte ?{' '}
             <Link
-              href="#"
+              href="/inscription"
               underline="hover"
               sx={{
                 color: 'Black',

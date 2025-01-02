@@ -7,5 +7,8 @@
         public string Email { get; set; }
         public string Message { get; set; }
         public DateTime DateEnvoi { get; set; }
+
+        public List<Reponse> Reponses { get; set; } = new List<Reponse>();
+
     }
 }

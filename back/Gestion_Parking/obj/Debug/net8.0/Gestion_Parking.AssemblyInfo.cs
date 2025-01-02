@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gestion_Parking")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+289435b03f0d545190633ff2f6b51c5916e5c06e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a67a4da07d91ab956889ed34acc07d0f49ce15c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Gestion_Parking")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Gestion_Parking")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

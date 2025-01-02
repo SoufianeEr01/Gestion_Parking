@@ -14,6 +14,7 @@ import {
   TableRow,
   IconButton,
   Snackbar,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -115,16 +116,16 @@ function Reservation() {
       <Button variant="contained"   color="success" onClick={() => setDialogs({ ...dialogs, add: true })}>
         +Ajouter une réservation
       </Button>
-      <Table>
+      <Table sx={{ mt: 3.5 }}>
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Heure Début</TableCell>
-            <TableCell>Heure Fin</TableCell>
-            <TableCell>Lieu</TableCell>
-            <TableCell>Personne ID</TableCell>
-            <TableCell>Place Parking ID</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Date</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Heure Début</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Heure Fin</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Lieu</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Personne ID</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Place Parking ID</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -138,15 +139,17 @@ function Reservation() {
               <TableCell>{reservation.placeParking_id}</TableCell>
               <TableCell>
                 <IconButton
+                color="primary" 
                   onClick={() => {
                     setSelectedReservation(reservation);
                     setNewReservation(reservation);
                     setDialogs({ ...dialogs, edit: true });
                   }}
                 >
-                  <EditIcon />
+                  <EditIcon  />
                 </IconButton>
                 <IconButton
+                color="error" 
                   onClick={() => {
                     setReservationToDelete(reservation);
                     setDialogs({ ...dialogs, confirm: true });
@@ -235,9 +238,12 @@ function Reservation() {
       {/* Confirmation Dialog */}
       <Dialog open={dialogs.confirm} onClose={() => setDialogs({ ...dialogs, confirm: false })}>
         <DialogTitle>Supprimer la réservation</DialogTitle>
+        <DialogContent>
+          <Typography>Êtes-vous sûr de vouloir supprimer cette reservation ?</Typography>
+        </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogs({ ...dialogs, confirm: false })}>Annuler</Button>
-          <Button onClick={deleteReservation}>Supprimer</Button>
+          <Button color ="Black" onClick={() => setDialogs({ ...dialogs, confirm: false })}>Annuler</Button>
+          <Button  variant="contained" color ="error"onClick={deleteReservation}>Supprimer</Button>
         </DialogActions>
       </Dialog>
 

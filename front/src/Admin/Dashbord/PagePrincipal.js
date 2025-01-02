@@ -25,6 +25,9 @@ import Reservation from './Reservation';
 import Groupe from './Groupe';
 import ProfilePage from '../../Admin/Dashbord/Profil';
 import AdminApi from "../../Api/AdminApi";
+import ContactManagement from './ContactAdmin';
+import CommentIcon from '@mui/icons-material/Comment';
+
 
 const theme = createTheme({
   palette: {
@@ -116,6 +119,8 @@ function Dashboard() {
         return <Groupe />;
       case 'Réservation':
         return <Reservation />;
+      case 'Contact':
+          return <ContactManagement />;
       default:
         return <Typography variant="h5" textAlign="center">Bienvenue au Tableau de Bord</Typography>;
     }
@@ -153,6 +158,10 @@ function Dashboard() {
     { label: 'Places Parking', icon: <LocalParkingIcon /> },
     { label: 'Emplois', icon: <CalendarTodayIcon /> },
     { label: 'Groupes', icon: <GroupIcon /> },
+    { label: 'Contact', icon: <CommentIcon/> },
+    { label: 'Réservation', icon: <SettingsIcon /> },
+
+
   ].map((item, index) => (
     <React.Fragment key={item.label}>
       <Button
@@ -169,37 +178,17 @@ function Dashboard() {
       >
         {item.icon}
         {menuOpen && (
-          <Typography variant="body2" sx={{ marginLeft: 2 }}>
+          <Typography  color ="Black" variant="body2" sx={{ marginLeft: 2 }}>
             {item.label}
           </Typography>
         )}
       </Button>
-      {index < 4 && <Divider sx={{ width: '80%', mx: 'auto' }} />}
+      {index < 7 && <Divider sx={{ width: '80%', mx: 'auto' }} />}
     </React.Fragment>
   ))}
 
   {/* Séparateur entre Groupes et Réservation */}
-  <Divider sx={{ width: '80%', mx: 'auto', my: 1 }} />
 
-  <Button
-    onClick={() => setCurrentPage('Réservation')}
-    sx={{
-      width: '90%',
-      justifyContent: menuOpen ? 'flex-start' : 'center',
-      textTransform: 'none',
-      color: '#555',
-      padding: menuOpen ? '10px 20px' : '10px',
-      borderRadius: 2,
-      '&:hover': { backgroundColor: '#f0f0f0' },
-    }}
-  >
-    <SettingsIcon />
-    {menuOpen && (
-      <Typography variant="body2" sx={{ marginLeft: 2 }}>
-        Réservation
-      </Typography>
-    )}
-  </Button>
 </Box>
 
         </Box>

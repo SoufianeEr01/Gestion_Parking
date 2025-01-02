@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<PlaceParking> PlaceParkings { get; set; }
     public DbSet<Contact> Contacts { get; set; }
+    public DbSet<Reponse> Reponses { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Configuration de la relation entre Reservation et Personne
@@ -42,8 +43,13 @@ public class AppDbContext : DbContext
             .HasMany(g => g.Emplois)
             .WithOne(e => e.Groupe)
             .HasForeignKey(e => e.Groupe_Id)
-            .OnDelete(DeleteBehavior.Cascade); // Cascade la suppression d'un groupe
+            .OnDelete(DeleteBehavior.Cascade);// Cascade la suppression d'un groupe
 
+        modelBuilder.Entity<Reponse>()
+          .HasOne(r => r.Contact)
+          .WithMany(c => c.Reponses)
+          .HasForeignKey(r => r.ContactId)
+          .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241228230435_firstMigratioNAfterC")]
-    partial class firstMigratioNAfterC
+    [Migration("20241230211358_firstMigratioNAfteR2")]
+    partial class firstMigratioNAfteR2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,6 +154,31 @@ namespace Gestion_Parking.Migrations
                     b.ToTable("PlaceParkings");
                 });
 
+            modelBuilder.Entity("Gestion_Parking.Models.Reponse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContactId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateReponse")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MessageReponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.ToTable("Reponses");
+                });
+
             modelBuilder.Entity("Reservation", b =>
                 {
                     b.Property<int>("id")
@@ -241,6 +266,17 @@ namespace Gestion_Parking.Migrations
                     b.Navigation("Groupe");
                 });
 
+            modelBuilder.Entity("Gestion_Parking.Models.Reponse", b =>
+                {
+                    b.HasOne("Gestion_Parking.Models.Contact", "Contact")
+                        .WithMany("Reponses")
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contact");
+                });
+
             modelBuilder.Entity("Reservation", b =>
                 {
                     b.HasOne("Gestion_Parking.Models.Etudiant", null)
@@ -275,6 +311,11 @@ namespace Gestion_Parking.Migrations
                         .HasForeignKey("GroupeId");
 
                     b.Navigation("EtudiantGroupe");
+                });
+
+            modelBuilder.Entity("Gestion_Parking.Models.Contact", b =>
+                {
+                    b.Navigation("Reponses");
                 });
 
             modelBuilder.Entity("Gestion_Parking.Models.Groupe", b =>
