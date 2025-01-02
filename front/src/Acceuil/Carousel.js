@@ -4,9 +4,9 @@ import { Box, Button, Typography } from '@mui/material';
 
 function ImageCarousel() {
   const images = [
-    '/images/img3.jpg',
-    '/images/img2.jpeg',
-    '/images/img5.jpeg', // Replace with the names of your images in the public folder
+    '/images/pixel.jpg',
+    '/images/pixel2.jpg',
+    '/images/pixels3.jpg', // Replace with the names of your images in the public folder
   ];
 
   return (
@@ -22,7 +22,7 @@ function ImageCarousel() {
           key={index}
           sx={{
             position: 'relative',
-            height: '500px',               // Adjust height as needed
+            height: '450px',               // Adjust height as needed
             backgroundImage: `url(${src})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -40,7 +40,9 @@ function ImageCarousel() {
               textAlign: 'center',
               borderRadius: '10px',
               marginBottom: '30px',
+              
             }}
+            
           >
             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
               Découvrez nos services

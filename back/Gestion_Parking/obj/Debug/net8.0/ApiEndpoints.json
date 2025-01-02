@@ -580,6 +580,54 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Gestion_Parking.Controllers.ReponseController",
+    "Method": "GetReponsesByContactId",
+    "RelativePath": "api/Reponse/{contactId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "contactId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReponseController",
+    "Method": "DeleteReponse",
+    "RelativePath": "api/Reponse/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReponseController",
+    "Method": "AddReponse",
+    "RelativePath": "api/Reponse/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reponse",
+        "Type": "Gestion_Parking.Models.Reponse",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Gestion_Parking.Controllers.ReservationController",
     "Method": "CreateReservation",
     "RelativePath": "api/Reservation",

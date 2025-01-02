@@ -46,7 +46,7 @@ namespace Gestion_Parking.Controllers
         }
 
         // Récupérer tous les contacts
-        [Authorize(Policy = "Admin")]
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetAllContacts()
         {

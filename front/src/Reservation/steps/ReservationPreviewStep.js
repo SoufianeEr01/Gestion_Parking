@@ -5,7 +5,6 @@ import ReservationApi from "../../Api/ReservationApi";
 const ReservationPreviewStep = ({ selectedOption, setError, onReservationPreview, place, groupe }) => {
   const [reservationPreview, setReservationPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const getPreviewFunction = () => {
     switch (selectedOption) {
       case 0:
