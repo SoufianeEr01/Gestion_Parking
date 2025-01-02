@@ -15,10 +15,12 @@ import Dashboard from './Admin/Dashbord/PagePrincipal';
 import Error403Page from './error/error403';
 import EtudiantDetailPage from './EtudiantDetailPage';
 import Error404Page from './error/error404';
-import Emploi from './Reservation/Emploi';
+
+
 import ContactPage from './Acceuil/Contact';
 import ProfilePageUti from './Acceuil/ProfilUti';
 
+import PlaceReservationDialog from './Reservation/PlaceReservationDialog';
 function App() {
   return (
     <div className="App">
@@ -52,10 +54,13 @@ function AppWithRouter() {
             <ProtectedRoute><Acceuil /></ProtectedRoute>} />
         <Route path="/about" element={
             <ProtectedRoute><About /></ProtectedRoute>} />
-        <Route path="/emploi" element={
-            <Emploi />} />
+
+       
         <Route path="/profil" element={
             <ProfilePageUti />} />
+
+        <Route path="/PlaceReservationDialog" element={
+            <PlaceReservationDialog />} />
         <Route path="/error403" element={
             <Error403Page />} />
           <Route path="*" element={<Error404Page />} />

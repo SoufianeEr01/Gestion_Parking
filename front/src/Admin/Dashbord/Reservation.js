@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import ReservationApi from "../../Api/ReservationApi"; // Assurez-vous que cette API est correctement implémentée.
+import ReservationApi from "../../Api/reservationApi";
 
 function Reservation() {
   const defaultReservation = {

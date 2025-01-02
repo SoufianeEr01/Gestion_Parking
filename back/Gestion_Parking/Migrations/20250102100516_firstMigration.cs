@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Gestion_Parking.Migrations
 {
     /// <inheritdoc />
-    public partial class firstMigratioNAfteRR : Migration
+    public partial class firstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,27 @@ namespace Gestion_Parking.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PlaceParkings", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reponses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContactId = table.Column<int>(type: "int", nullable: false),
+                    MessageReponse = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateReponse = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reponses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reponses_Contacts_ContactId",
+                        column: x => x.ContactId,
+                        principalTable: "Contacts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +174,11 @@ namespace Gestion_Parking.Migrations
                 column: "GroupeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reponses_ContactId",
+                table: "Reponses",
+                column: "ContactId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_Etudiantid",
                 table: "Reservations",
                 column: "Etudiantid");
@@ -177,13 +203,16 @@ namespace Gestion_Parking.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Contacts");
-
-            migrationBuilder.DropTable(
                 name: "Emplois");
 
             migrationBuilder.DropTable(
+                name: "Reponses");
+
+            migrationBuilder.DropTable(
                 name: "Reservations");
+
+            migrationBuilder.DropTable(
+                name: "Contacts");
 
             migrationBuilder.DropTable(
                 name: "Personnes");
