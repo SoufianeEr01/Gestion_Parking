@@ -1,68 +1,85 @@
-﻿//using Gestion_Parking.Models;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Data.SqlClient;
+﻿using Gestion_Parking.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
-//namespace Gestion_Parking.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class PersonnesController : ControllerBase
-//    {
-//        private readonly string connectionString;
-//        public PersonnesController(IConfiguration configuration)
-//        {
-//            connectionString = configuration["ConnectionStrings:DefaultConnection"] ?? "";
+namespace Gestion_Parking.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(Policy = "Admin")] 
+    public class PersonnesController : ControllerBase
+    {
+        private readonly string connectionString;
 
-//        }
-//        [HttpPost]
-//        public IActionResult CreatePersonne(Personne P1)
-//        {
-//            try
-//            {
-//                using (var connection = new SqlConnection(connectionString))
-//                {
-//                    connection.Open();
-//                    string sql = "INSERT INTO Personnes (nom, prenom, email, motdepasse, Discriminator, groupe_id, role) " +
-//                    "VALUES (@Nom, @Prenom, @Email, @Motdepasse, @Discriminator, @groupe_id, @Role)";
+        public PersonnesController(IConfiguration configuration)
+        {
+            connectionString = configuration["ConnectionStrings:DefaultConnection"] ?? "";
+        }
 
+        // Méthode pour récupérer toutes les personnes
+        [HttpGet]
+        public IActionResult GetPersonnes()
+        {
+            try
+            {
+                var personnes = new List<Personne>();
 
-//                    using (var command = new SqlCommand(sql, connection))
-//                    {
-//                        command.Parameters.AddWithValue("@Nom", P1.nom);
-//                        command.Parameters.AddWithValue("@Prenom", P1.prenom);
-//                        command.Parameters.AddWithValue("@Email", P1.email);
-//                        command.Parameters.AddWithValue("@Motdepasse", P1.motdepasse);
-//                        command.Parameters.AddWithValue("@Discriminator", GetDiscriminator(P1));
-//                        command.Parameters.AddWithValue("@groupe_id", P1.groupe_id);
-//                        command.Parameters.AddWithValue("@Role", P1.role);
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sql = "SELECT id, nom, prenom, email FROM Personnes"; // Pas de mots de passe ici
 
-//                        // Execute the command
-//                        command.ExecuteNonQuery();
-//                    }
+                    using (var command = new SqlCommand(sql, connection))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            personnes.Add(new Personne
+                            {
+                                id = reader.GetInt32(0),
+                                nom = reader.GetString(1),
+                                prenom = reader.GetString(2),
+                                email = reader.GetString(3),
+                             
+                            });
+                        }
+                    }
+                }
 
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                ModelState.AddModelError("Personne", "Sorry ,but me we have an exception");
-//                return BadRequest(ModelState);
-//            }
-//            return Ok();
-//        }
+                return Ok(personnes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Une erreur s'est produite lors de la récupération des données.");
+            }
+        }
 
-//        private static object role(Personne P1)
-//        {
-//            return P1.role;
-//        }
+        // Nouvelle méthode pour récupérer le nombre total de personnes
+        [HttpGet("count")]
+        public IActionResult GetPersonnesCount()
+        {
+            try
+            {
+                int count = 0;
 
-//        private string GetDiscriminator(Personne personne)
-//        {
-//            if (personne is Admin) return "Admin";
-//            if (personne is Etudiant) return "Etudiant";
-//            if (personne is Personnel) return "Personnel";
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sql = "SELECT COUNT(*) FROM Personnes"; // Compter le nombre total de lignes
 
-//            return "Personne";
-//        }
-//    }
-//}
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        count = (int)command.ExecuteScalar(); // Retourne le nombre total de personnes
+                    }
+                }
+
+                return Ok(new { count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Une erreur s'est produite lors de la récupération du nombre de personnes.");
+            }
+        }
+    }
+}

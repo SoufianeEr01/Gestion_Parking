@@ -16,6 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<PlaceParking> PlaceParkings { get; set; }
     public DbSet<Contact> Contacts { get; set; }
     public DbSet<Reponse> Reponses { get; set; }
+    public DbSet<EmploiPersonnel> EmploiPersonnels { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Configuration de la relation entre Reservation et Personne
@@ -32,26 +34,36 @@ public class AppDbContext : DbContext
             .HasForeignKey(r => r.placeParking_id)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Configuration de la relation entre Etudiant et Groupe (si toujours pertinente)
+        // Configuration de la relation entre Etudiant et Groupe
         modelBuilder.Entity<Etudiant>()
-            .HasOne(e => e.EtudiantGroupe) // Navigation property
-            .WithMany(g => g.Etudiants)    // Un groupe peut avoir plusieurs étudiants
+            .HasOne(e => e.EtudiantGroupe)
+            .WithMany(g => g.Etudiants)
             .HasForeignKey(e => e.GroupeId)
             .IsRequired(false);
+
         // Relation entre Groupe et Emploi
         modelBuilder.Entity<Groupe>()
             .HasMany(g => g.Emplois)
             .WithOne(e => e.Groupe)
             .HasForeignKey(e => e.Groupe_Id)
-            .OnDelete(DeleteBehavior.Cascade);// Cascade la suppression d'un groupe
+            .OnDelete(DeleteBehavior.Cascade);
 
+        // Relation entre Reponse et Contact
         modelBuilder.Entity<Reponse>()
-          .HasOne(r => r.Contact)
-          .WithMany(c => c.Reponses)
-          .HasForeignKey(r => r.ContactId)
-          .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(r => r.Contact)
+            .WithMany(c => c.Reponses)
+            .HasForeignKey(r => r.ContactId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Relation entre Personnel et EmploiPersonnel
+        modelBuilder.Entity<EmploiPersonnel>()
+            .HasOne(ep => ep.Personnel)
+            .WithMany(p => p.EmploiPersonnels)
+            .HasForeignKey(ep => ep.PersonnelId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Autres configurations personnalisées ici...
 
         base.OnModelCreating(modelBuilder);
     }
-
 }

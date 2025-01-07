@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Typography } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
-import ReservationApi from "../../Api/reservationApi";
+import ReservationApi from "../../Api/ReservationApi";
 const ReservationPreviewStep = ({ selectedOption, setError, onReservationPreview, place, groupe }) => {
   const [reservationPreview, setReservationPreview] = useState(null);
   const [loading, setLoading] = useState(false);

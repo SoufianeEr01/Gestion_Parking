@@ -72,6 +72,16 @@ const PlaceParkingApi = {
       handleApiError(error);
     }
   },
+  fetchPlaceParkingsCount: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/PlaceParking/count`, {
+        headers: getAuthHeaders(),
+      });
+      return response.data.count; 
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
 };
 
 export default PlaceParkingApi;

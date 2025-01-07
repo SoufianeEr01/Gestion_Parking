@@ -24,7 +24,7 @@ function TwoRowGrid() {
           />
         </Grid>
         <Grid item xs={12} md={6} display="flex" alignItems="center">
-          <Box sx={{ padding: '20px', backgroundColor: 'rgb(34, 182, 96)', borderRadius: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
+          <Box sx={{ padding: '20px', backgroundColor: '#008d36', borderRadius: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', marginBottom: '10px' }}>
               Une gestion de parking simplifiée et accessible !
             </Typography>
@@ -36,7 +36,7 @@ function TwoRowGrid() {
 
         {/* Deuxième ligne : Texte à gauche, Image à droite */}
         <Grid item xs={12} md={6} display="flex" alignItems="center">
-          <Box sx={{ padding: '20px', backgroundColor: 'rgb(34, 182, 96)', borderRadius: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
+          <Box sx={{ padding: '20px', backgroundColor: '#008d36', borderRadius: '20px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', marginBottom: '10px' }}>
               Optimisez votre stationnement sur le campus !
             </Typography>

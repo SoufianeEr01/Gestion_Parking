@@ -15,9 +15,9 @@ import Dashboard from './Admin/Dashbord/PagePrincipal';
 import Error403Page from './error/error403';
 import EtudiantDetailPage from './EtudiantDetailPage';
 import Error404Page from './error/error404';
+import PaymentComponent from './Reservation/steps/PaymentComponent';
 
-
-import ContactPage from './Acceuil/Contact';
+import ContactPage from './contact/ContactPage';
 import ProfilePageUti from './Acceuil/ProfilUti';
 
 import PlaceReservationDialog from './Reservation/PlaceReservationDialog';
@@ -61,6 +61,8 @@ function AppWithRouter() {
 
         <Route path="/PlaceReservationDialog" element={
             <PlaceReservationDialog />} />
+        <Route path="/paiement" element={
+            <PaymentComponent />} />
         <Route path="/error403" element={
             <Error403Page />} />
           <Route path="*" element={<Error404Page />} />

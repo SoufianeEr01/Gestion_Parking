@@ -310,7 +310,7 @@ const Header = () => {
                     
                   
                     <Avatar sx={{ bgcolor: "rgb(255, 255, 255)",color:'Black' }} onClick={handleProfileClick}>
-                      {etudiant.nom?.charAt(0) || "?"}
+                      {etudiant.nom[0]?.toUpperCase()|| "?"}
                     </Avatar>
                   
                     <Menu
