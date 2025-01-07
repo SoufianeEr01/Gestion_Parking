@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import Acceuil from './Acceuil/Acceuil';
 import About from './About/About';
 import Footer from './Acceuil/Footer';
-import Header from './Acceuil/Header';
+import Header from './Acceuil/Header/Header.js';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './Theme';
 import './App.css';

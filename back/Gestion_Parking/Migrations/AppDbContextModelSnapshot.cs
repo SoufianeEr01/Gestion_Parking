@@ -139,6 +139,9 @@ namespace Gestion_Parking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<DateOnly>("dateFinReservation")
+                        .HasColumnType("date");
+
                     b.Property<string>("etat")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
