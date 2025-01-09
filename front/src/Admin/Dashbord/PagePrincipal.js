@@ -27,6 +27,9 @@ import ProfilePage from '../../Admin/Dashbord/Profil';
 import AdminApi from "../../Api/AdminApi";
 import ContactManagement from './ContactAdmin';
 import CommentIcon from '@mui/icons-material/Comment';
+import TableauDeBord from './TableauDeBord';
+import Logout from '@mui/icons-material/Logout';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 
 const theme = createTheme({
@@ -122,7 +125,7 @@ function Dashboard() {
       case 'Contact':
           return <ContactManagement />;
       default:
-        return <Typography variant="h5" textAlign="center">Bienvenue au Tableau de Bord</Typography>;
+        return <TableauDeBord />;
     }
   };
 
@@ -211,10 +214,16 @@ function Dashboard() {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                sx={{ mt: "8px" }}
               >
-                <MenuItem onClick={handleOpenDialog}>Profil</MenuItem>
-                <MenuItem onClick={handleLogout}>Déconnexion</MenuItem>
+                <MenuItem onClick={handleOpenDialog}>
+                  <AccountCircle sx={{ mr: 1 }} />
+                    Mon profil
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <Logout sx={{ mr: 1 }} />
+                    Déconnexion
+                </MenuItem>
               </Menu>
             </Toolbar>
           </AppBar>

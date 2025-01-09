@@ -201,5 +201,30 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, new { erreur = "Une erreur est survenue lors de la suppression de la place de parking." });
             }
         }
+        [HttpGet("count")]
+        public IActionResult GetPersonnesCount()
+        {
+            try
+            {
+                int count = 0;
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sql = "SELECT COUNT(*) FROM PlaceParkings "; // Compter le nombre total de lignes
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        count = (int)command.ExecuteScalar(); // Retourne le nombre total de personnes
+                    }
+                }
+
+                return Ok(new { count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Une erreur s'est produite lors de la récupération du nombre de personnes.");
+            }
+        }
     }
 }

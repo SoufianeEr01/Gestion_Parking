@@ -18,6 +18,7 @@ import ConfirmationStep from "./steps/ConfirmationStep";
 import EmploiApi from "../Api/EmploiApi";
 import ReservationPreviewStep from "./steps/ReservationPreviewStep";
 import ReservationApi from "../Api/ReservationApi";
+import EmploiPersonnelApi from "../Api/EmploisPersonnelApi";
 
 const steps = [
   "Afficher l'emploi du temps",
@@ -34,16 +35,24 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
   const [error, setError] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
   const [reservationPreview, setReservationPreview] = useState(null);
+  const [disc, setDisc] = useState(null);
 
   // Fonction pour mettre à jour reservationPreview depuis le composant enfant
   const handleReservationPreview = (previewData) => {
     setReservationPreview(previewData);
   };
+
   // Fetch emploi data
   useEffect(() => {
     const fetchEmploiForEtudiant = async () => {
       const userData = JSON.parse(sessionStorage.getItem("userData"));
+      if (!userData) {
+        setError("Utilisateur introuvable.");
+        return;
+      }
+
       const idEtudiant = userData?.id;
+      setDisc(userData.discriminator); // Directly set disc here
 
       if (!idEtudiant) {
         setError("Impossible de récupérer l'ID de l'étudiant.");
@@ -52,24 +61,29 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
 
       setLoading(true);
       try {
-        const data = await EmploiApi.fetchEmploiByIdEtudiant(idEtudiant);
-        setEmplois(data);
-        setGroupe(data[0].groupe_Id);
-        setError("");
+        if (disc === "Etudiant") {
+          const data = await EmploiApi.fetchEmploiByIdEtudiant(idEtudiant);
+          setEmplois(data);
+          setGroupe(data[0]?.groupe_Id);
+          setError("");
+        } else if (disc === "Personnel") {
+          const data = await EmploiPersonnelApi.getEmploiByPersonnel(idEtudiant);
+          setEmplois(data);
+          setGroupe(data[0]?.groupe_Id);
+          setError("");
+        }
       } catch (err) {
-        setError("Les emplois pour cet étudiant ne sont pas disponibles.");
+        setError("Les emplois pour cet utilisateur ne sont pas disponibles.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchEmploiForEtudiant();
-  }, []);
+  }, [disc]); // Add `disc` as a dependency to re-fetch data on change
 
   const handleNext = async () => {
     if (activeStep === 2) {
-      
-      // console.log("res",reservationPreview)
       // Confirm reservations for the selected payment option
       if (selectedOption === 0) {
         await ReservationApi.confirmReservationHebdomadaire(reservationPreview);
@@ -81,11 +95,13 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
     }
     setActiveStep((prev) => prev + 1);
   };
+
   const handleBack = () => setActiveStep((prev) => prev - 1);
+
   const handleFinalize = () => {
     setActiveStep(0);
     setSelectedOption(null);
-    setReservationPreview(null);
+    setReservationPreview(null); // Reset preview on finalize
     setError("");
     onClose();
   };
@@ -105,21 +121,35 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
           ))}
         </Stepper>
         <Box sx={{ mt: 4 }}>
-          {activeStep === 0 && <EmploiTempsStep emplois={emplois} loading={loading} error={error} jours={["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]} />}
-          {activeStep === 1 && <PaymentOptionsStep paymentOptions={[
-            { title: "Hebdomadaire", price: "19.99 MAD / semaine", description: "Parfait pour des besoins temporaires." },
-            { title: "Mensuel", price: "59.99 MAD / mois", description: "Idéal pour un usage régulier." },
-            { title: "Semestriel", price: "199.99 MAD / trimestre", description: "Pour un engagement prolongé." },
-          ]} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />}
+          {activeStep === 0 && (
+            <EmploiTempsStep
+              discr={disc}
+              emplois={emplois}
+              loading={loading}
+              error={error}
+              jours={["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]}
+            />
+          )}
+          {activeStep === 1 && (
+            <PaymentOptionsStep
+              paymentOptions={[
+                { title: "Hebdomadaire", price: "19.99 MAD / semaine", description: "Parfait pour des besoins temporaires." },
+                { title: "Mensuel", price: "59.99 MAD / mois", description: "Idéal pour un usage régulier." },
+                { title: "Semestriel", price: "199.99 MAD / trimestre", description: "Pour un engagement prolongé." },
+              ]}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+            />
+          )}
           {activeStep === 2 && (
-  <ReservationPreviewStep 
-  selectedOption={selectedOption}
-  place={place}
-  groupe={groupe}
-  setError={setError}
-  onReservationPreview={handleReservationPreview}  // Passer la fonction ici
-/>
-)}
+            <ReservationPreviewStep
+              selectedOption={selectedOption}
+              place={place}
+              groupe={groupe}
+              setError={setError}
+              onReservationPreview={handleReservationPreview} // Passer la fonction ici
+            />
+          )}
           {activeStep === 3 && <ConfirmationStep />}
         </Box>
       </DialogContent>

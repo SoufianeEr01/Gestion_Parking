@@ -9,7 +9,7 @@ const AboutPage = () => {
       };
   return (
     <div style={{marginTop: "64px"}}>
-<Box sx={{ padding: '50px', backgroundColor: '#f4f4f4', minHeight: '100vh' }}>
+<Box sx={{ padding: '50px', backgroundColor: 'white', minHeight: '100vh' }}>
       {/* Header Section */}
       <Box
         sx={{
@@ -66,9 +66,17 @@ const AboutPage = () => {
           </Button>
         </Grid>
       </Grid>
-
+      <Box
+          sx={{
+            height: "4px",
+            width: "200px",
+            background: "linear-gradient(90deg,#008d36,#008d36)",
+            margin: "40px auto 0 auto",
+            borderRadius: "8px",
+          }}
+        ></Box>
       {/* Team Section */}
-      <Box sx={{ marginTop: '60px', textAlign: 'center' }}>
+      <Box sx={{ marginTop: '50px', textAlign: 'center' }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '20px', color: '#333' }}>
           Notre Équipe
         </Typography>
@@ -104,9 +112,18 @@ const AboutPage = () => {
 
       </Box>
     </Box>
-
+    {/* lignes */}
+    <Box
+          sx={{
+            height: "4px",
+            width: "200px",
+            background: "linear-gradient(90deg,#008d36,#008d36)",
+            margin: "40px auto 0 auto",
+            borderRadius: "8px",
+          }}
+        ></Box>
       {/* Payment Information Section */}
-      <Box sx={{ marginTop: '60px', textAlign: 'center', padding: '40px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
+      <Box sx={{ marginTop: '30px', textAlign: 'center', padding: '40px', backgroundColor: '#fff',  }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '20px', color: '#333' }}>
           Options de paiement
         </Typography>
@@ -144,7 +161,8 @@ const AboutPage = () => {
                   color: 'rgb(8, 151, 66)',
                   borderColor: 'rgb(8, 151, 66)',
                   '&:hover': {
-                    backgroundColor: 'rgba(8, 151, 66, 0.1)',
+                    color: 'white',
+                    backgroundColor: 'rgb(8, 151, 66)',
                   },
                 }}
               >
@@ -181,8 +199,8 @@ const AboutPage = () => {
                   color: 'rgb(8, 151, 66)',
                   borderColor: 'rgb(8, 151, 66)',
                   '&:hover': {
-                    backgroundColor: 'rgba(8, 151, 66, 0.1)',
-                  },
+                    color: 'white',
+                    backgroundColor: 'rgb(8, 151, 66)',                  },
                 }}
               >
                 Choisir
@@ -218,8 +236,8 @@ const AboutPage = () => {
                   color: 'rgb(8, 151, 66)',
                   borderColor: 'rgb(8, 151, 66)',
                   '&:hover': {
-                    backgroundColor: 'rgba(8, 151, 66, 0.1)',
-                  },
+                    color: 'white',
+                    backgroundColor: 'rgb(8, 151, 66)',                  },
                 }}
               >
                 Choisir

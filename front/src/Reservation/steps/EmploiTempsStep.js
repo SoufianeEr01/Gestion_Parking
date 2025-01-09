@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 
-const EmploiTempsStep = ({ emplois, loading, error, jours }) => (
+const EmploiTempsStep = ({ discr, emplois, loading, error, jours }) => (
   <>
     {loading ? (
       <Box textAlign="center" mt={2}>
@@ -39,17 +39,26 @@ const EmploiTempsStep = ({ emplois, loading, error, jours }) => (
           </TableHead>
           <TableBody>
             {emplois.map((emploi) => (
-              <TableRow key={emploi.id}>
+              <TableRow key={emploi.Id}>
                 <TableCell align="center">{jours[emploi.jour]}</TableCell>
-                <TableCell align="center">{emploi.dateDebut}</TableCell>
-                <TableCell align="center">{emploi.dateFin}</TableCell>
+                {discr === "Etudiant" ? (
+                  <>
+                    <TableCell align="center">{emploi.dateDebut}</TableCell>
+                    <TableCell align="center">{emploi.dateFin}</TableCell>
+                  </>
+                ) : (
+                  <>
+                    <TableCell align="center">{emploi.heureDebut}</TableCell>
+                    <TableCell align="center">{emploi.heureFin}</TableCell>
+                  </>
+                )}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
     ) : (
-      <Typography variant="body2" sx={{ mt: 2 }}>
+      <Typography variant="body2" sx={{ mt: 2 }} textAlign="center">
         Aucun emploi du temps disponible.
       </Typography>
     )}

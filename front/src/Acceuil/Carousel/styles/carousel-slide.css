@@ -51,7 +51,7 @@
 }
 
 .slide-button {
-  background-color: #10b981;
+  background-color: #008d36;
   color: white;
   border: none;
   padding: 0.75rem 2rem;
@@ -63,6 +63,6 @@
 }
 
 .slide-button:hover {
-  background-color: #059669;
+  background-color: #008d36;
   transform: scale(1.05);
 }

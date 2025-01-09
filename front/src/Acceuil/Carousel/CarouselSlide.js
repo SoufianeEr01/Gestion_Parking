@@ -15,7 +15,7 @@ export const CarouselSlide = ({ slide, isActive }) => {
         <div className="slide-content-inner">
           <h2 className="slide-title">{slide.title}</h2>
           <p className="slide-description">{slide.description}</p>
-          <button className="slide-button">
+          <button className="slide-button" >
             {slide.ctaText}
           </button>
         </div>

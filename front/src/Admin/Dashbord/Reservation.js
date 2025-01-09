@@ -15,6 +15,8 @@ import {
   IconButton,
   Snackbar,
   Typography,
+  
+  Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -37,8 +39,10 @@ function Reservation() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [reservationToDelete, setReservationToDelete] = useState(null);
-
-  
+   const [page, setPage] = useState(1);
+  const placesPerPage = 5;
+  // Pagination states
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const fetchReservations = async () => {
     try {
@@ -48,6 +52,7 @@ function Reservation() {
       setErrorMessage("Erreur lors de la récupération des réservations.");
     }
   };
+
   useEffect(() => {
     fetchReservations();
   }, []);
@@ -111,9 +116,19 @@ function Reservation() {
     setNewReservation({ ...newReservation, [field]: value });
   };
 
+  // Pagination handlers
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
-    <Box sx={{padding: 3}}>
-      <Button variant="contained"   color="success" onClick={() => setDialogs({ ...dialogs, add: true })}>
+    <Box sx={{ padding: 3 }}>
+      <Button variant="contained" color="success" onClick={() => setDialogs({ ...dialogs, add: true })}>
         +Ajouter une réservation
       </Button>
       <Table sx={{ mt: 3.5 }}>
@@ -129,7 +144,7 @@ function Reservation() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {reservations.map((reservation) => (
+          {reservations.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((reservation) => (
             <TableRow key={reservation.id}>
               <TableCell>{reservation.date}</TableCell>
               <TableCell>{reservation.heureDebut}</TableCell>
@@ -139,17 +154,17 @@ function Reservation() {
               <TableCell>{reservation.placeParking_id}</TableCell>
               <TableCell>
                 <IconButton
-                color="primary" 
+                  color="primary"
                   onClick={() => {
                     setSelectedReservation(reservation);
                     setNewReservation(reservation);
                     setDialogs({ ...dialogs, edit: true });
                   }}
                 >
-                  <EditIcon  />
+                  <EditIcon />
                 </IconButton>
                 <IconButton
-                color="error" 
+                  color="error"
                   onClick={() => {
                     setReservationToDelete(reservation);
                     setDialogs({ ...dialogs, confirm: true });
@@ -162,6 +177,16 @@ function Reservation() {
           ))}
         </TableBody>
       </Table>
+
+      {/* Pagination */}
+       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+              <Pagination
+                count={Math.ceil(reservations.length / placesPerPage-1)}
+                page={page}
+                onChange={(e, newPage) => setPage(newPage)}
+                color="success"
+              />
+            </Box>
 
       {/* Add/Edit Dialog */}
       <Dialog open={dialogs.add || dialogs.edit} onClose={() => setDialogs({ add: false, edit: false })}>
@@ -214,6 +239,7 @@ function Reservation() {
             required
             value={newReservation.personne_id}
             onChange={(e) => handleInputChange("personne_id", e.target.value)}
+            disabled={dialogs.edit}
           />
           <TextField
             color="success"
@@ -223,13 +249,19 @@ function Reservation() {
             required
             value={newReservation.placeParking_id}
             onChange={(e) => handleInputChange("placeParking_id", e.target.value)}
+            disabled={dialogs.edit}
+
           />
         </DialogContent>
         <DialogActions>
-          <Button color= "Black" onClick={() => setDialogs({ add: false, edit: false })}>Annuler</Button>
-          <Button  color="success"
+          <Button color="black" onClick={() => setDialogs({ add: false, edit: false })}>
+            Annuler
+          </Button>
+          <Button
+            color="success"
             variant="contained"
-            onClick={dialogs.add ? addReservation : updateReservation}>
+            onClick={dialogs.add ? addReservation : updateReservation}
+          >
             {dialogs.add ? "Ajouter" : "Modifier"}
           </Button>
         </DialogActions>
@@ -237,28 +269,30 @@ function Reservation() {
 
       {/* Confirmation Dialog */}
       <Dialog open={dialogs.confirm} onClose={() => setDialogs({ ...dialogs, confirm: false })}>
-        <DialogTitle>Supprimer la réservation</DialogTitle>
+        <DialogTitle style={{textAlign:'center'}}>Supprimer la réservation</DialogTitle>
         <DialogContent>
-          <Typography>Êtes-vous sûr de vouloir supprimer cette reservation ?</Typography>
+          <Typography>Êtes-vous sûr de vouloir supprimer cette réservation ?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button color ="Black" onClick={() => setDialogs({ ...dialogs, confirm: false })}>Annuler</Button>
-          <Button  variant="contained" color ="error"onClick={deleteReservation}>Supprimer</Button>
+          <Button onClick={() => setDialogs({ ...dialogs, confirm: false })} color="Black">Annuler</Button>
+          <Button color="error" variant="contained" onClick={deleteReservation}>
+            Supprimer
+          </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for messages */}
+      {/* Success/Error Snackbar */}
       <Snackbar
-        open={!!successMessage}
+        open={Boolean(successMessage)}
         autoHideDuration={3000}
-        message={successMessage}
         onClose={() => setSuccessMessage("")}
+        message={successMessage}
       />
       <Snackbar
-        open={!!errorMessage}
+        open={Boolean(errorMessage)}
         autoHideDuration={3000}
-        message={errorMessage}
         onClose={() => setErrorMessage("")}
+        message={errorMessage}
       />
     </Box>
   );

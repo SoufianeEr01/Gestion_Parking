@@ -60,6 +60,36 @@ const ReservationApi = {
     const url = `${BASE_URL}/reservation/ReservationSemestrielle/Confirmer`;
     return await ReservationApi.post(url, reservations);
   },
+  fetchReservations: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/Reservation`, { headers: getAuthHeaders() });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des réservations:", error);
+      throw error.response?.data || "Erreur inconnue";
+    }
+  },
+  createReservation: async (reservation) => {
+    return await ReservationApi.post(`${BASE_URL}/Reservation`, reservation);
+  },
+  updateReservation: async (id, reservation) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/Reservation/${id}`, reservation, { headers: getAuthHeaders() });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la réservation:", error);
+      throw error.response?.data || "Erreur inconnue";
+    }
+  },
+  deleteReservation: async (id) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/Reservation/${id}`, { headers: getAuthHeaders() });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la réservation:", error);
+      throw error.response?.data || "Erreur inconnue";
+    }
+  },
 };
 
 export default ReservationApi;
