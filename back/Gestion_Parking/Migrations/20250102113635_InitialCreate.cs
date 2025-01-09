@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Gestion_Parking.Migrations
 {
     /// <inheritdoc />
-    public partial class firstMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,7 +47,8 @@ namespace Gestion_Parking.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     numero = table.Column<int>(type: "int", nullable: false),
-                    etat = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    etat = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    dateFinReservation = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import Acceuil from './Acceuil/Acceuil';
 import About from './About/About';
 import Footer from './Acceuil/Footer';
-import Header from './Acceuil/Header';
+import Header from './Acceuil/Header/Header.js';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './Theme';
 import './App.css';
@@ -13,12 +13,12 @@ import SignUpPage from './Login/inscription';
 import ProtectedRoute from './Login/ProtectedRoute';
 import Dashboard from './Admin/Dashbord/PagePrincipal';
 import Error403Page from './error/error403';
-import EtudiantDetailPage from './EtudiantDetailPage';
 import Error404Page from './error/error404';
 import PaymentComponent from './Reservation/steps/PaymentComponent';
 
 import ContactPage from './contact/ContactPage';
 import ProfilePageUti from './Acceuil/ProfilUti';
+import EmploisPersonel from './Admin/Dashbord/EmploisPersonel';
 
 import PlaceReservationDialog from './Reservation/PlaceReservationDialog';
 function App() {
@@ -46,8 +46,6 @@ function AppWithRouter() {
 
       {/* Définir les routes */}
       <Routes>
-      <Route path="/detail" element={
-            <EtudiantDetailPage />} />
       <Route path="/admin" element={
             <ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/" element={
@@ -67,6 +65,9 @@ function AppWithRouter() {
             <Error403Page />} />
           <Route path="*" element={<Error404Page />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/personel" element={<EmploisPersonel />} />
+
+        
 
         {/* Route protégée */}
         <Route

@@ -194,7 +194,7 @@ function Etudiant() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogs({ ...dialogs, add: false, edit: false })}
-          color="black">
+          color='black'>
             Annuler
           </Button>
           <Button
@@ -217,7 +217,7 @@ function Etudiant() {
           Voulez-vous vraiment supprimer cet étudiant ?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogs({ ...dialogs, confirm: false })}>Annuler</Button>
+          <Button onClick={() => setDialogs({ ...dialogs, confirm: false })} color="Black">Annuler</Button>
           <Button onClick={deleteEtudiant} color="error" variant="contained">
             Supprimer
           </Button>

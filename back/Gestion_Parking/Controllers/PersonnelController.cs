@@ -57,6 +57,12 @@ namespace Gestion_Parking.Controllers
                         insertCommand.Parameters.AddWithValue("@Role", personnel.role);
                         insertCommand.ExecuteNonQuery();
                     }
+
+                    // Si le rôle est Administrateur, générer l'emploi
+                    if (personnel.role == "Administrateur")
+                    {
+                        GenerateEmploiPourAdministrateur(personnel.email);
+                    }
                 }
 
                 return Ok("Personnel créé avec succès.");
@@ -67,6 +73,61 @@ namespace Gestion_Parking.Controllers
                 return BadRequest(new { erreur = ex.Message });
             }
         }
+
+        private void GenerateEmploiPourAdministrateur(string email)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Récupérer l'ID de l'administrateur basé sur son email
+                string getAdminIdQuery = "SELECT Id FROM Personnes WHERE email = @Email AND role = 'Administrateur'";
+                int adminId;
+
+                using (var getAdminIdCommand = new SqlCommand(getAdminIdQuery, connection))
+                {
+                    getAdminIdCommand.Parameters.AddWithValue("@Email", email);
+                    adminId = (int)getAdminIdCommand.ExecuteScalar();
+                }
+
+                // Générer l'emploi pour cet administrateur
+                for (int jour = 0; jour <= 5; jour++) // Lundi à Samedi
+                {
+                    // Vérifier si l'emploi existe déjà
+                    string checkSql = @"
+            SELECT COUNT(1) 
+            FROM EmploiPersonnels 
+            WHERE PersonnelId = @PersonnelId AND Jour = @Jour;";
+                    bool emploiExiste;
+
+                    using (var checkCommand = new SqlCommand(checkSql, connection))
+                    {
+                        checkCommand.Parameters.AddWithValue("@PersonnelId", adminId);
+                        checkCommand.Parameters.AddWithValue("@Jour", ((Jour)jour).ToString());
+                        emploiExiste = (int)checkCommand.ExecuteScalar() > 0;
+                    }
+
+                    // Si l'emploi n'existe pas, l'insérer
+                    if (!emploiExiste)
+                    {
+                        string insertSql = @"
+                INSERT INTO EmploiPersonnels (Jour, HeureDebut, HeureFin, Role, PersonnelId) 
+                VALUES (@Jour, @HeureDebut, @HeureFin, @Role, @PersonnelId)";
+                        using (var insertCommand = new SqlCommand(insertSql, connection))
+                        {
+                            insertCommand.Parameters.AddWithValue("@Jour", ((Jour)jour).ToString());
+                            insertCommand.Parameters.AddWithValue("@HeureDebut", jour == 5 ? new TimeSpan(8, 30, 0) : new TimeSpan(8, 30, 0));
+                            insertCommand.Parameters.AddWithValue("@HeureFin", jour == 5 ? new TimeSpan(12, 30, 0) : new TimeSpan(16, 30, 0));
+                            insertCommand.Parameters.AddWithValue("@Role", "Administrateur");
+                            insertCommand.Parameters.AddWithValue("@PersonnelId", adminId);
+
+                            insertCommand.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+        }
+
 
 
         // Lire tous les enregistrements de Personnel
