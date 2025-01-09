@@ -139,8 +139,11 @@ namespace Gestion_Parking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateOnly>("dateFinReservation")
+                    b.Property<DateOnly?>("dateFinReservation")
                         .HasColumnType("date");
+
+                    b.Property<int>("etage")
+                        .HasColumnType("int");
 
                     b.Property<string>("etat")
                         .IsRequired()

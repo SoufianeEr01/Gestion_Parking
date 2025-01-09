@@ -320,14 +320,18 @@ namespace Gestion_Parking.Controllers
                             command.ExecuteNonQuery();
                         }
 
-                        // Mettre à jour l'état de la place de parking à "occupee"
-                        //string updateSql = "UPDATE PlaceParkings SET etat = 'occupee' WHERE id = @PlaceParkingId";
-                        //using (var command = new SqlCommand(updateSql, connection))
-                        //{
-                        //    command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                        // Calculer la date de fin de réservation
+                        DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
 
-                        //    command.ExecuteNonQuery();
-                        //}
+                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
+                        using (var command = new SqlCommand(updateSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@DateFinReservation", dateFinReservation);
+
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
 
@@ -339,6 +343,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue. " + ex.Message);
             }
         }
+
 
 
 
@@ -454,6 +459,18 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            command.ExecuteNonQuery();
+                        }
+                        // Calculer la date de fin de réservation
+                        DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
+
+                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
+                        using (var command = new SqlCommand(updateSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@DateFinReservation", dateFinReservation);
 
                             command.ExecuteNonQuery();
                         }
@@ -583,6 +600,18 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            command.ExecuteNonQuery();
+                        }
+                        // Calculer la date de fin de réservation
+                        DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
+
+                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
+                        using (var command = new SqlCommand(updateSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@DateFinReservation", dateFinReservation);
 
                             command.ExecuteNonQuery();
                         }

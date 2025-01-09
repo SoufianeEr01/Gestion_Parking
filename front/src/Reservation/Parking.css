@@ -1,0 +1,188 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Global styles */
+  body {
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background-color: #f7f9fc;
+    color: #212121;
+  }
+  
+  /* Container */
+  .parking-container {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 50px;
+  }
+  
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .header svg {
+    margin-bottom: 16px;
+  }
+  
+  /* Floor Selector */
+  .floor-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    margin-top: 50px;
+  }
+  
+  .floor-button {
+    padding: 10px 20px;
+    margin: 0 8px;
+    background-color: #e3f2fd;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .floor-button.active {
+    background-color: #008D36;
+    color: #ffffff;
+  }
+  
+  /* Parking Grid */
+.parking-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(80px, 1fr)); /* Par défaut, 5 colonnes */
+    gap: 16px; /* Espacement entre les places */
+    justify-content: center; /* Centre la grille horizontalement */
+  }
+  
+  /* Parking Spot */
+  .spot {
+    aspect-ratio: 1 / 1; /* Conserve un carré parfait */
+    border: 2px solid #cfd8dc;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s, border-color 0.3s;
+    width: 200px; /* Taille par défaut */
+    height: 65px; /* Hauteur par défaut */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 1200px) {
+    .parking-grid {
+      grid-template-columns: repeat(4, minmax(70px, 1fr)); /* Passe à 4 colonnes sur des écrans moyens */
+    }
+  
+    .spot {
+      width: 150px; /* Réduit la taille des places */
+      height: 60px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .parking-grid {
+      grid-template-columns: repeat(3, minmax(60px, 1fr)); /* Passe à 3 colonnes sur des écrans petits */
+    }
+  
+    .spot {
+      width: 120px; /* Réduit encore la taille des places */
+      height: 55px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .parking-grid {
+      grid-template-columns: repeat(2, minmax(60px, 1fr)); /* Passe à 2 colonnes sur des écrans très petits */
+    }
+  
+    .spot {
+      width: 100px; /* Taille encore plus réduite */
+      height: 50px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .parking-grid {
+      grid-template-columns: repeat(1, minmax(60px, 1fr)); /* Une seule colonne sur des écrans très étroits */
+    }
+  
+    .spot {
+      width: 80px;
+      height: 45px; /* Taille minimale pour rester lisible */
+    }
+  }
+  
+  
+  .spot:hover {
+    transform: scale(1.05);
+  }
+  
+  .spot.libre {
+    background-color: #e8f5e9;
+    border-color: #388e3c;
+  }
+  
+  .spot.occupe {
+    background-color: #ffebee;
+    border-color: #d32f2f;
+  }
+  
+  .spot-number {
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  
+  .spot-status {
+    font-size: 0.9rem;
+    margin-top: 6px;
+  }
+  
+  /* Legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+    padding: 12px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .legend-color {
+    width: 30px;
+    height: 24px;
+    border-radius: 4px;
+  }
+  
+  .legend-color.libre {
+    background-color: #e8f5e9;
+    border: 2px solid #388e3c;
+  }
+  
+  .legend-color.occupe {
+    background-color: #ffebee;
+    border: 2px solid #d32f2f;
+  }
+  .react-tooltip {
+    background-color: #333;  /* Fond sombre */
+    color: #fff;  /* Texte blanc */
+    border-radius: 4px;  /* Coins arrondis */
+    padding: 5px;
+    font-size: 14px;
+  }  
+  

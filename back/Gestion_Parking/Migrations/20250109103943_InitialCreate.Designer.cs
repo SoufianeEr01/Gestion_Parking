@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250102113635_InitialCreate")]
+    [Migration("20250109103943_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -142,8 +142,11 @@ namespace Gestion_Parking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateOnly>("dateFinReservation")
+                    b.Property<DateOnly?>("dateFinReservation")
                         .HasColumnType("date");
+
+                    b.Property<int>("etage")
+                        .HasColumnType("int");
 
                     b.Property<string>("etat")
                         .IsRequired()

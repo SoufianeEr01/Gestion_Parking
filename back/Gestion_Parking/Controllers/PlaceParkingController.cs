@@ -30,12 +30,13 @@ namespace Gestion_Parking.Controllers
                 {
                     connection.Open();
 
-                    string sqlInsert = "INSERT INTO PlaceParkings (numero, etat) " +
-                                       "VALUES (@Numero, @Etat)";
+                    string sqlInsert = "INSERT INTO PlaceParkings (numero, etat, etage) " +
+                                       "VALUES (@Numero, @Etat, @Etage)";
                     using (var commandInsert = new SqlCommand(sqlInsert, connection))
                     {
                         commandInsert.Parameters.AddWithValue("@Numero", placeParking.numero);
                         commandInsert.Parameters.AddWithValue("@Etat", placeParking.etat);
+                        commandInsert.Parameters.AddWithValue("@Etage", placeParking.etage);
                         commandInsert.ExecuteNonQuery();
                     }
 
@@ -48,6 +49,7 @@ namespace Gestion_Parking.Controllers
             }
         }
 
+
         // Lire toutes les Places de Parking
         [AllowAnonymous]
         [HttpGet]
@@ -59,8 +61,8 @@ namespace Gestion_Parking.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    Console.WriteLine("Connexion à la base de données réussie."); // Log
-                    string sql = "SELECT id, numero, etat FROM PlaceParkings";
+                    Console.WriteLine("Connexion à la base de données réussie.");
+                    string sql = "SELECT id, numero, etat, etage FROM PlaceParkings";
                     using (var command = new SqlCommand(sql, connection))
                     using (var reader = command.ExecuteReader())
                     {
@@ -70,7 +72,8 @@ namespace Gestion_Parking.Controllers
                             {
                                 id = reader.GetInt32(0),
                                 numero = reader.GetInt32(1),
-                                etat = reader.GetString(2)
+                                etat = reader.GetString(2),
+                                etage = reader.GetInt32(3)
                             };
                             placeParkingList.Add(placeParking);
                         }
@@ -91,6 +94,7 @@ namespace Gestion_Parking.Controllers
         }
 
 
+
         // Lire une Place de Parking par son ID
         [Authorize(Policy = "EtudiantOuAdmin")]
         [HttpGet("{id}")]
@@ -101,7 +105,7 @@ namespace Gestion_Parking.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "SELECT id, numero, etat FROM PlaceParkings WHERE id = @Id";
+                    string sql = "SELECT id, numero, etat, etage FROM PlaceParkings WHERE id = @Id";
                     using (var command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@Id", id);
@@ -113,7 +117,8 @@ namespace Gestion_Parking.Controllers
                                 {
                                     id = reader.GetInt32(0),
                                     numero = reader.GetInt32(1),
-                                    etat = reader.GetString(2)
+                                    etat = reader.GetString(2),
+                                    etage = reader.GetInt32(3)
                                 };
                                 return Ok(placeParking);
                             }
@@ -131,6 +136,7 @@ namespace Gestion_Parking.Controllers
             }
         }
 
+
         // Mettre à jour une Place de Parking
         [Authorize(Policy = "Admin")]
         [HttpPut("{id}")]
@@ -141,13 +147,14 @@ namespace Gestion_Parking.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "UPDATE PlaceParkings SET numero = @Numero, etat = @Etat " +
+                    string sql = "UPDATE PlaceParkings SET numero = @Numero, etat = @Etat, etage = @Etage " +
                                  "WHERE id = @Id";
                     using (var command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@Id", id);
                         command.Parameters.AddWithValue("@Numero", placeParking.numero);
                         command.Parameters.AddWithValue("@Etat", placeParking.etat);
+                        command.Parameters.AddWithValue("@Etage", placeParking.etage);
 
                         int rowsAffected = command.ExecuteNonQuery();
                         if (rowsAffected == 0)
@@ -163,6 +170,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, new { erreur = "Une erreur est survenue lors de la mise à jour de la place de parking." });
             }
         }
+
 
         // Supprimer une Place de Parking
         [Authorize(Policy = "Admin")]
