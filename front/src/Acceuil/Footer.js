@@ -27,7 +27,7 @@ function Footer() {
 
       {/* Lien de navigation */}
       <Stack direction="row" justifyContent="center" spacing={4} mb={2}>
-        {['Acceuil', 'About', 'Réservation', 'Contact'].map((item) => (
+        {['Acceuil', 'About', 'Réservation', 'Contact','Emploi'].map((item) => (
           <Link
             key={item}
             href="#"

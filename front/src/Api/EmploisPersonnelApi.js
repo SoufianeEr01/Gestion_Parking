@@ -49,6 +49,16 @@ const EmploisPersonnelApi = {
     }
   },
 
+  getEmploiPersonnels: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/personnel`, { headers: getAuthHeaders() });
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des emplois par personnel:", error);
+      throw error.response?.data || error.message;
+    }
+  },
+
   // Mettre à jour un emploi personnel
   updateEmploiPersonnel: async (id, emploiData) => {
     try {

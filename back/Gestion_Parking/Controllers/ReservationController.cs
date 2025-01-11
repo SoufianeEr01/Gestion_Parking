@@ -96,21 +96,36 @@ namespace Gestion_Parking.Controllers
         }
 
         // Lire une réservation par ID
-        [HttpGet("{id}")]
-        public IActionResult GetReservationById(int id)
+        [HttpGet("{id_personne}")]
+        public IActionResult GetReservationsById(int id_personne)
         {
             try
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "SELECT id, date, heureDebut, heureFin, lieu, personne_id, placeParking_id FROM Reservations WHERE id = @Id";
+
+                    string sql = @"
+            SELECT 
+                id, 
+                date, 
+                heureDebut, 
+                heureFin, 
+                lieu, 
+                personne_id, 
+                placeParking_id 
+            FROM Reservations 
+            WHERE personne_id = @id_personne";
+
                     using (var command = new SqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@Id", id);
+                        command.Parameters.AddWithValue("@id_personne", id_personne);
+
                         using (var reader = command.ExecuteReader())
                         {
-                            if (reader.Read())
+                            var reservations = new List<Reservation>();
+
+                            while (reader.Read())
                             {
                                 var reservation = new Reservation
                                 {
@@ -122,13 +137,19 @@ namespace Gestion_Parking.Controllers
                                     personne_id = reader.GetInt32(5),
                                     placeParking_id = reader.GetInt32(6)
                                 };
-                                _logger.LogInformation($"Réservation trouvée avec ID {id}.");
-                                return Ok(reservation);
+
+                                reservations.Add(reservation);
+                            }
+
+                            if (reservations.Count > 0)
+                            {
+                                _logger.LogInformation($"Réservations trouvées pour l'utilisateur avec ID : {id_personne}.");
+                                return Ok(reservations);
                             }
                             else
                             {
-                                _logger.LogWarning($"Réservation avec ID {id} non trouvée.");
-                                return NotFound("Réservation non trouvée.");
+                                _logger.LogWarning($"Aucune réservation trouvée pour l'utilisateur avec ID : {id_personne}.");
+                                return NotFound(new { message = "Aucune réservation trouvée pour cet ID." });
                             }
                         }
                     }
@@ -136,10 +157,12 @@ namespace Gestion_Parking.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la récupération de la réservation.");
+                _logger.LogError(ex, "Erreur lors de la récupération des réservations.");
                 return StatusCode(500, new { erreur = ex.Message });
             }
         }
+
+
 
         // Mettre à jour une réservation
         [HttpPut("{id}")]

@@ -90,6 +90,15 @@ const ReservationApi = {
       throw error.response?.data || "Erreur inconnue";
     }
   },
+  fetchReservationById_personne: async (id_personne) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/Reservation/${id_personne}`,  { headers: getAuthHeaders() });
+      return response.data;
+    } catch (error) {
+      console.error(`Erreur lors de la récupération de la réservation avec l'ID du persoone ${id_personne} :`, error);
+      throw error.response?.data || "Erreur inconnue";
+    }
+  },
 };
 
 export default ReservationApi;

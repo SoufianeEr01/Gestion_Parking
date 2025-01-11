@@ -180,7 +180,7 @@ namespace Gestion_Parking.Controllers
                     string sql = @"
                         SELECT Id, Jour, HeureDebut, HeureFin, Role, PersonnelId 
                         FROM EmploiPersonnels 
-                        WHERE PersonnelId = @PersonnelId";
+                        WHERE PersonnelId = @PersonnelId ORDER BY Jour ";
                     using (var command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@PersonnelId", personnelId);
@@ -206,6 +206,53 @@ namespace Gestion_Parking.Controllers
                 if (emplois.Count == 0)
                 {
                     return NotFound("Aucun emploi trouvé pour ce personnel.");
+                }
+
+                return Ok(emplois);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la récupération des emplois.");
+                return StatusCode(500, "Une erreur est survenue.");
+            }
+        }
+
+        [Authorize(Policy = "Admin")]
+        [HttpGet("personnel")]
+        public IActionResult GetEmploiPersonnels()
+        {
+            var emplois = new List<EmploiPersonnel>();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sql = @"
+                        SELECT Id, Jour, HeureDebut, HeureFin, Role, PersonnelId 
+                        FROM EmploiPersonnels ";
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                emplois.Add(new EmploiPersonnel
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Jour = Enum.Parse<Jour>(reader.GetString(1)),
+                                    HeureDebut = reader.GetTimeSpan(2),
+                                    HeureFin = reader.GetTimeSpan(3),
+                                    Role = reader.GetString(4),
+                                    PersonnelId = reader.GetInt32(5)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (emplois.Count == 0)
+                {
+                    return NotFound("Aucun emploi trouvé pour les personnels.");
                 }
 
                 return Ok(emplois);

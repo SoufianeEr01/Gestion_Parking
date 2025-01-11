@@ -24,21 +24,21 @@ const ReservationApi = {
   },
 
   // Récupérer une réservation par ID
-  fetchReservationById: async (id) => {
+  fetchReservationById_personne: async (id_personne) => {
     try {
       const token = sessionStorage.getItem('jwtToken');
       if (!token) {
         throw new Error("Token d'authentification manquant");
       }
 
-      const response = await axios.get(`${BASE_URL}/Reservation/${id}`, {
+      const response = await axios.get(`${BASE_URL}/Reservation/${id_personne}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
       return response.data;
     } catch (error) {
-      console.error(`Erreur lors de la récupération de la réservation avec l'ID ${id} :`, error);
+      console.error(`Erreur lors de la récupération de la réservation avec l'ID ${id_personne} :`, error);
       throw error.response?.data || error.message;
     }
   },

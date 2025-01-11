@@ -83,8 +83,24 @@ namespace Gestion_Parking.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    // Requête SQL pour récupérer les emplois du groupe spécifié
-                    string sql = "SELECT Jour, DateDebut, DateFin, Groupe_Id FROM Emplois WHERE Groupe_Id = @Groupe_Id";
+
+                    // Requête SQL
+                    string sql = @" 
+                        SELECT Jour, DateDebut, DateFin, Groupe_Id 
+                        FROM Emplois 
+                        WHERE Groupe_Id = 2
+                        ORDER BY 
+                            CASE 
+                             WHEN Jour = 'Lundi' THEN 1
+                                WHEN Jour = 'Mardi' THEN 2
+                                WHEN Jour = 'Mercredi' THEN 3
+                                WHEN Jour = 'Jeudi' THEN 4
+                                WHEN Jour = 'Vendredi' THEN 5
+                                WHEN Jour = 'Samedi' THEN 6
+                                ELSE 7
+                            END ;
+";
+
                     using (var command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@Groupe_Id", groupeId);
@@ -93,23 +109,34 @@ namespace Gestion_Parking.Controllers
                         {
                             while (reader.Read())
                             {
-                                // Ajout des logs pour vérifier les données lues
-                                _logger.LogInformation("Lecture d'un emploi: Jour={Jour}, DateDebut={DateDebut}, DateFin={DateFin}, Groupe_Id={Groupe_Id}",
-                                    reader["Jour"], reader["DateDebut"], reader["DateFin"], reader["Groupe_Id"]);
-
-                                emplois.Add(new Emploi
+                                try
                                 {
-                                    Jour = Enum.Parse<Jour>(reader.GetString(0)), // Vérifiez que "Jour" est bien une chaîne dans la base de données
-                                    DateDebut = reader.GetTimeSpan(1),
-                                    DateFin = reader.GetTimeSpan(2),
-                                    Groupe_Id = reader.GetInt32(3)
-                                });
+                                    var jourString = reader.GetString(0);
+                                    if (Enum.TryParse<Jour>(jourString, true, out var jour))
+                                    {
+                                        emplois.Add(new Emploi
+                                        {
+                                            Jour = jour,
+                                            DateDebut = reader.GetTimeSpan(1),
+                                            DateFin = reader.GetTimeSpan(2),
+                                            Groupe_Id = reader.GetInt32(3)
+                                        });
+                                    }
+                                    else
+                                    {
+                                        _logger.LogWarning("Jour non valide trouvé : {Jour}", jourString);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(ex, "Erreur lors du traitement d'un emploi.");
+                                }
                             }
                         }
                     }
                 }
 
-                if (emplois.Count == 0)
+                if (!emplois.Any())
                 {
                     _logger.LogWarning("Aucun emploi trouvé pour le groupe avec l'ID {GroupeId}", groupeId);
                     return NotFound($"Aucun emploi trouvé pour le groupe avec l'ID {groupeId}.");
@@ -123,6 +150,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue lors de la récupération des emplois.");
             }
         }
+
 
         // Nouvelle fonction : Récupérer les emplois par ID d'étudiant
         [Authorize(Policy = "EtudiantOuAdmin")]

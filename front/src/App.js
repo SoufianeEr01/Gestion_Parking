@@ -21,6 +21,8 @@ import ProfilePageUti from './Acceuil/ProfilUti';
 import EmploisPersonel from './Admin/Dashbord/EmploisPersonel';
 
 import PlaceReservationDialog from './Reservation/PlaceReservationDialog';
+import CreationPersonnelEmploi from './Admin/Dashbord/CreateEmploiPersonel.js';
+import EmploiList from './Acceuil/Emploi/Emplois';
 function App() {
   return (
     <div className="App">
@@ -37,7 +39,8 @@ function AppWithRouter() {
   const location = useLocation(); // Utilisé ici, dans un contexte sous Router
 
   // Vérifier si la route actuelle est "/login" ou "/inscription"
-  const isLoginOrSignupPage = location.pathname === '/' || location.pathname === '/about' || location.pathname === '/parking'|| location.pathname === '/contact';
+  const isLoginOrSignupPage = location.pathname === '/' || location.pathname === '/about' || location.pathname === '/parking' || location.pathname === '/contact' || location.pathname === '/emploi';
+
 
   return (
     <div>
@@ -53,7 +56,9 @@ function AppWithRouter() {
         <Route path="/about" element={
             <ProtectedRoute><About /></ProtectedRoute>} />
 
-       
+        <Route path="/emploi" element={<ProtectedRoute><EmploiList /></ProtectedRoute>} />
+
+
         <Route path="/profil" element={
             <ProfilePageUti />} />
 
@@ -66,6 +71,7 @@ function AppWithRouter() {
           <Route path="*" element={<Error404Page />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/personel" element={<EmploisPersonel />} />
+
 
         
 
