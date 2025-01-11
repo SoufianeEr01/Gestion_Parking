@@ -19,6 +19,7 @@ import EmploiApi from "../Api/EmploiApi";
 import ReservationPreviewStep from "./steps/ReservationPreviewStep";
 import ReservationApi from "../Api/ReservationApi";
 import EmploiPersonnelApi from "../Api/EmploisPersonnelApi";
+import PaymentCard from "./steps/PaymentCard";
 
 const steps = [
   "Afficher l'emploi du temps",
@@ -31,6 +32,7 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [emplois, setEmplois] = useState(null);
   const [groupe, setGroupe] = useState(null);
+  const [personnelId, setPersonnelId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
@@ -52,6 +54,7 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
       }
 
       const idEtudiant = userData?.id;
+      setPersonnelId(idEtudiant);
       setDisc(userData.discriminator); // Directly set disc here
 
       if (!idEtudiant) {
@@ -145,12 +148,15 @@ const PlaceReservationDialog = ({ open, onClose, place }) => {
             <ReservationPreviewStep
               selectedOption={selectedOption}
               place={place}
+              disc={disc}
               groupe={groupe}
+              personnelId={personnelId}
               setError={setError}
               onReservationPreview={handleReservationPreview} // Passer la fonction ici
             />
           )}
-          {activeStep === 3 && <ConfirmationStep />}
+          {/* {activeStep === 3 && <ConfirmationStep />} */}
+          {activeStep === 3 && <PaymentCard />}
         </Box>
       </DialogContent>
       <DialogActions>

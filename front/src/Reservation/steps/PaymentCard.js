@@ -65,7 +65,7 @@ const SuccessBox = styled(Alert)(({ theme }) => ({
 }));
 
 // Payment Component
-function PaymentComponent({ selectedOption, reservationPreview }) {
+function PaymentCard({ selectedOption, reservationPreview }) {
   const [formData, setFormData] = useState({
     cardNumber: '',
     cardHolder: '',
@@ -263,4 +263,4 @@ function PaymentComponent({ selectedOption, reservationPreview }) {
   );
 }
 
-export default PaymentComponent;
+export default PaymentCard;
