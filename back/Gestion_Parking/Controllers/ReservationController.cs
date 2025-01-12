@@ -305,9 +305,9 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
-                        // Insérer la réservation dans la table Reservations
-                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
-                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
+                        // Insérer la réservation dans la table Reservations avec l'état
+                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
+                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
                             command.Parameters.AddWithValue("@Date", reservation.date.ToDateTime(TimeOnly.MinValue));
@@ -316,6 +316,7 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@Etat", "actif"); // Ajouter l'état par défaut
 
                             command.ExecuteNonQuery();
                         }
@@ -323,7 +324,7 @@ namespace Gestion_Parking.Controllers
                         // Calculer la date de fin de réservation
                         DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
 
-                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        // Mettre à jour l'état de la place de parking à "occupe" et ajouter la date de fin de réservation
                         string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
                         using (var command = new SqlCommand(updateSql, connection))
                         {
@@ -343,6 +344,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue. " + ex.Message);
             }
         }
+
 
 
 
@@ -449,8 +451,8 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
-                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
-                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
+                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
+                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
                             command.Parameters.AddWithValue("@Date", reservation.date.ToDateTime(TimeOnly.MinValue));
@@ -459,6 +461,7 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@Etat", "actif"); // Ajouter l'état par défaut
 
                             command.ExecuteNonQuery();
                         }
@@ -536,7 +539,7 @@ namespace Gestion_Parking.Controllers
 
                 // Calcul de la date de début et de la fin
                 DateOnly dateDebut = DateOnly.FromDateTime(DateTime.Now.Date).AddDays(1); // Demain
-                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 20)); // 20 janvier 2025
+                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 26)); // 26 janvier 2025
 
                 var reservations = new List<Reservation>();
 
@@ -590,8 +593,8 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
-                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
-                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
+                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
+                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
                             command.Parameters.AddWithValue("@Date", reservation.date.ToDateTime(TimeOnly.MinValue));
@@ -600,6 +603,7 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@Etat", "actif"); // Ajouter l'état par défaut
 
                             command.ExecuteNonQuery();
                         }
@@ -890,6 +894,76 @@ namespace Gestion_Parking.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet("ExistingReservationForPersonne/{personneId}")]
+            public IActionResult ExistingReservationForPersonne(int personneId)
+            {
+                try
+                {
+                    bool reservationExists = false;
+
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        // Requête pour vérifier l'existence d'une réservation
+                        string query = "SELECT COUNT(*) FROM Reservations WHERE personne_id = @PersonneId and etat = 'actif'";
+
+                        using (var command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@PersonneId", personneId);
+
+                            // Exécution de la requête
+                            int count = (int)command.ExecuteScalar();
+
+                            reservationExists = count > 0; // Si le nombre de résultats est supérieur à 0, une réservation existe
+                        }
+                    }
+
+                    return Ok(reservationExists);
+                }
+                catch (Exception ex)
+                {
+                    // Gestion des erreurs
+                    return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
+                }
+            }
+        [HttpPost("ArchiverReservations")]
+        public IActionResult ArchiverReservations()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Requête pour mettre à jour l'état à 'archive' si la date actuelle est supérieure à la date de la réservation
+                    string updateSql = "UPDATE Reservations SET etat = 'archive' WHERE date < @CurrentDate AND etat != 'archive'";
+
+                    using (var command = new SqlCommand(updateSql, connection))
+                    {
+                        // Ajouter la date actuelle comme paramètre
+                        command.Parameters.AddWithValue("@CurrentDate", DateTime.Now.Date); // Utilisez Date pour ne comparer que la date
+
+                        int rowsAffected = command.ExecuteNonQuery(); // Exécuter la mise à jour
+
+                        if (rowsAffected > 0)
+                        {
+                            return Ok(new { message = $"{rowsAffected} réservation(s) ont été archivées." });
+                        }
+                        else
+                        {
+                            return Ok(new { message = "Aucune réservation n'a été archivée." });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Gestion des erreurs
+                return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
+            }
+        }
 
 
 

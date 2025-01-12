@@ -9,6 +9,7 @@ namespace Gestion_Parking.Models
         public string prenom { get; set; }
         public string email { get; set; }
         public string? motdepasse { get; set; }
+        public ICollection<Paiement> Paiements { get; set; } = new List<Paiement>();
 
         // Méthode statique pour hasher un mot de passe
         public static string HashPassword(string plainTextPassword)

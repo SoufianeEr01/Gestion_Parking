@@ -7,6 +7,7 @@ public class Reservation
     public TimeOnly heureDebut { get; set; }
     public TimeOnly heureFin { get; set; }
     public string lieu { get; set; }
+    public String etat { get; set; } = "actif"; // Valeur par défaut
     public int personne_id { get; set; }  // Référence unique à Personne
     public int placeParking_id { get; set; }  // Référence obligatoire
 
