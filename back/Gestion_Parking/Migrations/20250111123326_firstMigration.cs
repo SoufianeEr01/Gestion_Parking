@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Gestion_Parking.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class firstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,8 +47,9 @@ namespace Gestion_Parking.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     numero = table.Column<int>(type: "int", nullable: false),
+                    etage = table.Column<int>(type: "int", nullable: false),
                     etat = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    dateFinReservation = table.Column<DateOnly>(type: "date", nullable: false)
+                    dateFinReservation = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -123,6 +124,29 @@ namespace Gestion_Parking.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmploiPersonnels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonnelId = table.Column<int>(type: "int", nullable: false),
+                    Jour = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    HeureDebut = table.Column<TimeSpan>(type: "time", nullable: false),
+                    HeureFin = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmploiPersonnels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmploiPersonnels_Personnes_PersonnelId",
+                        column: x => x.PersonnelId,
+                        principalTable: "Personnes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reservations",
                 columns: table => new
                 {
@@ -165,6 +189,11 @@ namespace Gestion_Parking.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmploiPersonnels_PersonnelId",
+                table: "EmploiPersonnels",
+                column: "PersonnelId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Emplois_Groupe_Id",
                 table: "Emplois",
                 column: "Groupe_Id");
@@ -203,6 +232,9 @@ namespace Gestion_Parking.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "EmploiPersonnels");
+
             migrationBuilder.DropTable(
                 name: "Emplois");
 

@@ -46,11 +46,19 @@ public static class DataSeeder
         // Vérifiez si des places existent déjà pour éviter de dupliquer les données
         if (!context.PlaceParkings.Any())
         {
-            var placesParking = Enumerable.Range(1, 20) // Générer 20 places numérotées de 1 à 20
+            var placesParking = Enumerable.Range(1, 60) // Générer 60 places numérotées de 1 à 60
                 .Select(i => new PlaceParking
                 {
                     numero = i,
-                    etat = "libre" // Toutes les places sont libres
+                    etat = "libre", // Toutes les places sont libres par défaut
+                    etage = i switch
+                    {
+                        >= 1 and <= 20 => 0, // Si le numéro est entre 1 et 20, l'étage est 0
+                        >= 21 and <= 40 => 1, // Si le numéro est entre 21 et 40, l'étage est 1
+                        >= 41 and <= 60 => 2, // Si le numéro est entre 41 et 60, l'étage est 2
+                        _ => throw new InvalidOperationException("Numéro de place invalide")
+                    },
+                    dateFinReservation = null // Par défaut, la date de fin de réservation est null pour les places libres
                 })
                 .ToList();
 
@@ -59,6 +67,7 @@ public static class DataSeeder
             context.SaveChanges();
         }
     }
+
 
     public static void SeedEtudiants(AppDbContext context)
     {

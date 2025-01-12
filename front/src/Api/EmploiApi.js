@@ -30,6 +30,7 @@ const EmploiApi = {
 
   // Appels API spécifiques
   fetchEmploisByGroupe: (groupeId) => EmploiApi.request('get', `${BASE_URL}/Emplois/group/${groupeId}`),
+  fetchJoursByGroupe: (groupeId) => EmploiApi.request('get', `${BASE_URL}/jour/group/${groupeId}`),
   createEmploi: (emploiData) => EmploiApi.request('post', `${BASE_URL}/Emplois`, emploiData),
   fetchEmploiByJour: (jour) => EmploiApi.request('get', `${BASE_URL}/Emplois/${jour}`),
   fetchEmploiByIdEtudiant: (idEtudiant) => EmploiApi.request('get', `${BASE_URL}/Emplois/etudiant/${idEtudiant}`),

@@ -353,6 +353,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
+    "Method": "GetJoursByGroupe",
+    "RelativePath": "api/Emplois/jour/{groupeId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Gestion_Parking.Controllers.EtudiantController",
     "Method": "CreateEtudiant",
     "RelativePath": "api/Etudiant",
@@ -836,6 +852,22 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "GetReservationsByNom",
+    "RelativePath": "api/Reservation/nom/{nom_personne}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nom_personne",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

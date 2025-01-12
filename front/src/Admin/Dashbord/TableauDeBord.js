@@ -3,10 +3,14 @@ import { Card, CardContent, Typography, Box, Avatar } from "@mui/material";
 import { Users, ShoppingCart, CreditCard, TrendingUp, Car } from "lucide-react";
 import PersonneApi from "../../Api/PersonneApi";
 import PlaceParkingApi from "../../Api/PlaceParkingApi";
+import ReservationApi from "../../Api/ReservationApi";
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 function TableauDeBord() {
   const [userCount, setUserCount] = useState("Chargement...");
   const [parkingCount, setParkingCount] = useState("Chargement...");
+  const [reservCount, setReservCount] = useState("Chargement...");
+
   const [error, setError] = useState(null);
 
   const fetchUserCount = async () => {
@@ -19,6 +23,16 @@ function TableauDeBord() {
     }
   };
 
+  const fetchtReservCount = async () => {
+    try {
+      const count = await ReservationApi.fetchReservations(); 
+      setReservCount(count.length);  // Correctement orthographié 'length'
+    } catch (err) {
+      setError("Erreur lors du chargement des réservations.");
+      console.error(err);
+    }
+  };
+  
   const fetchParkingCount = async () => {
 
     try {
@@ -34,6 +48,7 @@ function TableauDeBord() {
   useEffect(() => {
     fetchUserCount();
     fetchParkingCount();
+    fetchtReservCount();
   }, []);
 
   const stats = [
@@ -53,10 +68,10 @@ function TableauDeBord() {
     },
    
     {
-      label: "Revenu Total",
-      value: "10.000Dhs",
+      label: "Nombre de réservations",
+      value: error || reservCount,
       change: "+23.1%",
-      icon: <CreditCard />,
+      icon: <EventAvailableIcon />,
       color: "#9C27B0", 
     },
     {

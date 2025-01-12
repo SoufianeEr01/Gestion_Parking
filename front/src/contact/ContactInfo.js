@@ -102,17 +102,17 @@ const ContactInfo = () => {
       <ContactItem
         icon={<Phone size={24} />}
         title="Téléphone"
-        content="+33 1 23 45 67 89"
+        content="+212 522 894 287"
       />
       <ContactItem
         icon={<Mail size={24} />}
         title="Email"
-        content="contact@parkingapp.com"
+        content="contact@parking-emsi.ma"
       />
       <ContactItem
         icon={<MapPin size={24} />}
         title="Adresse"
-        content="123 Avenue des Parkings, 75001 Paris"
+        content="Lotissement Alkhawarizmi, quartier laymoune"
       />
       <ContactItem
         icon={<Clock size={24} />}

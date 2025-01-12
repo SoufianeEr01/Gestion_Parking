@@ -195,39 +195,6 @@ const LoginPage = () => {
         </Box>
 
         <Divider sx={{ marginY: 3, color: 'rgb(29, 125, 61)' }}>ou</Divider>
-
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<GoogleIcon />}
-          sx={{
-            marginBottom: 2,
-            borderColor: 'rgb(29, 125, 61)',
-            color: 'rgb(29, 125, 61)',
-            '&:hover': {
-              borderColor: 'rgb(24, 100, 49)',
-              backgroundColor: '#e6f2eb',
-            },
-          }}
-        >
-          Se connecter avec Google
-        </Button>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<FacebookIcon />}
-          sx={{
-            borderColor: 'rgb(29, 125, 61)',
-            color: 'rgb(29, 125, 61)',
-            '&:hover': {
-              borderColor: 'rgb(24, 100, 49)',
-              backgroundColor: '#e6f2eb',
-            },
-          }}
-        >
-          Se connecter avec Facebook
-        </Button>
-
         <Box textAlign="center" marginTop={2}>
           <Typography variant="body2" color="textSecondary">
             Pas de compte ?{' '}

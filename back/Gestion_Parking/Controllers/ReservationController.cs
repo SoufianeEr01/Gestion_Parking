@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging; // Ajout de l'importation pour ILogger
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Gestion_Parking.Controllers
 {
@@ -59,32 +60,56 @@ namespace Gestion_Parking.Controllers
         [HttpGet]
         public IActionResult GetAllReservations()
         {
-            var reservations = new List<Reservation>();
+            var reservations = new List<object>(); // Utilisation d'un objet générique pour inclure toutes les colonnes.
             try
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "SELECT id, date, heureDebut, heureFin, lieu, personne_id, placeParking_id FROM Reservations";
+
+                    string sql = @"
+        SELECT 
+            r.id AS ReservationID, 
+            r.date AS DateReservation, 
+            r.heureDebut AS HeureDebut, 
+            r.heureFin AS HeureFin, 
+            r.lieu AS LieuReservation,
+            p.nom AS NomPersonne, 
+            p.prenom AS PrenomPersonne, 
+            g.nom AS NomGroupe, 
+            pr.numero AS NumeroPlace
+        FROM 
+            Reservations r
+        JOIN 
+            Personnes p ON r.personne_id = p.id
+        JOIN 
+            Groupes g ON p.GroupeId = g.id
+        JOIN 
+            PlaceParkings pr ON pr.id = r.placeParking_id";
+
                     using (var command = new SqlCommand(sql, connection))
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            var reservation = new Reservation
+                            // Construction d'un objet anonyme pour contenir toutes les données
+                            var reservation = new
                             {
-                                id = reader.GetInt32(0),
-                                date = DateOnly.FromDateTime(reader.GetDateTime(1)), // Assuming `date` is DATETIME
-                                heureDebut = TimeOnly.FromTimeSpan(reader.GetTimeSpan(2)), // Handle TIME as TimeSpan
-                                heureFin = TimeOnly.FromTimeSpan(reader.GetTimeSpan(3)),   // Handle TIME as TimeSpan
-                                lieu = reader.GetString(4),
-                                personne_id = reader.GetInt32(5),
-                                placeParking_id = reader.GetInt32(6)
+                                ReservationID = reader.GetInt32(0),
+                                DateReservation = DateOnly.FromDateTime(reader.GetDateTime(1)),
+                                HeureDebut = TimeOnly.FromTimeSpan(reader.GetTimeSpan(2)),
+                                HeureFin = TimeOnly.FromTimeSpan(reader.GetTimeSpan(3)),
+                                LieuReservation = reader.GetString(4),
+                                NomPersonne = reader.GetString(5),
+                                PrenomPersonne = reader.GetString(6),
+                                NomGroupe = reader.GetString(7),
+                                NumeroPlace = reader.IsDBNull(8) ? null : reader.GetInt32(8).ToString() // Handle the conversion issue
                             };
                             reservations.Add(reservation);
                         }
                     }
                 }
+
                 _logger.LogInformation("Récupération de toutes les réservations réussie.");
                 return Ok(reservations);
             }
@@ -95,7 +120,7 @@ namespace Gestion_Parking.Controllers
             }
         }
 
-        // Lire une réservation par ID
+
         [HttpGet("{id_personne}")]
         public IActionResult GetReservationsById(int id_personne)
         {
@@ -107,35 +132,45 @@ namespace Gestion_Parking.Controllers
 
                     string sql = @"
             SELECT 
-                id, 
-                date, 
-                heureDebut, 
-                heureFin, 
-                lieu, 
-                personne_id, 
-                placeParking_id 
-            FROM Reservations 
-            WHERE personne_id = @id_personne";
+                r.id AS ReservationID, 
+                r.date AS DateReservation, 
+                r.heureDebut AS HeureDebut, 
+                r.heureFin AS HeureFin, 
+                r.lieu AS LieuReservation,
+                p.nom AS NomPersonne, 
+                p.prenom AS PrenomPersonne, 
+                pr.numero AS NumeroPlace
+            FROM 
+                Reservations r
+            JOIN 
+                Personnes p ON r.personne_id = p.id
+            LEFT JOIN 
+                PlaceParkings pr ON pr.id = r.placeParking_id
+            WHERE 
+                r.personne_id = @id_personne";
 
                     using (var command = new SqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@id_personne", id_personne);
+                        // Ajout du paramètre de manière explicite avec une sécurité renforcée
+                        command.Parameters.Add(new SqlParameter("@id_personne", SqlDbType.Int) { Value = id_personne });
 
                         using (var reader = command.ExecuteReader())
                         {
-                            var reservations = new List<Reservation>();
+                            var reservations = new List<object>();
 
                             while (reader.Read())
                             {
-                                var reservation = new Reservation
+                                // Création d'un objet anonyme contenant les données
+                                var reservation = new
                                 {
-                                    id = reader.GetInt32(0),
-                                    date = DateOnly.FromDateTime(reader.GetDateTime(1)), // Assuming `date` is DATETIME
-                                    heureDebut = TimeOnly.FromTimeSpan(reader.GetTimeSpan(2)), // Handle TIME as TimeSpan
-                                    heureFin = TimeOnly.FromTimeSpan(reader.GetTimeSpan(3)),   // Handle TIME as TimeSpan
-                                    lieu = reader.GetString(4),
-                                    personne_id = reader.GetInt32(5),
-                                    placeParking_id = reader.GetInt32(6)
+                                    ReservationID = reader.GetInt32(0),
+                                    DateReservation = reader.GetDateTime(1).ToString("yyyy-MM-dd"), // Formatage de la date
+                                    HeureDebut = reader.GetTimeSpan(2).ToString(@"hh\:mm"),       // Formatage de l'heure
+                                    HeureFin = reader.GetTimeSpan(3).ToString(@"hh\:mm"),         // Formatage de l'heure
+                                    LieuReservation = reader.GetString(4),
+                                    NomPersonne = reader.GetString(5),
+                                    PrenomPersonne = reader.GetString(6),
+                                    NumeroPlace = reader.IsDBNull(7) ? null : reader.GetInt32(7).ToString() // Gestion des valeurs null
                                 };
 
                                 reservations.Add(reservation);
@@ -162,6 +197,83 @@ namespace Gestion_Parking.Controllers
             }
         }
 
+
+        [HttpGet("nom/{nom_personne}")]
+        public IActionResult GetReservationsByNom(string nom_personne)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string sql = @"
+            SELECT 
+                r.id AS ReservationID, 
+                r.date AS DateReservation, 
+                r.heureDebut AS HeureDebut, 
+                r.heureFin AS HeureFin, 
+                r.lieu AS LieuReservation,
+                p.nom AS NomPersonne, 
+                p.prenom AS PrenomPersonne, 
+                pr.numero AS NumeroPlace
+            FROM 
+                Reservations r
+            INNER JOIN 
+                Personnes p ON r.personne_id = p.id
+            LEFT JOIN 
+                PlaceParkings pr ON pr.id = r.placeParking_id
+            WHERE 
+                p.nom = @nom_personne";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nom_personne", SqlDbType.NVarChar) { Value = nom_personne });
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            var reservations = new List<object>();
+
+                            while (reader.Read())
+                            {
+                                var reservation = new
+                                {
+                                    ReservationID = reader.GetInt32(0),
+                                    DateReservation = reader.GetDateTime(1).ToString("yyyy-MM-dd"),
+                                    HeureDebut = reader.GetTimeSpan(2).ToString(@"hh\:mm"),
+                                    HeureFin = reader.GetTimeSpan(3).ToString(@"hh\:mm"),
+                                    LieuReservation = reader.GetString(4),
+                                    NomPersonne = reader.GetString(5),
+                                    PrenomPersonne = reader.GetString(6),
+                                    NumeroPlace = reader.IsDBNull(7) ? null : reader.GetInt32(7).ToString()
+                                };
+
+                                reservations.Add(reservation);
+                            }
+
+                            if (reservations.Count > 0)
+                            {
+                                return Ok(reservations);
+                            }
+                            else
+                            {
+                                return NotFound(new { message = "Aucune réservation trouvée pour cet utilisateur." });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Erreur SQL lors de la récupération des réservations.");
+                return StatusCode(500, new { erreur = "Erreur avec la base de données." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la récupération des réservations.");
+                return StatusCode(500, new { erreur = ex.Message });
+            }
+        }
 
 
         // Mettre à jour une réservation
@@ -343,14 +455,18 @@ namespace Gestion_Parking.Controllers
                             command.ExecuteNonQuery();
                         }
 
-                        // Mettre à jour l'état de la place de parking à "occupee"
-                        //string updateSql = "UPDATE PlaceParkings SET etat = 'occupee' WHERE id = @PlaceParkingId";
-                        //using (var command = new SqlCommand(updateSql, connection))
-                        //{
-                        //    command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                        // Calculer la date de fin de réservation
+                        DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
 
-                        //    command.ExecuteNonQuery();
-                        //}
+                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
+                        using (var command = new SqlCommand(updateSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@DateFinReservation", dateFinReservation);
+
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
 
@@ -362,6 +478,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue. " + ex.Message);
             }
         }
+
 
 
 
@@ -477,6 +594,18 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            command.ExecuteNonQuery();
+                        }
+                        // Calculer la date de fin de réservation
+                        DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
+
+                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
+                        using (var command = new SqlCommand(updateSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@DateFinReservation", dateFinReservation);
 
                             command.ExecuteNonQuery();
                         }
@@ -606,6 +735,18 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            command.ExecuteNonQuery();
+                        }
+                        // Calculer la date de fin de réservation
+                        DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
+
+                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
+                        using (var command = new SqlCommand(updateSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@DateFinReservation", dateFinReservation);
 
                             command.ExecuteNonQuery();
                         }

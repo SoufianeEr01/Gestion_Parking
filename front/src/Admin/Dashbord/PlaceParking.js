@@ -26,18 +26,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import PlaceParkingApi from "../../Api/PlaceParkingApi";
 
 const PlaceParking = () => {
-  // State management
   const [places, setPlaces] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // for confirmation dialog
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [editingPlace, setEditingPlace] = useState(null);
-  const [placeData, setPlaceData] = useState({ numero: "", etat: "" });
+  const [placeData, setPlaceData] = useState({ numero: "", etat: "", etage: "" });
   const [feedbackMessage, setFeedbackMessage] = useState({ success: "", error: "" });
   const [page, setPage] = useState(1);
   const placesPerPage = 5;
-  const [placeToDelete, setPlaceToDelete] = useState(null); // store the place to be deleted
+  const [placeToDelete, setPlaceToDelete] = useState(null);
 
-  // Fetch parking places
   const fetchPlaces = async () => {
     try {
       const data = await PlaceParkingApi.fetchPlaceParkings();
@@ -51,54 +49,54 @@ const PlaceParking = () => {
     fetchPlaces();
   }, []);
 
-  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPlaceData((prevData) => ({
       ...prevData,
-      [name]: name === "numero" ? String(value) : value,
+      [name]: name === "numero" || name === "etage" ? String(value) : value,
     }));
   };
 
-  // Add or update a parking place
   const handleSubmit = async () => {
-    const { numero, etat } = placeData;
+    const { numero, etat, etage } = placeData;
 
-    if (!String(numero).trim() || !String(etat).trim()) {
+    if (!String(numero).trim() || !String(etat).trim() || etage === "") {
       setFeedbackMessage({ success: "", error: "Tous les champs sont obligatoires !" });
       return;
     }
 
     try {
       if (editingPlace) {
-        await PlaceParkingApi.updatePlaceParking(editingPlace.id, { numero: String(numero), etat });
+        await PlaceParkingApi.updatePlaceParking(editingPlace.id, { numero, etat, etage });
         setFeedbackMessage({ success: "Place modifiée avec succès !", error: "" });
       } else {
-        await PlaceParkingApi.createPlaceParking({ numero: String(numero), etat });
+        await PlaceParkingApi.createPlaceParking({ numero, etat, etage });
         setFeedbackMessage({ success: "Place ajoutée avec succès !", error: "" });
       }
       setOpenDialog(false);
-      setPlaceData({ numero: "", etat: "" });
+      setPlaceData({ numero: "", etat: "", etage: "" });
       fetchPlaces();
     } catch {
       setFeedbackMessage({ success: "", error: "Erreur lors de l'opération." });
     }
   };
 
-  // Open the dialog for adding/editing a place
   const openDialogForEdit = (place) => {
     setEditingPlace(place);
-    setPlaceData(place || { numero: "", etat: "" });
+    setPlaceData(place || { numero: "", etat: "", etage: "" });
     setOpenDialog(true);
   };
 
-  // Delete a parking place (trigger confirmation dialog)
-  const handleDelete = (place) => {
-    setPlaceToDelete(place); // Set the place to delete
-    setOpenConfirmDialog(true); // Open the confirmation dialog
+  const getEtageFromIndex = (index) => {
+    const etages = ["Rez-de-chaussée", "Étage 1", "Étage 2"];
+    return etages[index] || "Étape inconnue"; // Retourne un message par défaut si l'index est invalide
   };
 
-  // Confirm the deletion
+  const handleDelete = (place) => {
+    setPlaceToDelete(place);
+    setOpenConfirmDialog(true);
+  };
+
   const handleConfirmDelete = async () => {
     if (placeToDelete) {
       try {
@@ -109,16 +107,14 @@ const PlaceParking = () => {
         setFeedbackMessage({ success: "", error: "Erreur lors de la suppression de la place." });
       }
     }
-    setOpenConfirmDialog(false); // Close the confirmation dialog
+    setOpenConfirmDialog(false);
   };
 
-  // Cancel the deletion
   const handleCancelDelete = () => {
-    setOpenConfirmDialog(false); // Close the confirmation dialog
-    setPlaceToDelete(null); // Reset the place to delete
+    setOpenConfirmDialog(false);
+    setPlaceToDelete(null);
   };
 
-  // Pagination calculations
   const indexOfLastPlace = page * placesPerPage;
   const indexOfFirstPlace = indexOfLastPlace - placesPerPage;
   const currentPlaces = places.slice(indexOfFirstPlace, indexOfLastPlace);
@@ -133,14 +129,13 @@ const PlaceParking = () => {
         + Ajouter une Place
       </Button>
 
-      {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth>
         <DialogTitle textAlign="center">
           {editingPlace ? "Modifier une Place" : "Ajouter une Place"}
         </DialogTitle>
         <DialogContent>
           <TextField
-          color="success"
+            color="success"
             label="Numéro"
             name="numero"
             value={placeData.numero}
@@ -149,11 +144,12 @@ const PlaceParking = () => {
             fullWidth
             required
             sx={{ mt: 2 }}
+            disabled={!!editingPlace}
           />
           <FormControl fullWidth required sx={{ mt: 2 }}>
             <InputLabel>État</InputLabel>
             <Select
-            color="success"
+              color="success"
               name="etat"
               value={placeData.etat}
               onChange={handleChange}
@@ -164,23 +160,33 @@ const PlaceParking = () => {
               <MenuItem value="Occupée">Occupée</MenuItem>
             </Select>
           </FormControl>
+          <FormControl fullWidth required sx={{ mt: 2 }}>
+            <InputLabel>Étage</InputLabel>
+            <Select
+              color="success"
+              name="etage"
+              value={placeData.etage}
+              onChange={handleChange}
+              label="Étage"
+              required
+              disabled={!!editingPlace}
+            >
+              <MenuItem value="0">Rez-de-chaussée</MenuItem>
+              <MenuItem value="1">Étage 1</MenuItem>
+              <MenuItem value="2">Étage 2</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">
             Annuler
           </Button>
-          <Button
-            onClick={handleSubmit}
-            color="success"
-            variant="contained"
-            
-          >
+          <Button onClick={handleSubmit} color="success" variant="contained">
             {editingPlace ? "Modifier" : "Ajouter"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Feedback Snackbar */}
       <Snackbar
         open={!!(feedbackMessage.success || feedbackMessage.error)}
         autoHideDuration={6000}
@@ -188,12 +194,12 @@ const PlaceParking = () => {
         message={feedbackMessage.success || feedbackMessage.error}
       />
 
-      {/* Parking Places Table */}
       <Table sx={{ mt: 3.5 }}>
         <TableHead>
           <TableRow>
             <TableCell style={{ fontWeight: "bold" }}>Numéro</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>État</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Étage</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -202,6 +208,7 @@ const PlaceParking = () => {
             <TableRow key={place.id}>
               <TableCell>{place.numero}</TableCell>
               <TableCell>{place.etat}</TableCell>
+              <TableCell>{getEtageFromIndex(place.etage)}</TableCell>
               <TableCell>
                 <IconButton color="primary" onClick={() => openDialogForEdit(place)}>
                   <EditIcon />
@@ -215,7 +222,6 @@ const PlaceParking = () => {
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Pagination
           count={Math.ceil(places.length / placesPerPage)}
@@ -225,7 +231,6 @@ const PlaceParking = () => {
         />
       </Box>
 
-      {/* Confirmation Delete Dialog */}
       <Dialog open={openConfirmDialog} onClose={handleCancelDelete}>
         <DialogTitle>Confirmation de suppression</DialogTitle>
         <DialogContent>
