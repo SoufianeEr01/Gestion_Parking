@@ -238,6 +238,16 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.EmploiPersonnelController",
+    "Method": "GetEmploiPersonnels",
+    "RelativePath": "api/EmploiPersonnel/personnel",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.EmploiPersonnelController",
     "Method": "GetEmploiByPersonnel",
     "RelativePath": "api/EmploiPersonnel/personnel/{personnelId}",
     "HttpMethod": "GET",
@@ -330,6 +340,22 @@
     "ContainingType": "Gestion_Parking.Controllers.EmploisController",
     "Method": "GetEmploisByGroupe",
     "RelativePath": "api/Emplois/group/{groupeId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.EmploisController",
+    "Method": "GetJoursByGroupe",
+    "RelativePath": "api/Emplois/jour/{groupeId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -510,6 +536,48 @@
     "Parameters": [
       {
         "Name": "personneId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.PaiementController",
+    "Method": "GetPaiements",
+    "RelativePath": "api/Paiement",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.PaiementController",
+    "Method": "PostPaiement",
+    "RelativePath": "api/Paiement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "paiement",
+        "Type": "Gestion_Parking.Models.Paiement",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.PaiementController",
+    "Method": "GetPaiementById",
+    "RelativePath": "api/Paiement/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -780,14 +848,14 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.ReservationController",
-    "Method": "GetReservationById",
-    "RelativePath": "api/Reservation/{id}",
+    "Method": "GetReservationsById",
+    "RelativePath": "api/Reservation/{id_personne}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "id_personne",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -826,6 +894,48 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ArchiverReservations",
+    "RelativePath": "api/Reservation/ArchiverReservations",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ExistingReservationForPersonne",
+    "RelativePath": "api/Reservation/ExistingReservationForPersonne/{personneId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personneId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "GetReservationsByNom",
+    "RelativePath": "api/Reservation/nom/{nom_personne}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nom_personne",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

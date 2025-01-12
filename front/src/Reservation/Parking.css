@@ -6,12 +6,12 @@
   }
   
   /* Global styles */
-  body {
+  /* body {
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     background-color: #f7f9fc;
     color: #212121;
   }
-  
+   */
   /* Container */
   .parking-container {
     padding: 24px;
@@ -59,6 +59,7 @@
     grid-template-columns: repeat(5, minmax(80px, 1fr)); /* Par défaut, 5 colonnes */
     gap: 16px; /* Espacement entre les places */
     justify-content: center; /* Centre la grille horizontalement */
+    margin-top: 15px;
   }
   
   /* Parking Spot */

@@ -29,7 +29,7 @@ const ContactPage = () => {
         background: 'linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%)',
         minHeight: '100vh',
         py: 8,
-        marginTop: 4,
+        marginTop: 2,
       }}
     >
       <Container maxWidth="lg">

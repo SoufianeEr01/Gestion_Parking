@@ -16,7 +16,7 @@ import EtudiantApi from "../Api/EtudiantApi";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import EmailIcon from "@mui/icons-material/Email";
 import ContactTab from "../Acceuil/ContactTab";
-import EmploisList from "./Emplois";
+import EmploisList from "./Emploi/Emplois";
 
 const ProfilePageUti = ({ onClose }) => {
   const [userData, setUserData] = useState({
@@ -176,7 +176,6 @@ const ProfilePageUti = ({ onClose }) => {
         <Tab label="Informations Personnelles" />
         <Tab label="Paramètres du compte" />
         <Tab label="Contacts" />
-        <Tab label="Emplois -Semester 1" />
       </Tabs>
 
       {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
@@ -275,12 +274,7 @@ const ProfilePageUti = ({ onClose }) => {
       <ContactTab userEmail={userData.email} />
       </Box>
 )}
-{activeTab === 3 && (
-      <Box sx={{ mt: 3 }}>
-      <EmploisList userId={userData.id} userDisc={userData.discriminator} />
 
-      </Box>
-)}
     </Container>
   );
 };

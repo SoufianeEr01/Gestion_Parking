@@ -1,48 +1,27 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  IconButton,
   Snackbar,
   Typography,
-  
   Pagination,
+  InputAdornment,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import ReservationApi from "../../Api/ReservationApi";
+import SearchIcon from "@mui/icons-material/Search";
 
 function Reservation() {
-  const defaultReservation = {
-    date: "",
-    heureDebut: "",
-    heureFin: "",
-    lieu: "",
-    personne_id: "",
-    placeParking_id: "",
-  };
-
   const [reservations, setReservations] = useState([]);
-  const [newReservation, setNewReservation] = useState(defaultReservation);
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [dialogs, setDialogs] = useState({ add: false, edit: false, confirm: false });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [reservationToDelete, setReservationToDelete] = useState(null);
-   const [page, setPage] = useState(1);
-  const placesPerPage = 5;
-  // Pagination states
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(6); // Number of reservations per page
+  const [filterText, setFilterText] = useState(""); // State for filter text
 
   const fetchReservations = async () => {
     try {
@@ -57,242 +36,134 @@ function Reservation() {
     fetchReservations();
   }, []);
 
-  const validateFields = () => {
-    const { date, heureDebut, heureFin, lieu, personne_id, placeParking_id } = newReservation;
-    const today = new Date().toISOString().split("T")[0]; // Format 'YYYY-MM-DD'
-
-    if (!date || !heureDebut || !heureFin || !lieu || !personne_id || !placeParking_id) {
-      setErrorMessage("Tous les champs sont obligatoires.");
-      return false;
-    }
-
-    if (date < today) {
-      setErrorMessage("La date doit être aujourd'hui ou dans le futur.");
-      return false;
-    }
-
-    return true;
+  // Handle filter change
+  const handleFilterChange = (event) => {
+    setFilterText(event.target.value);
+    setPage(1); // Reset to the first page when the filter changes
   };
 
-  const addReservation = async () => {
-    if (!validateFields()) return;
+  // Filter reservations based on the name
+  const filteredReservations = reservations.filter((reservation) =>
+    reservation.nomPersonne.toLowerCase().includes(filterText.toLowerCase()) ||
+    reservation.prenomPersonne.toLowerCase().includes(filterText.toLowerCase())
+  );
 
-    try {
-      await ReservationApi.createReservation(newReservation);
-      setSuccessMessage("Réservation ajoutée avec succès !");
-      setDialogs({ ...dialogs, add: false });
-      setNewReservation(defaultReservation);
-      fetchReservations();
-    } catch (error) {
-      setErrorMessage("Erreur lors de la création de la réservation.");
-    }
-  };
+  // Slice the reservations for the current page
+  const paginatedReservations = filteredReservations.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
 
-  const updateReservation = async () => {
-    if (!validateFields()) return;
-
-    try {
-      await ReservationApi.updateReservation(selectedReservation.id, newReservation);
-      setSuccessMessage("Réservation mise à jour avec succès !");
-      setDialogs({ ...dialogs, edit: false });
-      fetchReservations();
-    } catch (error) {
-      setErrorMessage("Erreur lors de la mise à jour de la réservation.");
-    }
-  };
-
-  const deleteReservation = async () => {
-    try {
-      await ReservationApi.deleteReservation(reservationToDelete.id);
-      setSuccessMessage("Réservation supprimée avec succès !");
-      setDialogs({ ...dialogs, confirm: false });
-      fetchReservations();
-    } catch (error) {
-      setErrorMessage("Erreur lors de la suppression de la réservation.");
-    }
-  };
-
-  const handleInputChange = (field, value) => {
-    setNewReservation({ ...newReservation, [field]: value });
-  };
-
-  // Pagination handlers
+  // Handle page change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   return (
     <Box sx={{ padding: 3 }}>
-      <Button variant="contained" color="success" onClick={() => setDialogs({ ...dialogs, add: true })}>
-        +Ajouter une réservation
-      </Button>
-      <Table sx={{ mt: 3.5 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell style={{ fontWeight: "bold" }}>Date</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Heure Début</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Heure Fin</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Lieu</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Personne ID</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Place Parking ID</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {reservations.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((reservation) => (
-            <TableRow key={reservation.id}>
-              <TableCell>{reservation.date}</TableCell>
-              <TableCell>{reservation.heureDebut}</TableCell>
-              <TableCell>{reservation.heureFin}</TableCell>
-              <TableCell>{reservation.lieu}</TableCell>
-              <TableCell>{reservation.personne_id}</TableCell>
-              <TableCell>{reservation.placeParking_id}</TableCell>
-              <TableCell>
-                <IconButton
-                  color="primary"
-                  onClick={() => {
-                    setSelectedReservation(reservation);
-                    setNewReservation(reservation);
-                    setDialogs({ ...dialogs, edit: true });
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  color="error"
-                  onClick={() => {
-                    setReservationToDelete(reservation);
-                    setDialogs({ ...dialogs, confirm: true });
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      {/* Filter TextField */}
+      <TextField
+        
+        label="Filtrer par nom"
+        variant="outlined"
+        value={filterText}
+        color="success"
+        width="50%"
+        onChange={handleFilterChange}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon color="success" />
+            </InputAdornment>
+          ),
+        }}
 
-      {/* Pagination */}
-       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <Pagination
-                count={Math.ceil(reservations.length / placesPerPage-1)}
-                page={page}
-                onChange={(e, newPage) => setPage(newPage)}
-                color="success"
-              />
-            </Box>
+        sx={{
+          mb: 2,
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "10px",
+          },
+          "& .MuiInputLabel-root": {
+            fontWeight: "bold",
+          },
+          "& .MuiOutlinedInput-input": {
+            padding: "12px 14px",
+            fontSize: "16px",
+          },
+        }}
+      />
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={dialogs.add || dialogs.edit} onClose={() => setDialogs({ add: false, edit: false })}>
-        <DialogTitle>{dialogs.add ? "Ajouter une réservation" : "Modifier la réservation"}</DialogTitle>
-        <DialogContent>
-          <TextField
-            color="success"
-            label="Date"
-            type="date"
-            fullWidth
-            margin="normal"
-            required
-            value={newReservation.date}
-            onChange={(e) => handleInputChange("date", e.target.value)}
-          />
-          <TextField
-            color="success"
-            label="Heure Début"
-            type="time"
-            fullWidth
-            margin="normal"
-            required
-            value={newReservation.heureDebut}
-            onChange={(e) => handleInputChange("heureDebut", e.target.value)}
-          />
-          <TextField
-            color="success"
-            label="Heure Fin"
-            type="time"
-            fullWidth
-            margin="normal"
-            required
-            value={newReservation.heureFin}
-            onChange={(e) => handleInputChange("heureFin", e.target.value)}
-          />
-          <TextField
-            color="success"
-            label="Lieu"
-            fullWidth
-            margin="normal"
-            required
-            value={newReservation.lieu}
-            onChange={(e) => handleInputChange("lieu", e.target.value)}
-          />
-          <TextField
-            color="success"
-            label="Personne ID"
-            fullWidth
-            margin="normal"
-            required
-            value={newReservation.personne_id}
-            onChange={(e) => handleInputChange("personne_id", e.target.value)}
-            disabled={dialogs.edit}
-          />
-          <TextField
-            color="success"
-            label="Place Parking ID"
-            fullWidth
-            margin="normal"
-            required
-            value={newReservation.placeParking_id}
-            onChange={(e) => handleInputChange("placeParking_id", e.target.value)}
-            disabled={dialogs.edit}
+      {/* Display message if no reservations are found */}
+      {filteredReservations.length === 0 ? (
+        <Typography
+          variant="h6"
+          align="center"
+          color="textSecondary"
+          sx={{ mt: 5 }}
+        >
+          Aucune réservation trouvée pour cet utilisateur.
+        </Typography>
+      ) : (
+        <>
+          {/* Display table if there are reservations */}
+          <Table sx={{ mt: 3.5, width: "100%" }}>
+            <TableHead>
+              <TableRow>
+                <TableCell style={{ fontWeight: "bold" }}>Date</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Heure Début</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Heure Fin</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Nom & Prénom</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Groupe</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Numéro du Place</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Lieu</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Etat</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedReservations.map((reservation) => (
+                <TableRow key={reservation.id}>
+                  <TableCell>{reservation.dateReservation}</TableCell>
+                  <TableCell>{reservation.heureDebut}</TableCell>
+                  <TableCell>{reservation.heureFin}</TableCell>
+                  <TableCell>
+                    {reservation.nomPersonne} {reservation.prenomPersonne}
+                  </TableCell>
+                  <TableCell>{reservation.nomGroupe}</TableCell>
+                  <TableCell>{reservation.numeroPlace}</TableCell>
+                  <TableCell>{reservation.lieuReservation}</TableCell>
+                  <TableCell>{reservation.etatReservation}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button color="black" onClick={() => setDialogs({ add: false, edit: false })}>
-            Annuler
-          </Button>
-          <Button
-            color="success"
-            variant="contained"
-            onClick={dialogs.add ? addReservation : updateReservation}
-          >
-            {dialogs.add ? "Ajouter" : "Modifier"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          {/* Pagination */}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Pagination
+              count={Math.ceil(filteredReservations.length / rowsPerPage)}
+              page={page}
+              onChange={handleChangePage}
+              color="success"
+              sx={{ mt: 2 }}
+            />
+          </Box>
+        </>
+      )}
 
-      {/* Confirmation Dialog */}
-      <Dialog open={dialogs.confirm} onClose={() => setDialogs({ ...dialogs, confirm: false })}>
-        <DialogTitle style={{textAlign:'center'}}>Supprimer la réservation</DialogTitle>
-        <DialogContent>
-          <Typography>Êtes-vous sûr de vouloir supprimer cette réservation ?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogs({ ...dialogs, confirm: false })} color="Black">Annuler</Button>
-          <Button color="error" variant="contained" onClick={deleteReservation}>
-            Supprimer
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Success/Error Snackbar */}
+      {/* Snackbar for success and error messages */}
       <Snackbar
-        open={Boolean(successMessage)}
-        autoHideDuration={3000}
+        open={!!successMessage}
+        autoHideDuration={6000}
         onClose={() => setSuccessMessage("")}
         message={successMessage}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
       <Snackbar
-        open={Boolean(errorMessage)}
-        autoHideDuration={3000}
+        open={!!errorMessage}
+        autoHideDuration={6000}
         onClose={() => setErrorMessage("")}
         message={errorMessage}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>
   );

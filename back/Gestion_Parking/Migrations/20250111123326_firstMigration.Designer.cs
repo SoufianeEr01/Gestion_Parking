@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250109103943_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250111123326_firstMigration")]
+    partial class firstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,6 +78,38 @@ namespace Gestion_Parking.Migrations
                     b.HasIndex("Groupe_Id");
 
                     b.ToTable("Emplois");
+                });
+
+            modelBuilder.Entity("Gestion_Parking.Models.EmploiPersonnel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<TimeSpan>("HeureDebut")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("HeureFin")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Jour")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("PersonnelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonnelId");
+
+                    b.ToTable("EmploiPersonnels");
                 });
 
             modelBuilder.Entity("Gestion_Parking.Models.Groupe", b =>
@@ -272,6 +304,17 @@ namespace Gestion_Parking.Migrations
                     b.Navigation("Groupe");
                 });
 
+            modelBuilder.Entity("Gestion_Parking.Models.EmploiPersonnel", b =>
+                {
+                    b.HasOne("Gestion_Parking.Models.Personnel", "Personnel")
+                        .WithMany("EmploiPersonnels")
+                        .HasForeignKey("PersonnelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Personnel");
+                });
+
             modelBuilder.Entity("Gestion_Parking.Models.Reponse", b =>
                 {
                     b.HasOne("Gestion_Parking.Models.Contact", "Contact")
@@ -343,6 +386,8 @@ namespace Gestion_Parking.Migrations
 
             modelBuilder.Entity("Gestion_Parking.Models.Personnel", b =>
                 {
+                    b.Navigation("EmploiPersonnels");
+
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618

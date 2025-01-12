@@ -38,19 +38,19 @@ const PaiementApi = {
 
   // Fonction pour récupérer tous les paiements
   fetchPaiements: async () => {
-    const url = `${BASE_URL}/Paiements`;
+    const url = `${BASE_URL}/Paiement`;
     return await PaiementApi.get(url);
   },
 
   // Fonction pour récupérer un paiement par ID
   fetchPaiementById: async (id) => {
-    const url = `${BASE_URL}/Paiements/${id}`;
+    const url = `${BASE_URL}/Paiement/${id}`;
     return await PaiementApi.get(url);
   },
 
   // Fonction pour créer un paiement
   createPaiement: async (paiement) => {
-    const url = `${BASE_URL}/Paiements`;
+    const url = `${BASE_URL}/Paiement`;
     return await PaiementApi.post(url, paiement);
   },
   

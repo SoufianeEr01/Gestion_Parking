@@ -1,20 +1,23 @@
 export const slides = [
   {
     image: '/images/pixel.jpg',
-    title: 'Discover Excellence',
-    description: 'Experience unparalleled service and quality in everything we do',
-    ctaText: 'Book Now'
+    title: 'Réservez Facilement',
+    description: 'Gérez vos réservations de parking en toute simplicité !',
+    ctaText: 'Reserver',
+    url:'/parking'
   },
   {
     image: '/images/pixel2.jpg',
-    title: 'Premium Quality',
-    description: 'Every detail crafted to perfection, every moment designed for you',
-    ctaText: 'Learn More'
+    title: 'Parking Intelligent',
+    description: 'Optimisez votre stationnement selon votre emploi du temps !',
+    ctaText: 'Parking',
+    url:'/parking'
   },
   {
     image: '/images/pixels3.jpg',
-    title: 'Natural Beauty',
-    description: 'Immerse yourself in the breathtaking landscapes and serene moments',
-    ctaText: 'Explore'
+    title: 'Solution Pratique',
+    description: 'Planifiez votre stationnement en avance !',
+    ctaText: 'Stationner',
+    url:'/parking'
   }
 ];

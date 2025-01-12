@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250106202811_firstMigratio")]
-    partial class firstMigratio
+    [Migration("20250112121122_firstMigration1")]
+    partial class firstMigration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,6 +129,31 @@ namespace Gestion_Parking.Migrations
                     b.ToTable("Groupes");
                 });
 
+            modelBuilder.Entity("Gestion_Parking.Models.Paiement", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("mode_paiement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("personne_id")
+                        .HasColumnType("int");
+
+                    b.Property<float>("prix_paye")
+                        .HasColumnType("real");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("personne_id");
+
+                    b.ToTable("Paiements");
+                });
+
             modelBuilder.Entity("Gestion_Parking.Models.Personne", b =>
                 {
                     b.Property<int>("id")
@@ -173,6 +198,12 @@ namespace Gestion_Parking.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateOnly?>("dateFinReservation")
+                        .HasColumnType("date");
+
+                    b.Property<int>("etage")
+                        .HasColumnType("int");
 
                     b.Property<string>("etat")
                         .IsRequired()
@@ -227,6 +258,10 @@ namespace Gestion_Parking.Migrations
 
                     b.Property<DateOnly>("date")
                         .HasColumnType("date");
+
+                    b.Property<string>("etat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeOnly>("heureDebut")
                         .HasColumnType("time");
@@ -309,6 +344,17 @@ namespace Gestion_Parking.Migrations
                     b.Navigation("Personnel");
                 });
 
+            modelBuilder.Entity("Gestion_Parking.Models.Paiement", b =>
+                {
+                    b.HasOne("Gestion_Parking.Models.Personne", "Personne")
+                        .WithMany("Paiements")
+                        .HasForeignKey("personne_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Personne");
+                });
+
             modelBuilder.Entity("Gestion_Parking.Models.Reponse", b =>
                 {
                     b.HasOne("Gestion_Parking.Models.Contact", "Contact")
@@ -366,6 +412,11 @@ namespace Gestion_Parking.Migrations
                     b.Navigation("Emplois");
 
                     b.Navigation("Etudiants");
+                });
+
+            modelBuilder.Entity("Gestion_Parking.Models.Personne", b =>
+                {
+                    b.Navigation("Paiements");
                 });
 
             modelBuilder.Entity("Gestion_Parking.Models.PlaceParking", b =>

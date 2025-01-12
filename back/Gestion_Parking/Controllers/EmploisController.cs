@@ -78,38 +78,72 @@ namespace Gestion_Parking.Controllers
         public IActionResult GetEmploisByGroupe(int groupeId)
         {
             var emplois = new List<Emploi>();
+
             try
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    // Requête SQL pour récupérer les emplois du groupe spécifié
-                    string sql = "SELECT Jour, DateDebut, DateFin, Groupe_Id FROM Emplois WHERE Groupe_Id = @Groupe_Id";
+
+                    // Requête SQL
+                    string sql = @"
+                SELECT Jour, DateDebut, DateFin, Groupe_Id 
+                FROM Emplois 
+                WHERE Groupe_Id = @Groupe_Id
+                ORDER BY 
+                    CASE 
+                        WHEN Jour = 'Lundi' THEN 1
+                        WHEN Jour = 'Mardi' THEN 2
+                        WHEN Jour = 'Mercredi' THEN 3
+                        WHEN Jour = 'Jeudi' THEN 4
+                        WHEN Jour = 'Vendredi' THEN 5
+                        WHEN Jour = 'Samedi' THEN 6
+                        ELSE 7
+                    END;
+            ";
+
                     using (var command = new SqlCommand(sql, connection))
                     {
+                        // Ajout du paramètre SQL
                         command.Parameters.AddWithValue("@Groupe_Id", groupeId);
 
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                // Ajout des logs pour vérifier les données lues
-                                _logger.LogInformation("Lecture d'un emploi: Jour={Jour}, DateDebut={DateDebut}, DateFin={DateFin}, Groupe_Id={Groupe_Id}",
-                                    reader["Jour"], reader["DateDebut"], reader["DateFin"], reader["Groupe_Id"]);
-
-                                emplois.Add(new Emploi
+                                try
                                 {
-                                    Jour = Enum.Parse<Jour>(reader.GetString(0)), // Vérifiez que "Jour" est bien une chaîne dans la base de données
-                                    DateDebut = reader.GetTimeSpan(1),
-                                    DateFin = reader.GetTimeSpan(2),
-                                    Groupe_Id = reader.GetInt32(3)
-                                });
+                                    // Récupération des données de la ligne
+                                    var jourString = reader.IsDBNull(0) ? null : reader.GetString(0);
+                                    var dateDebut = reader.IsDBNull(1) ? (TimeSpan?)null : reader.GetTimeSpan(1);
+                                    var dateFin = reader.IsDBNull(2) ? (TimeSpan?)null : reader.GetTimeSpan(2);
+                                    var groupeIdFromDb = reader.IsDBNull(3) ? (int?)null : reader.GetInt32(3);
+
+                                    if (!string.IsNullOrEmpty(jourString) && Enum.TryParse<Jour>(jourString, true, out var jour))
+                                    {
+                                        emplois.Add(new Emploi
+                                        {
+                                            Jour = jour,
+                                            DateDebut = dateDebut ?? TimeSpan.Zero,
+                                            DateFin = dateFin ?? TimeSpan.Zero,
+                                            Groupe_Id = groupeIdFromDb ?? 0
+                                        });
+                                    }
+                                    else
+                                    {
+                                        _logger.LogWarning("Jour non valide trouvé : {Jour}", jourString);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(ex, "Erreur lors du traitement d'une ligne d'emploi.");
+                                }
                             }
                         }
                     }
                 }
 
-                if (emplois.Count == 0)
+                if (!emplois.Any())
                 {
                     _logger.LogWarning("Aucun emploi trouvé pour le groupe avec l'ID {GroupeId}", groupeId);
                     return NotFound($"Aucun emploi trouvé pour le groupe avec l'ID {groupeId}.");
@@ -123,6 +157,71 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue lors de la récupération des emplois.");
             }
         }
+
+        //
+        [Authorize(Policy = "Admin")]
+        [HttpGet("jour/{groupeId}")]
+        public IActionResult GetJoursByGroupe(int groupeId)
+        {
+            var emplois = new List<Emploi>();
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Corrected SQL query to use the groupeId parameter
+                    string sql = @"SELECT jour FROM emplois WHERE Groupe_Id = @Groupe_Id";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        // Add the groupeId parameter to the query
+                        command.Parameters.AddWithValue("@Groupe_Id", groupeId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                try
+                                {
+                                    // Safely read the "jour" column
+                                    var jourString = reader.IsDBNull(0) ? null : reader.GetString(0);
+
+                                    if (!string.IsNullOrEmpty(jourString) && Enum.TryParse<Jour>(jourString, true, out var jour))
+                                    {
+                                        emplois.Add(new Emploi
+                                        {
+                                            Jour = jour,
+                                        });
+                                    }
+                                    else
+                                    {
+                                        _logger.LogWarning("Jour non valide trouvé : {Jour}", jourString);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    // Log errors related to reading rows
+                                    _logger.LogError(ex, "Erreur lors du traitement d'une ligne d'emploi.");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return Ok(emplois); // Return the list of emplois
+            }
+            catch (Exception ex)
+            {
+                // Log the error and return a 500 status code
+                _logger.LogError(ex, "Erreur lors de la récupération des emplois pour le groupe avec l'ID {GroupeId}", groupeId);
+                return StatusCode(500, "Une erreur est survenue lors de la récupération des emplois.");
+            }
+        }
+
+
+
 
         // Nouvelle fonction : Récupérer les emplois par ID d'étudiant
         [Authorize(Policy = "EtudiantOuAdmin")]

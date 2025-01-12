@@ -2,22 +2,31 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Gestion_Parking.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion_Parking.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous] // Ajout de la politique pour sécuriser l'accès (à ajuster en fonction de vos besoins)
-    public class PaiementsController : ControllerBase
+    [AllowAnonymous] // Ajuster en fonction des besoins
+    public class PaiementController : ControllerBase
     {
-        private readonly string connectionString;
+        private readonly string _connectionString;
+        private readonly ILogger<PaiementController> _logger;
 
-        public PaiementsController(IConfiguration configuration)
+        public PaiementController(IConfiguration configuration, ILogger<PaiementController> logger)
         {
-            connectionString = configuration["ConnectionStrings:DefaultConnection"] ?? "";
+            // Vérifiez si la chaîne de connexion est valide
+            _connectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                throw new ArgumentNullException(nameof(_connectionString), "La chaîne de connexion ne peut pas être nulle ou vide.");
+            }
+
+            _logger = logger;
         }
 
         // GET: api/Paiements
@@ -26,25 +35,39 @@ namespace Gestion_Parking.Controllers
         {
             try
             {
-                var paiements = new List<Paiement>();
+                var paiements = new List<object>();
 
-                using (var connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT id, mode_paiement, prix_paye, personne_id FROM Paiements";
+                    const string query = @"SELECT 
+                                                pa.id AS PaiementID, 
+                                                pa.mode_paiement, 
+                                                pa.prix_paye, 
+                                                pr.nom, 
+                                                pr.prenom, 
+                                                pr.id AS PersonneID,
+                                                pr.email
+                                            FROM paiements pa
+                                            JOIN Personnes pr ON pa.personne_id = pr.id";
 
                     using (var command = new SqlCommand(query, connection))
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            paiements.Add(new Paiement
+                            var paiement = new
                             {
-                                id = reader.GetInt32(0),
-                                mode_paiement = reader.GetString(1),
-                                prix_paye = reader.GetFloat(2),
-                                personne_id = reader.GetInt32(3)
-                            });
+                                PaiementID = reader.GetInt32(0),
+                                ModePaiement = reader.GetString(1),
+                                PrixPaye = reader.GetFloat(2),
+                                NomPersonne = reader.GetString(3),
+                                PrenomPersonne = reader.GetString(4),
+                                PersonneID = reader.GetInt32(5),
+                                Email = reader.GetString(6)
+                            };
+
+                            paiements.Add(paiement);
                         }
                     }
                 }
@@ -53,7 +76,7 @@ namespace Gestion_Parking.Controllers
             }
             catch (Exception ex)
             {
-                // Loggez l'erreur pour le diagnostic
+                _logger.LogError(ex, "Erreur lors de la récupération des paiements.");
                 return StatusCode(500, "Une erreur s'est produite lors de la récupération des paiements.");
             }
         }
@@ -66,7 +89,7 @@ namespace Gestion_Parking.Controllers
             {
                 Paiement paiement = null;
 
-                using (var connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
                     string query = "SELECT id, mode_paiement, prix_paye, personne_id FROM Paiements WHERE id = @Id";
@@ -115,7 +138,7 @@ namespace Gestion_Parking.Controllers
 
             try
             {
-                using (var connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
                     string insertQuery = "INSERT INTO Paiements (mode_paiement, prix_paye, personne_id) " +

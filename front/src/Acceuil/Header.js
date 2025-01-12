@@ -184,16 +184,16 @@ import PersonnelApi from "../Api/PersonnelApi";
 import ProfilePageUti from "./ProfilUti";
 import { Logout, AccountCircle } from "@mui/icons-material";
 
-
 const pages = [
   { name: "Accueil", id: "acceuil", path: "/" },
   { name: "À propos", id: "about", path: "/about" },
   { name: "Réservation", id: "reservation", path: "/parking" },
   { name: "Contact", id: "contact", path: "/contact" },
+  { name: "Emploi", id: "emploi", path: "/emploi" },
 ];
 
 const Header = () => {
-  const [etudiant, setEtudiant] = useState({});
+  const [etudiant, setEtudiant] = useState(null); // Modifié pour null pour mieux gérer l'état
   const [loading, setLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -306,27 +306,23 @@ const Header = () => {
               {/* Profil */}
               {!loading && etudiant?.nom && (
                 <>
-                
-                    
-                  
-                    <Avatar sx={{ bgcolor: "rgb(255, 255, 255)",color:'Black' }} onClick={handleProfileClick}>
-                      {etudiant.nom[0]?.toUpperCase()|| "?"}
-                    </Avatar>
-                  
-                    <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleProfileClose}
-                sx={{ mt: "8px" }}
-              >
+                  <Avatar sx={{ bgcolor: "rgb(255, 255, 255)", color: "Black" }} onClick={handleProfileClick}>
+                    {etudiant.nom[0]?.toUpperCase() || "?"}
+                  </Avatar>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleProfileClose}
+                    sx={{ mt: "8px" }}
+                  >
                     <MenuItem onClick={openProfileDialog}>
-                  <AccountCircle sx={{ mr: 1 }} />
-                  Mon profil
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <Logout sx={{ mr: 1 }} />
-                  Déconnexion
-                </MenuItem>
+                      <AccountCircle sx={{ mr: 1 }} />
+                      Mon profil
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>
+                      <Logout sx={{ mr: 1 }} />
+                      Déconnexion
+                    </MenuItem>
                   </Menu>
                 </>
               )}

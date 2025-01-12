@@ -6,90 +6,36 @@ const BASE_URL = "https://localhost:7031/api";
 // Fonction pour récupérer les en-têtes d'authentification
 const getAuthHeaders = () => {
   const token = sessionStorage.getItem('jwtToken');
-  if (!token) {
-    throw new Error("Token d'authentification manquant");
-  }
+  if (!token) throw new Error("Token d'authentification manquant");
   return {
-    'Authorization': `Bearer ${token}`, // Use backticks here
+    'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json',
   };
 };
 
-
 const EmploiApi = {
-  // Fonction générique pour effectuer des appels GET
-  get: async (url) => {
+  // Fonction générique pour effectuer des appels API
+  request: async (method, url, data = null) => {
     try {
-      const response = await axios.get(url, { headers: getAuthHeaders() });
+      const config = { headers: getAuthHeaders() };
+      const response = method === 'get' || method === 'delete'
+        ? await axios[method](url, config)
+        : await axios[method](url, data, config);
       return response.data;
     } catch (error) {
-      console.error("Erreur lors de l'appel GET:", error);
+      console.error(`Erreur lors de l'appel ${method.toUpperCase()}:`, error);
       throw error.response?.data || error.message;
     }
   },
 
-  // Fonction générique pour effectuer des appels POST
-  post: async (url, data) => {
-    try {
-      const response = await axios.post(url, data, { headers: getAuthHeaders() });
-      return response.data;
-    } catch (error) {
-      console.error("Erreur lors de l'appel POST:", error);
-      throw error.response?.data || error.message;
-    }
-  },
-
-  // Fonction générique pour effectuer des appels PUT
-  put: async (url, data) => {
-    try {
-      const response = await axios.put(url, data, { headers: getAuthHeaders() });
-      return response.data;
-    } catch (error) {
-      console.error("Erreur lors de l'appel PUT:", error);
-      throw error.response?.data || error.message;
-    }
-  },
-
-  // Fonction générique pour effectuer des appels DELETE
-  delete: async (url) => {
-    try {
-      await axios.delete(url, { headers: getAuthHeaders() });
-    } catch (error) {
-      console.error("Erreur lors de l'appel DELETE:", error);
-      throw error.response?.data || error.message;
-    }
-  },
-// Récupérer les emplois par groupe
-fetchEmploisByGroupe: (groupeId) => {
-  return EmploiApi.get(`${BASE_URL}/Emplois/group/${groupeId}`); // Use backticks
-},
-
-// Créer un emploi
-createEmploi: (emploiData) => {
-  return EmploiApi.post(`${BASE_URL}/Emplois`, emploiData); // Use backticks
-},
-
-// Récupérer un emploi par jour
-fetchEmploiByJour: (jour) => {
-  return EmploiApi.get(`${BASE_URL}/Emplois/${jour}`); // Fix incorrect backticks
-},
-
-// Récupérer les emplois par étudiant
-fetchEmploiByIdEtudiant: (idEtudiant) => {
-  return EmploiApi.get(`${BASE_URL}/Emplois/etudiant/${idEtudiant}`); // Use backticks
-},
-
-// Mettre à jour un emploi
-updateEmploi: (jour, emploiData) => {
-  return EmploiApi.put(`${BASE_URL}/Emplois/${jour}`, emploiData); // Use backticks
-},
-
-// Supprimer un emploi
-deleteEmploi: (jour, confirm) => {
-  return EmploiApi.delete(`${BASE_URL}/Emplois/${jour}?confirm=${confirm}`); // Use backticks
-}
-
-
+  // Appels API spécifiques
+  fetchEmploisByGroupe: (groupeId) => EmploiApi.request('get', `${BASE_URL}/Emplois/group/${groupeId}`),
+  fetchJoursByGroupe: (groupeId) => EmploiApi.request('get', `${BASE_URL}/jour/group/${groupeId}`),
+  createEmploi: (emploiData) => EmploiApi.request('post', `${BASE_URL}/Emplois`, emploiData),
+  fetchEmploiByJour: (jour) => EmploiApi.request('get', `${BASE_URL}/Emplois/${jour}`),
+  fetchEmploiByIdEtudiant: (idEtudiant) => EmploiApi.request('get', `${BASE_URL}/Emplois/etudiant/${idEtudiant}`),
+  updateEmploi: (jour, emploiData) => EmploiApi.request('put', `${BASE_URL}/Emplois/${jour}`, emploiData),
+  deleteEmploi: (jour, confirm) => EmploiApi.request('delete', `${BASE_URL}/Emplois/${jour}?confirm=${confirm}`),
 };
 
 export default EmploiApi;

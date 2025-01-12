@@ -103,7 +103,7 @@ function Parking() {
       {spots[selectedFloor] && (
         <div className="parking-floor">
           <h2>{spots[selectedFloor].name}</h2>
-          <div className="parking-grid">
+          <div className="parking-grid" >
             {spots[selectedFloor].spots.map((spot) => (
               <div
                 key={spot.id}
