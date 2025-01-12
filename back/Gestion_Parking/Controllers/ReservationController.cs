@@ -1063,6 +1063,8 @@ JOIN
                     return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
                 }
             }
+
+
         [HttpPost("ArchiverReservations")]
         public IActionResult ArchiverReservations()
         {
@@ -1073,9 +1075,9 @@ JOIN
                     connection.Open();
 
                     // Requête pour mettre à jour l'état à 'archive' si la date actuelle est supérieure à la date de la réservation
-                    string updateSql = "UPDATE Reservations SET etat = 'archive' WHERE date < @CurrentDate AND etat != 'archive'";
+                    string updateReservationsSql = "UPDATE Reservations SET etat = 'archive' WHERE date < @CurrentDate AND etat != 'archive'";
 
-                    using (var command = new SqlCommand(updateSql, connection))
+                    using (var command = new SqlCommand(updateReservationsSql, connection))
                     {
                         // Ajouter la date actuelle comme paramètre
                         command.Parameters.AddWithValue("@CurrentDate", DateTime.Now.Date); // Utilisez Date pour ne comparer que la date
@@ -1084,7 +1086,29 @@ JOIN
 
                         if (rowsAffected > 0)
                         {
-                            return Ok(new { message = $"{rowsAffected} réservation(s) ont été archivées." });
+                            // Si des réservations ont été archivées, mettre à jour l'état des places de parking
+                            string updatePlacesSql = @"
+                        UPDATE PlaceParkings 
+                        SET etat = 'libre', dateFinReservation = null 
+                        WHERE id IN 
+                        (SELECT DISTINCT P.id 
+                         FROM Reservations R 
+                         JOIN PlaceParkings P ON R.placeParking_id = P.id) 
+                         AND dateFinReservation < GETDATE()";
+
+                            using (var placeCommand = new SqlCommand(updatePlacesSql, connection))
+                            {
+                                int placeRowsAffected = placeCommand.ExecuteNonQuery(); // Exécuter la mise à jour des places
+
+                                if (placeRowsAffected > 0)
+                                {
+                                    return Ok(new { message = $"{rowsAffected} réservation(s) ont été archivées et {placeRowsAffected} place(s) de parking ont été libérées." });
+                                }
+                                else
+                                {
+                                    return Ok(new { message = $"{rowsAffected} réservation(s) ont été archivées, mais aucune place de parking n'a été mise à jour." });
+                                }
+                            }
                         }
                         else
                         {
@@ -1099,6 +1123,7 @@ JOIN
                 return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
             }
         }
+
 
 
 
