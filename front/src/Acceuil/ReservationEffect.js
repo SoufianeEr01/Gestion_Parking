@@ -74,7 +74,7 @@ const ReservationEffect = ({ personne }) => {
   }, [personne]);
 
   const calculateRemainingTime = (endDate) => {
-    const now = new Date(firstDate);
+    const now = new Date();
     const end = new Date(endDate);
     const diff = end - now;
 

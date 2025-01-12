@@ -6,7 +6,7 @@ function PaiementDashboard() {
   const [paiements, setPaiements] = useState([]);
   const [page, setPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState('');
-  const placesPerPage = 5;
+  const placesPerPage = 7;
 
   const fetchPaiements = async () => {
     try {
@@ -30,7 +30,7 @@ function PaiementDashboard() {
   return (
     <Box>
       {errorMessage && <Box color="error.main">{errorMessage}</Box>}
-      <Table sx={{ mt: 3.5 }}>
+      <Table sx={{ mt: 5 }}>
         <TableHead>
           <TableRow>
             <TableCell style={{ fontWeight: 'bold' }}>Nom</TableCell>

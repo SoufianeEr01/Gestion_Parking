@@ -66,7 +66,6 @@ const CreationPersonnelEmploi = ({ open, setOpen}) => {
       const data = await EmploisPersonnelApi.getEmploiByPersonnel(personnelId);
       setEmploisExistants(data);
     } catch (err) {
-      setError("Erreur lors de la récupération des emplois existants.");
     } finally {
       setLoading(false);
     }

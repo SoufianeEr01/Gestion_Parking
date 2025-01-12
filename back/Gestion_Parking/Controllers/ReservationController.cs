@@ -76,15 +76,12 @@ SELECT
     r.etat AS EtatReservation,
     r.lieu AS LieuReservation,
     p.nom AS NomPersonne, 
-    p.prenom AS PrenomPersonne, 
-    g.nom AS NomGroupe, 
+    p.prenom AS PrenomPersonne,  
     pr.numero AS NumeroPlace
 FROM 
     Reservations r
 JOIN 
     Personnes p ON r.personne_id = p.id
-JOIN 
-    Groupes g ON p.GroupeId = g.id
 JOIN 
     PlaceParkings pr ON pr.id = r.placeParking_id";
 
@@ -103,8 +100,7 @@ JOIN
                                 LieuReservation = reader.GetString(5),
                                 NomPersonne = reader.GetString(6),
                                 PrenomPersonne = reader.GetString(7),
-                                NomGroupe = reader.GetString(8),
-                                NumeroPlace = reader.IsDBNull(9) ? null : reader.GetInt32(9).ToString()
+                                NumeroPlace = reader.IsDBNull(8) ? null : reader.GetInt32(8).ToString() // Correction de l'index
                             };
                             reservations.Add(reservation);
                         }
@@ -120,6 +116,7 @@ JOIN
                 return StatusCode(500, new { erreur = ex.Message });
             }
         }
+
 
 
 
