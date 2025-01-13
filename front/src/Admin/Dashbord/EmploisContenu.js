@@ -21,6 +21,7 @@ import {
   FormControl,
   IconButton,
   Typography,
+  Alert
   
   
 } from "@mui/material";
@@ -152,7 +153,7 @@ function EmploisContent() {
       setSuccessMessage("Emploi ajouté avec succès !");
       handleClosed();
     } catch (error) {
-      setError("Erreur lors de l'ajout de l'emploi.");
+      setError("Un emploi existe déjà pour cette journée.");
     }
   };
 
@@ -443,7 +444,7 @@ function EmploisContent() {
       <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogTitle style={{textAlign:'center'}}>{editEmploi ? "Modifier l'Emploi" : "Ajouter un Emploi"}</DialogTitle>
         <DialogContent>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
           <TextField
             label="Jour"
             value={currentEmploi.jour}

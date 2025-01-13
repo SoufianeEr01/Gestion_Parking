@@ -180,7 +180,7 @@ const PlaceParking = () => {
             <TableRow key={place.id}>
               <TableCell>{place.numero}</TableCell>
               <TableCell>{getEtageLabel(place.etage)}</TableCell> {/* Utilisation de la fonction de conversion */}
-              <TableCell>{place.etat}</TableCell>
+              <TableCell style={{ color: place.etat === "libre" ? 'green' : 'red' }}>{place.etat}</TableCell>
               {/* <TableCell>{place.dateFinReservation}</TableCell> */}
               <TableCell>
                 <IconButton color="error" onClick={() => handleDelete(place)}>

@@ -47,7 +47,23 @@ function PaiementDashboard() {
               <TableCell>{p.prenomPersonne}</TableCell>
               <TableCell>{p.email}</TableCell>
               <TableCell>{p.modePaiement}</TableCell>
-              <TableCell>{p.prixPaye} <span style={{ fontWeight: 'bold' }}>MAD</span></TableCell>
+              <TableCell>
+                <span style={{ 
+                  color: '#2e7d32', // Teinte verte attrayante
+                  fontWeight: 'bold', // Rendre le prix plus visible
+                  fontSize: '16px', // Taille de texte légèrement augmentée
+                }}>
+                  {p.prixPaye}
+                </span>
+                <span style={{
+                  color: '#66bb6a', // Variante plus claire pour "MAD"
+                  fontWeight: '600', // Semi-gras pour différencier
+                  marginLeft: '5px', // Espace entre le prix et "MAD"
+                }}>
+                  MAD
+                </span>
+              </TableCell>
+
             </TableRow>
           ))}
         </TableBody>

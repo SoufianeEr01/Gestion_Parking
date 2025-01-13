@@ -23,7 +23,7 @@ function Reservation() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); // Number of reservations per page
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Number of reservations per page
   const [filterText, setFilterText] = useState(""); // Filter for name
   const [filterEtat, setFilterEtat] = useState(""); // Filter for status
   const [filterNumeroPlace, setFilterNumeroPlace] = useState(""); // Filter for number place
