@@ -88,7 +88,7 @@ namespace Gestion_Parking.Controllers
                     string selectSql = @"
                 SELECT Id, Nom, Prenom 
                 FROM Personnes 
-                WHERE Discriminator = 'Personnel' AND Role = 'Administrateur';";
+                WHERE Discriminator = 'Personnel' AND Role = 'administrateur';";
                     var administrateurs = new List<dynamic>();
 
                     using (var selectCommand = new SqlCommand(selectSql, connection))
@@ -132,7 +132,7 @@ namespace Gestion_Parking.Controllers
                                     Jour = (Jour)jour,
                                     HeureDebut = jour == 5 ? new TimeSpan(8, 30, 0) : new TimeSpan(8, 30, 0),
                                     HeureFin = jour == 5 ? new TimeSpan(12, 30, 0) : new TimeSpan(16, 30, 0),
-                                    Role = "Administrateur",
+                                    Role = "administrateur",
                                     PersonnelId = admin.Id
                                 };
 

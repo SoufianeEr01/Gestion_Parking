@@ -129,6 +129,17 @@ const ReservationApi = {
       throw error.response?.data || "Erreur inconnue";
     }
   },
+  archiverReservationsPourPersonne: async (idPersonne) => {
+    try {
+      const url = `${BASE_URL}/reservation/ArchiverReservationsByPersonne/${idPersonne}`; // Endpoint pour archiver les réservations d'une personne
+      const response = await ReservationApi.post(url, {}); // Pas de données supplémentaires, juste l'ID dans l'URL
+      return response.message; // Message de succès ou d'erreur renvoyé par l'API
+    } catch (error) {
+      console.error(`Erreur lors de l'archivage des réservations pour la personne avec l'ID ${idPersonne}:`, error);
+      throw error.response?.data || "Erreur inconnue";
+    }
+  },
+
 };
 
 export default ReservationApi;

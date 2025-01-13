@@ -200,12 +200,14 @@ const Personnele = () => {
             required
             displayEmpty
             sx={{ mt: 2 }}
+            disabled={editingPersonnel}
           >
+            
             <MenuItem value="" disabled>
               Sélectionnez un rôle
             </MenuItem>
-            <MenuItem value="ADMINISTRATION">ADMINISTRATION</MenuItem>
-            <MenuItem value="ENSEIGNANT">ENSEIGNANT</MenuItem>
+            <MenuItem value="Administrateur">ADMINISTRATEUR</MenuItem>
+            <MenuItem value="Enseignant">ENSEIGNANT</MenuItem>
           </Select>
         </DialogContent>
         <DialogActions>

@@ -24,6 +24,7 @@ const PlaceParkingApi = {
       const response = await axios.get(`${BASE_URL}/PlaceParking`, {
         headers: getAuthHeaders(),
       });
+      console.log(response);
       return response.data;
     } catch (error) {
       handleApiError(error);

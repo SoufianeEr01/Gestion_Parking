@@ -118,7 +118,7 @@ public static class DataSeeder
                         prenom = "Alice",
                         email = "alice.bernard@emsi-edu.ma",
                         motdepasse = Personne.HashPassword("admin123"),
-                        role = "administrateur"
+                        role = "Administrateur"
                     },
                     new Personnel
                     {
@@ -126,7 +126,7 @@ public static class DataSeeder
                         prenom = "Marc",
                         email = "marc.rousseau@emsi-edu.ma",
                         motdepasse = Personne.HashPassword("enseignant456"),
-                        role = "enseignant"
+                        role = "Enseignant"
                     },
                     new Personnel
                     {
@@ -134,7 +134,7 @@ public static class DataSeeder
                         prenom = "Sophie",
                         email = "sophie.lemoine@emsi-edu.ma",
                         motdepasse = Personne.HashPassword("enseignant789"),
-                        role = "enseignant"
+                        role = "Enseignant"
                     }
                 };
 

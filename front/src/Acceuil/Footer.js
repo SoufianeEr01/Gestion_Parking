@@ -13,9 +13,9 @@ function Footer() {
   const menuItems = [
     { label: 'Accueil', path: '/' },
     { label: 'About', path: '/about' },
-    { label: 'Réservation', path: '/parking' },
-    { label: 'Contact', path: '/contact' },
+    { label: 'Parking', path: '/parking' },
     { label: 'Emploi', path: '/emploi' },
+    { label: 'Contact', path: '/contact' },
   ];
   return (
     <Box

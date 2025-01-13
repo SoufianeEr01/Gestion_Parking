@@ -10,6 +10,8 @@ import {
   Snackbar,
   Typography,
   Pagination,
+  Grid,
+  MenuItem,
   InputAdornment,
 } from "@mui/material";
 import ReservationApi from "../../Api/ReservationApi";
@@ -21,7 +23,12 @@ function Reservation() {
   const [errorMessage, setErrorMessage] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); // Number of reservations per page
-  const [filterText, setFilterText] = useState(""); // State for filter text
+  const [filterText, setFilterText] = useState(""); // Filter for name
+  const [filterEtat, setFilterEtat] = useState(""); // Filter for status
+  const [filterNumeroPlace, setFilterNumeroPlace] = useState(""); // Filter for number place
+  const [filterDate, setFilterDate] = useState(""); // Filter for date
+  const [filterHeureDebut, setFilterHeureDebut] = useState(""); // Filter for start time
+  const [filterHeureFin, setFilterHeureFin] = useState(""); // Filter for end time
 
   const fetchReservations = async () => {
     try {
@@ -36,72 +43,232 @@ function Reservation() {
     fetchReservations();
   }, []);
 
-  // Handle filter change
+  // Handle filter change for name
   const handleFilterChange = (event) => {
     setFilterText(event.target.value);
     setPage(1); // Reset to the first page when the filter changes
   };
 
-  // Filter reservations based on the name
+  // Handle filter change for status
+  const handleFilterEtatChange = (event) => {
+    setFilterEtat(event.target.value);
+    setPage(1); // Reset to the first page when the filter changes
+  };
+
+  // Handle filter change for numero place
+  const handleFilterNumeroPlaceChange = (event) => {
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      setFilterNumeroPlace(value);
+    }
+    setPage(1);
+  };
+
+  // Handle filter change for date
+  const handleFilterDateChange = (event) => {
+    setFilterDate(event.target.value);
+    setPage(1); // Reset to the first page
+  };
+
+  // Handle filter change for start time
+  // Handle filter change for start time
+const handleFilterHeureDebutChange = (event) => {
+  setFilterHeureDebut(event.target.value);
+  setPage(1); // Reset to the first page
+};
+
+
+  // Handle filter change for end time
+  const handleFilterHeureFinChange = (event) => {
+    setFilterHeureFin(event.target.value);
+    setPage(1); // Reset to the first page
+  };
+
   const filteredReservations = reservations.filter((reservation) =>
-    reservation.nomPersonne.toLowerCase().includes(filterText.toLowerCase()) ||
-    reservation.prenomPersonne.toLowerCase().includes(filterText.toLowerCase())
+    (reservation.nomPersonne.toLowerCase().includes(filterText.toLowerCase()) ||
+      reservation.prenomPersonne.toLowerCase().includes(filterText.toLowerCase())) &&
+    (filterEtat ? reservation.etatReservation.toLowerCase() === filterEtat.toLowerCase() : true) &&
+    (filterNumeroPlace ? reservation.numeroPlace.toString().includes(filterNumeroPlace) : true) &&
+    (filterDate ? reservation.dateReservation === filterDate : true) &&
+    (filterHeureDebut ? reservation.heureDebut.startsWith(filterHeureDebut) : true) && // Compare start time
+    (filterHeureFin ? reservation.heureFin.startsWith(filterHeureFin) : true) // Compare end time
   );
 
-  // Slice the reservations for the current page
-  const paginatedReservations = filteredReservations.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
-
-  // Handle page change
+  // Handle page change for pagination
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   return (
     <Box sx={{ padding: 3 }}>
-      {/* Filter TextField */}
-      <TextField
-        
-        label="Filtrer par nom"
-        variant="outlined"
-        value={filterText}
-        color="success"
-        width="50%"
-        onChange={handleFilterChange}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon color="success" />
-            </InputAdornment>
-          ),
-        }}
+      {/* Filter section */}
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        {/* Filter by name */}
+        <Grid item xs={4}>
+          <TextField
+            label="Filtrer par nom"
+            variant="outlined"
+            value={filterText}
+            color="success"
+            fullWidth
+            onChange={handleFilterChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="success" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+            }}
+          />
+        </Grid>
 
-        sx={{
-          mb: 2,
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "10px",
-          },
-          "& .MuiInputLabel-root": {
-            fontWeight: "bold",
-          },
-          "& .MuiOutlinedInput-input": {
-            padding: "12px 14px",
-            fontSize: "16px",
-          },
-        }}
-      />
+        {/* Filter by status */}
+        <Grid item xs={4}>
+          <TextField
+            select
+            label="Filtrer par état"
+            value={filterEtat}
+            onChange={handleFilterEtatChange}
+            fullWidth
+            color="success"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+            }}
+          >
+            <MenuItem value="">Tous</MenuItem>
+            <MenuItem value="actif">Actif</MenuItem>
+            <MenuItem value="archive">Archive</MenuItem>
+          </TextField>
+        </Grid>
+
+        {/* Filter by numero place */}
+        <Grid item xs={4}>
+          <TextField
+            label="Filtrer par numéro de place"
+            variant="outlined"
+            value={filterNumeroPlace}
+            color="success"
+            fullWidth
+            onChange={handleFilterNumeroPlaceChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+            }}
+          />
+        </Grid>
+
+        {/* Filter by date */}
+        <Grid item xs={4}>
+          <TextField
+            label="Filtrer par date"
+            variant="outlined"
+            type="date"
+            value={filterDate}
+            color="success"
+            fullWidth
+            onChange={handleFilterDateChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+            }}
+          />
+        </Grid>
+
+        {/* Filter by start time */}
+        <Grid item xs={4}>
+          <TextField
+            label="Filtrer par heure début"
+            variant="outlined"
+            type="time"
+            value={filterHeureDebut}
+            color="success"
+            fullWidth
+            onChange={handleFilterHeureDebutChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+            }}
+          />
+        </Grid>
+
+        {/* Filter by end time */}
+        <Grid item xs={4}>
+          <TextField
+            label="Filtrer par heure fin"
+            variant="outlined"
+            type="time"
+            value={filterHeureFin}
+            color="success"
+            fullWidth
+            onChange={handleFilterHeureFinChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+            }}
+          />
+        </Grid>
+      </Grid>
 
       {/* Display message if no reservations are found */}
       {filteredReservations.length === 0 ? (
-        <Typography
-          variant="h6"
-          align="center"
-          color="textSecondary"
-          sx={{ mt: 5 }}
-        >
-          Aucune réservation trouvée pour cet utilisateur.
+        <Typography variant="h6" align="center" color="textSecondary" sx={{ mt: 5 }}>
+          Aucune réservation trouvée.
         </Typography>
       ) : (
         <>
@@ -119,7 +286,7 @@ function Reservation() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedReservations.map((reservation) => (
+              {filteredReservations.map((reservation) => (
                 <TableRow key={reservation.id}>
                   <TableCell>{reservation.dateReservation}</TableCell>
                   <TableCell>{reservation.heureDebut}</TableCell>
