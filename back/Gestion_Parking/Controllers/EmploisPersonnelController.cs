@@ -132,7 +132,7 @@ namespace Gestion_Parking.Controllers
                                     Jour = (Jour)jour,
                                     HeureDebut = jour == 5 ? new TimeSpan(8, 30, 0) : new TimeSpan(8, 30, 0),
                                     HeureFin = jour == 5 ? new TimeSpan(12, 30, 0) : new TimeSpan(16, 30, 0),
-                                    Role = "Administrateur",
+                                    Role = "administrateur",
                                     PersonnelId = admin.Id
                                 };
 

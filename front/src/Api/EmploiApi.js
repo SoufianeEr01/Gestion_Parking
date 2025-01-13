@@ -34,8 +34,8 @@ const EmploiApi = {
   createEmploi: (emploiData) => EmploiApi.request('post', `${BASE_URL}/Emplois`, emploiData),
   fetchEmploiByJour: (jour) => EmploiApi.request('get', `${BASE_URL}/Emplois/${jour}`),
   fetchEmploiByIdEtudiant: (idEtudiant) => EmploiApi.request('get', `${BASE_URL}/Emplois/etudiant/${idEtudiant}`),
-  updateEmploi: (id, emploiData) => EmploiApi.request('put', `${BASE_URL}/Emplois/${id}`, emploiData),
-  deleteEmploi: (jour, confirm) => EmploiApi.request('delete', `${BASE_URL}/Emplois/${jour}?confirm=${confirm}`),
+  updateEmploi: (id, emploiData) => EmploiApi.request("put", `${BASE_URL}/Emplois/${id}`, emploiData),
+    deleteEmploi: (jour, confirm) => EmploiApi.request('delete', `${BASE_URL}/Emplois/${jour}?confirm=${confirm}`),
 };
 
 export default EmploiApi;

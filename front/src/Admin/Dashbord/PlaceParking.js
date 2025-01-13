@@ -37,6 +37,7 @@ const PlaceParking = () => {
     try {
       const data = await PlaceParkingApi.fetchPlaceParkings();
       setPlaces(data);
+      console.log(data);
     } catch (error) {
       setFeedbackMessage({ success: "", error: "Erreur lors de la récupération des places." });
     }
@@ -63,7 +64,7 @@ const PlaceParking = () => {
     }
 
     try {
-      await PlaceParkingApi.createPlaceParking({ numero, etage, etat: "Libre" });
+      await PlaceParkingApi.createPlaceParking({ numero, etage, etat: "libre" });
       setFeedbackMessage({ success: "Place ajoutée avec succès !", error: "" });
       setOpenDialog(false);
       setPlaceData({ numero: "", etage: "" });
@@ -88,6 +89,20 @@ const PlaceParking = () => {
       }
     }
     setPlaceToDelete(null);
+  };
+
+  // Fonction de conversion de l'étage
+  const getEtageLabel = (etage) => {
+    switch (etage) {
+      case 0:
+        return "Rez-de-chaussée";
+      case 1:
+        return "Étage 1";
+      case 2:
+        return "Étage 2";
+      default:
+        return `Étage ${etage}`;
+    }
   };
 
   const indexOfLastPlace = page * placesPerPage;
@@ -154,8 +169,9 @@ const PlaceParking = () => {
         <TableHead>
           <TableRow>
             <TableCell style={{ fontWeight: "bold" }}>Numéro</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>État</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Étage</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>État</TableCell>
+            {/* <TableCell style={{ fontWeight: "bold" }}>Date Fin Réservation</TableCell> */}
             <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -163,8 +179,9 @@ const PlaceParking = () => {
           {currentPlaces.map((place) => (
             <TableRow key={place.id}>
               <TableCell>{place.numero}</TableCell>
+              <TableCell>{getEtageLabel(place.etage)}</TableCell> {/* Utilisation de la fonction de conversion */}
               <TableCell>{place.etat}</TableCell>
-              <TableCell>{place.etage}</TableCell>
+              {/* <TableCell>{place.dateFinReservation}</TableCell> */}
               <TableCell>
                 <IconButton color="error" onClick={() => handleDelete(place)}>
                   <DeleteIcon />

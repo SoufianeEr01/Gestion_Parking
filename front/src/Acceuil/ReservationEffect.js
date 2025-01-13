@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography, Grid, IconButton, Box, Button } from '@mui/material';
+import { Card, CardContent, Typography, Grid, IconButton, Box, Button ,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,} from '@mui/material';
 import  CircularPro from './CircularPro'; // Import the new component
 import ReservationApi from '../Api/ReservationApi';
 import EtudiantApi from '../Api/EtudiantApi'; 
@@ -8,7 +12,12 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable'; 
 import { User, MapPin, Calendar, Clock, CreditCard } from 'lucide-react';
-const ReservationEffect = ({ personne }) => {
+
+const ReservationEffect = ({ personne, onClose }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false); // Nouveau state pour le dialogue de confirmation
   const [reservations, setReservations] = useState([]);
   const [userData, setUserData] = useState({
     id: 0,
@@ -73,11 +82,48 @@ const ReservationEffect = ({ personne }) => {
     fetchUser();
   }, [personne]);
 
-  const calculateRemainingTime = (endDate) => {
-    
-    const days = reservations.length;
-   
-    return `${days} jours`;
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleOpenConfirmDialog = () => {
+    setConfirmDialogOpen(true);
+  };
+
+  const handleCloseConfirmDialog = () => {
+    setConfirmDialogOpen(false);
+  };
+
+ 
+  const handleConfirmCancel = async () => {
+    setConfirmDialogOpen(false); // Fermer le dialogue de confirmation
+    try {
+      const userData = JSON.parse(sessionStorage.getItem("userData"));
+      const idPersonne = userData?.id;
+  
+      // Appel de l'API pour archiver les réservations
+      const message = await ReservationApi.archiverReservationsPourPersonne(idPersonne);
+      setReservations([]); // Réinitialiser la liste après annulation
+  
+      setIsSuccess(true);
+      setDialogMessage(message); // Afficher le message de succès
+    } catch (error) {
+      console.error("Erreur lors de l'annulation des réservations :", error);
+      setIsSuccess(false);
+      setDialogMessage(
+        "Une erreur s'est produite lors de l'annulation des réservations. Veuillez réessayer plus tard."
+      );
+    } finally {
+      setDialogOpen(true); // Ouvrir le dialogue pour le message final
+      if (onClose) onClose(); // Fermer le dialogue parent si nécessaire
+    }
+  };
+  
+
+
+  const calculateRemainingTime = () => {
+    const NbrReservationRest = reservations.length;
+    return `${NbrReservationRest} jour(s)`;
   };
 
   const generatePDF = () => {
@@ -165,9 +211,10 @@ const ReservationEffect = ({ personne }) => {
     return <Typography color="error">{error}</Typography>;
   }
 
-  const remainingTime = lastDate ? calculateRemainingTime(lastDate) : "Non disponible";
+  const remainingTime =  calculateRemainingTime();
 
   return (
+    <>
       <Box sx={{ display: 'flex', justifyContent: 'center', padding: 2, backgroundColor: '#white' }}>
         <Card sx={{ maxWidth: 800, width: '100%',height: '100%', borderRadius: 2 }}>
           <CardContent sx={{ backgroundColor: '#008d36', color: 'white', paddingBottom: 2 }}>
@@ -215,7 +262,7 @@ const ReservationEffect = ({ personne }) => {
                   </IconButton>
                   <Box sx={{ ml: 2 }}>
                     <Typography variant="body2" color="textSecondary">
-                      Date De début
+                    Prochaine réservation
                     </Typography>
                     <Typography variant="h6">{firstDate || "Non disponible"}</Typography>
                   </Box>
@@ -229,7 +276,7 @@ const ReservationEffect = ({ personne }) => {
                   </IconButton>
                   <Box sx={{ ml: 2 }}>
                     <Typography variant="body2" color="textSecondary">
-                      Date De fin
+                    Date butoir
                     </Typography>
                     <Typography variant="h6">{lastDate || "Non disponible"}</Typography>
                   </Box>
@@ -244,7 +291,7 @@ const ReservationEffect = ({ personne }) => {
             </IconButton>
               <Box sx={{ ml: 2 }}>
                 <Typography variant="body2" color="textSecondary">
-                  Temps Restant
+                  Jours Restant
                 </Typography>
                 <Typography variant="h6">{ remainingTime || "Aucune"} </Typography>
               </Box>
@@ -266,16 +313,16 @@ const ReservationEffect = ({ personne }) => {
             </Grid>
           </CardContent>
           <CardContent sx={{ textAlign: 'center',display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={generatePDF}
-            sx={{}}
-            disabled={reservations.length === 0}
-          >
+            {reservations.length>0&&
+            <>
+          <Button variant="contained" color="success" onClick={generatePDF} sx={{ marginRight: 2 }}>
             Imprimer la Facture
           </Button>
-
+          <Button variant="contained" color="error" onClick={handleOpenConfirmDialog}>
+              Annuler mes réservations
+            </Button>
+            </>
+          }
             </CardContent>
           <hr></hr>
           <CardContent sx={{ textAlign: 'center'                                                  }}>
@@ -283,7 +330,39 @@ const ReservationEffect = ({ personne }) => {
             Cette réservation est valide uniquement pour les dateReservation indiqués.          </Typography>
           </CardContent>
         </Card>
+
       </Box>
+      {/* Dialogue de confirmation */}
+      <Dialog open={confirmDialogOpen} onClose={handleCloseConfirmDialog}>
+        <DialogTitle>Confirmer l'annulation</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Êtes-vous sûr de vouloir annuler toutes vos réservations ? Cette action est irréversible.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDialog} variant="outlined">
+            Annuler
+          </Button>
+          <Button onClick={handleConfirmCancel} variant="contained" color="error">
+            Confirmer
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialogue de succès/erreur */}
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>{isSuccess ? "Succès" : "Erreur"}</DialogTitle>
+        <DialogContent>
+          <Typography>{dialogMessage}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} variant="contained" color={isSuccess ? "success" : "error"}>
+            Fermer
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </>
   );
 };
 

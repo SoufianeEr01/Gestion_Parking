@@ -1124,6 +1124,71 @@ JOIN
             }
         }
 
+        [HttpPost("ArchiverReservationsByPersonne/{idPersonne}")]
+        public IActionResult ArchiverReservationsByPersonne(int idPersonne)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Requête pour mettre à jour l'état des réservations d'une personne spécifique
+                    string updateReservationsSql = @"
+                UPDATE Reservations 
+                SET etat = 'archive' 
+                WHERE etat != 'archive' AND personne_id = @IdPersonne";
+
+                    using (var command = new SqlCommand(updateReservationsSql, connection))
+                    {
+                        // Ajouter les paramètres nécessaires
+                        command.Parameters.AddWithValue("@CurrentDate", DateTime.Now.Date);
+                        command.Parameters.AddWithValue("@IdPersonne", idPersonne);
+
+                        int rowsAffected = command.ExecuteNonQuery(); // Exécuter la mise à jour
+
+                        if (rowsAffected > 0)
+                        {
+                            // Mettre à jour les places de parking correspondantes
+                            string updatePlacesSql = @"
+                    UPDATE PlaceParkings 
+                    SET etat = 'libre', dateFinReservation = null 
+                    WHERE id IN 
+                    (SELECT DISTINCT P.id 
+                     FROM Reservations R 
+                     JOIN PlaceParkings P ON R.placeParking_id = P.id 
+                     WHERE R.personne_id = @IdPersonne)";
+
+                            using (var placeCommand = new SqlCommand(updatePlacesSql, connection))
+                            {
+                                // Réutiliser le paramètre idPersonne
+                                placeCommand.Parameters.AddWithValue("@IdPersonne", idPersonne);
+
+                                int placeRowsAffected = placeCommand.ExecuteNonQuery(); // Exécuter la mise à jour des places
+
+                                if (placeRowsAffected > 0)
+                                {
+                                    return Ok(new { message = $"{rowsAffected} réservation(s) ont été annulés et une place libérée." });
+                                }
+                                else
+                                {
+                                    return Ok(new { message = $"{rowsAffected} réservation(s) ont été annulés, mais aucune place de parking n'a été mise à jour." });
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return Ok(new { message = $"Aucune réservation pour la personne {idPersonne} n'a été archivée." });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Gestion des erreurs
+                return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
+            }
+        }
 
 
 

@@ -34,6 +34,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreationPersonnelEmploi from "./CreateEmploiPersonel";
 import SearchIcon from '@mui/icons-material/Search';
 import  {Grid}  from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+
 
 
 const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
@@ -52,6 +54,7 @@ function EmploisContent() {
 
 
   const [currentEmploi, setCurrentEmploi] = useState({
+    id: "",
     jour: "",
     dateDebut: "",
     dateFin: "",
@@ -147,7 +150,7 @@ function EmploisContent() {
     try {
       const newEmploi = await EmploiApi.createEmploi(emploiData);
       setSuccessMessage("Emploi ajouté avec succès !");
-      handleClose();
+      handleClosed();
     } catch (error) {
       setError("Erreur lors de l'ajout de l'emploi.");
     }
@@ -156,61 +159,57 @@ function EmploisContent() {
   const handleClose = () => setOpen(false);
 
 
-  const handleDelete = async (id) => {
-    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet emploi ?");
-    if (!confirmDeletion) return;
-  
-    try {
-      await EmploiApi.deleteEmploi(id, confirmDeletion);
-      setEmplois(emplois.filter((emploi) => emploi.id !== id)); // Mettre à jour la liste des emplois
-      setSuccessMessage("Emploi supprimé avec succès.");
-    } catch (error) {
-      setError("Erreur lors de la suppression de l'emploi.");
-    }
-  };
-
   // Fonction pour éditer un emploi
   const handleEdit = (emploi) => {
+    console.log("Emploi à éditer : ", emploi); // Afficher l'objet emploi
     setEditEmploi(emploi);
     setCurrentEmploi({
+      id: emploi.id, // Assurez-vous que l'ID est bien récupéré ici
       jour: jours[emploi.jour],
-      dateDebut: emploi.dateDebut.split(":")[0] + ":" + emploi.dateDebut.split(":")[1], 
-      dateFin: emploi.dateFin.split(":")[0] + ":" + emploi.dateFin.split(":")[1], 
+      dateDebut: emploi.dateDebut.split(":")[0] + ":" + emploi.dateDebut.split(":")[1],
+      dateFin: emploi.dateFin.split(":")[0] + ":" + emploi.dateFin.split(":")[1],
       groupeId: emploi.groupe_Id,
     });
     setOpen(true);
   };
-
+  
   const handleUpdate = async () => {
+    setError(""); // Réinitialiser les erreurs
+    
     if (!currentEmploi.jour || !currentEmploi.dateDebut || !currentEmploi.dateFin || !currentEmploi.groupeId) {
       setError("Tous les champs sont obligatoires.");
       return;
     }
-
+  
+    // Convertir le jour en numéro
     const jourNum = jours.indexOf(currentEmploi.jour);
-    if (jourNum === 6) {
+    if (jourNum === -1) {
       setError("Jour invalide.");
       return;
     }
-
+  
     const emploiData = {
+      id:currentEmploi.id,
       jour: jourNum,
-      dateDebut: currentEmploi.dateDebut + ":00",
-      dateFin: currentEmploi.dateFin + ":00",
+      dateDebut: `${currentEmploi.dateDebut}:00`,
+      dateFin: `${currentEmploi.dateFin}:00`,
       groupe_Id: currentEmploi.groupeId,
     };
-
+  
     try {
-      console.log("Edit emploi:", editEmploi);
+
+      // Appel API pour mettre à jour l'emploi avec l'ID
       await EmploiApi.updateEmploi(editEmploi.id, emploiData);
+      // Succès
       setSuccessMessage("Emploi mis à jour avec succès.");
-      handleClose();
-      fetchEmploisForGroup(selectedGroupe); // Recharger la liste après mise à jour
+      handleClosed(); // Fermer la boîte de dialogue
+      fetchEmploisForGroup(selectedGroupe); // Recharger les emplois du groupe sélectionné
     } catch (error) {
-      setError("Erreur lors de la mise à jour de l'emploi.");
+      console.error("Erreur lors de la mise à jour de l'emploi :", error);
+      setError("Erreur lors de la mise à jour de l'emploi. Veuillez réessayer.");
     }
   };
-
+  
   const handleCloseEmploisView = () => {
     setViewEmplois(false); // Fermer la vue des emplois
     setSelectedGroupe(""); // Réinitialiser le groupe sélectionné
@@ -222,7 +221,16 @@ function EmploisContent() {
     setOpend(true);
   };
   const handleClosed = () => {
-    setOpend(false);
+    setOpen(false); 
+    setCurrentEmploi({
+      id: "",
+      jour: "",
+      dateDebut: "",
+      dateFin: "",
+      groupeId: "",
+    });
+    setEditEmploi(null);
+    setError("");
   };
 
 
@@ -315,13 +323,31 @@ function EmploisContent() {
     {viewEmplois && (
   <Box sx={{ flexDirection: "column",display: "flex",justifyContent: "center",alignItems: "center",width: "100%" }}>
     <FormControl sx={{ mb: 2, width: "50%", mt: 2 }}>
-      <InputLabel id="select-groupe-label">Sélectionnez un Groupe</InputLabel>
+      <InputLabel id="select-groupe-label" color="black">Sélectionnez un Groupe</InputLabel>
       <Select
         labelId="select-groupe-label"
         value={selectedGroupe}
         onChange={handleGroupeChange}
         fullWidth
         color="success"
+        startAdornment={
+          <InputAdornment position="start">
+            <SearchIcon color="success" />
+          </InputAdornment>
+  }
+  sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+  }}
+
       >
         {groupes.map((groupe) => (
           <MenuItem key={groupe.id} value={groupe.id}>
@@ -356,24 +382,25 @@ function EmploisContent() {
             <TableBody>
               {emplois.map((emploi) => (
                 <TableRow key={emploi.id}>
-                  <TableCell align="center">{jourparnum(emploi.jour)}</TableCell>
-                  <TableCell align="center">{emploi.dateDebut}</TableCell>
-                  <TableCell align="center">{emploi.dateFin}</TableCell>
-                  <TableCell align="center">
-                    {fetchgroupId(emploi.groupe_Id)}
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton onClick={() => handleEdit(emploi)} color="primary" size="small">
-                      <EditIcon />
-                    </IconButton>
-                    {/* <IconButton
-                      onClick={() => handleDelete(emploi.id)}
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton> */}
-                  </TableCell>
-                </TableRow>
+                <TableCell align="center">{jourparnum(emploi.jour)}</TableCell>
+                <TableCell align="center">{emploi.dateDebut}</TableCell>
+                <TableCell align="center">{emploi.dateFin}</TableCell>
+                <TableCell align="center">
+                  {fetchgroupId(emploi.groupe_Id)}
+                </TableCell>
+                <TableCell align="center">
+                  <IconButton onClick={() => handleEdit(emploi)} color="primary" size="small">
+                    <EditIcon />
+                  </IconButton>
+                  {/* <IconButton
+                    onClick={() => handleDelete(emploi.id)}
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </IconButton> */}
+                </TableCell>
+              </TableRow>
+
               ))}
             </TableBody>
           </Table>
@@ -424,7 +451,6 @@ function EmploisContent() {
             select
             fullWidth
             sx={{ mb: 2 , mt:2}}
-          
             disabled={editEmploi}
             color="success"
           >

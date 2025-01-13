@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Acceuil from './Acceuil/Acceuil';
 import About from './About/About';
@@ -23,7 +23,24 @@ import EmploisPersonel from './Admin/Dashbord/EmploisPersonel';
 import PlaceReservationDialog from './Reservation/PlaceReservationDialog';
 import CreationPersonnelEmploi from './Admin/Dashbord/CreateEmploiPersonel.js';
 import EmploiList from './Acceuil/Emploi/Emplois';
+
+import ReservationApi from './Api/ReservationApi.js';
+
 function App() {
+  useEffect(() => {
+    // Appel de la fonction pour archiver les réservations au démarrage de l'application
+    const archiveReservationsAtStartup = async () => {
+      try {
+        const result = await ReservationApi.archiverReservations();
+        console.log(result); // Vous pouvez afficher ou gérer la réponse comme vous le souhaitez
+      } catch (error) {
+        console.error("Erreur lors de l'archivage des réservations :", error);
+      }
+    };
+
+    archiveReservationsAtStartup(); // Appeler la fonction d'archivage
+  }, []); // [] assure que l'appel ne se fait qu'une seule fois au démarrage
+
   return (
     <div className="App">
       <ThemeProvider theme={theme}>

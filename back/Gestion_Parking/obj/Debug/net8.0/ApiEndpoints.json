@@ -281,14 +281,14 @@
   {
     "ContainingType": "Gestion_Parking.Controllers.EmploisController",
     "Method": "UpdateEmploi",
-    "RelativePath": "api/Emplois/{jour}",
+    "RelativePath": "api/Emplois/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "jour",
-        "Type": "System.String",
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       },
       {
@@ -727,6 +727,22 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.PlaceParkingController",
+    "Method": "DeletePlaceParking",
+    "RelativePath": "api/PlaceParking/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.PlaceParkingController",
     "Method": "UpdatePlaceParking",
     "RelativePath": "api/PlaceParking/{id}",
     "HttpMethod": "PUT",
@@ -748,23 +764,7 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.PlaceParkingController",
-    "Method": "DeletePlaceParking",
-    "RelativePath": "api/PlaceParking/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Gestion_Parking.Controllers.PlaceParkingController",
-    "Method": "GetPersonnesCount",
+    "Method": "GetCountPlaceParking",
     "RelativePath": "api/PlaceParking/count",
     "HttpMethod": "GET",
     "IsController": true,
@@ -907,6 +907,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ArchiverReservationsByPersonne",
+    "RelativePath": "api/Reservation/ArchiverReservationsByPersonne/{idPersonne}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idPersonne",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

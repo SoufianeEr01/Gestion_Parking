@@ -88,7 +88,7 @@ const AboutPage = () => {
               ressources disponibles. Avec une technologie avancée et une interface intuitive, nous vous offrons un
               service qui répond à vos besoins.
             </Typography>
-            <Button
+            {/* <Button
               variant="contained"
               sx={{
                 backgroundColor: 'rgb(8, 151, 66)',
@@ -99,7 +99,7 @@ const AboutPage = () => {
               }}
             >
               En savoir plus
-            </Button>
+            </Button> */}
           </Grid>
         </Grid>
 

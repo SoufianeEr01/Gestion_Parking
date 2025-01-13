@@ -47,7 +47,7 @@ function PaiementDashboard() {
               <TableCell>{p.prenomPersonne}</TableCell>
               <TableCell>{p.email}</TableCell>
               <TableCell>{p.modePaiement}</TableCell>
-              <TableCell>{p.prixPaye}</TableCell>
+              <TableCell>{p.prixPaye} <span style={{ fontWeight: 'bold' }}>MAD</span></TableCell>
             </TableRow>
           ))}
         </TableBody>

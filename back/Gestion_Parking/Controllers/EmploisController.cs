@@ -87,7 +87,7 @@ namespace Gestion_Parking.Controllers
 
                     // Requête SQL
                     string sql = @"
-                SELECT Jour, DateDebut, DateFin, Groupe_Id 
+                SELECT Id ,Jour, DateDebut, DateFin, Groupe_Id 
                 FROM Emplois 
                 WHERE Groupe_Id = @Groupe_Id
                 ORDER BY 
@@ -114,15 +114,17 @@ namespace Gestion_Parking.Controllers
                                 try
                                 {
                                     // Récupération des données de la ligne
-                                    var jourString = reader.IsDBNull(0) ? null : reader.GetString(0);
-                                    var dateDebut = reader.IsDBNull(1) ? (TimeSpan?)null : reader.GetTimeSpan(1);
-                                    var dateFin = reader.IsDBNull(2) ? (TimeSpan?)null : reader.GetTimeSpan(2);
-                                    var groupeIdFromDb = reader.IsDBNull(3) ? (int?)null : reader.GetInt32(3);
+                                    var id = reader.GetInt32(0);
+                                    var jourString = reader.IsDBNull(0) ? null : reader.GetString(1);
+                                    var dateDebut = reader.IsDBNull(1) ? (TimeSpan?)null : reader.GetTimeSpan(2);
+                                    var dateFin = reader.IsDBNull(2) ? (TimeSpan?)null : reader.GetTimeSpan(3);
+                                    var groupeIdFromDb = reader.IsDBNull(3) ? (int?)null : reader.GetInt32(4);
 
                                     if (!string.IsNullOrEmpty(jourString) && Enum.TryParse<Jour>(jourString, true, out var jour))
                                     {
                                         emplois.Add(new Emploi
                                         {
+                                            Id=id,
                                             Jour = jour,
                                             DateDebut = dateDebut ?? TimeSpan.Zero,
                                             DateFin = dateFin ?? TimeSpan.Zero,
@@ -303,9 +305,7 @@ namespace Gestion_Parking.Controllers
                     string sql = @"
                 UPDATE Emplois 
                 SET DateDebut = @DateDebut, 
-                    DateFin = @DateFin, 
-                    Groupe_Id = @Groupe_Id, 
-                    Jour = @Jour
+                    DateFin = @DateFin
                 WHERE Id = @Id";
 
                     using (var command = new SqlCommand(sql, connection))
@@ -314,8 +314,6 @@ namespace Gestion_Parking.Controllers
                         command.Parameters.AddWithValue("@Id", id);
                         command.Parameters.AddWithValue("@DateDebut", emploi.DateDebut);
                         command.Parameters.AddWithValue("@DateFin", emploi.DateFin);
-                        command.Parameters.AddWithValue("@Groupe_Id", emploi.Groupe_Id);
-                        command.Parameters.AddWithValue("@Jour", emploi.Jour.ToString());
 
                         int rowsAffected = command.ExecuteNonQuery();
 

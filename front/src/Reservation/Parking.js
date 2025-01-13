@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Car } from 'lucide-react';
 import PlaceParkingApi from '../Api/PlaceParkingApi';
 import './Parking.css';
 import PlaceReservationDialog from './PlaceReservationDialog';
-import ReservationApi from "../Api/ReservationApi";
 import { Tooltip } from 'react-tooltip';  // Assurez-vous de l'importation correcte
 
 function Parking() {
@@ -14,25 +12,14 @@ function Parking() {
   const [reserved, setReserved] = useState([]);
 
 
-  useEffect(() => {
-    // Appel de la fonction pour archiver les réservations au démarrage de l'application
-    const archiveReservationsAtStartup = async () => {
-      try {
-        const result = await ReservationApi.archiverReservations();
-        console.log(result); // Vous pouvez afficher ou gérer la réponse comme vous le souhaitez
-      } catch (error) {
-        console.error("Erreur lors de l'archivage des réservations :", error);
-      }
-    };
-
-    archiveReservationsAtStartup(); // Appeler la fonction d'archivage
-  }, []); // [] assure que l'appel ne se fait qu'une seule fois au démarrage
-
+  
   // Fetch parking places data from API
   useEffect(() => {
     const fetchAvailablePlaces = async () => {
       try {
         const allPlaces = await PlaceParkingApi.fetchPlaceParkings();
+        
+      // console.log(allPlaces);
         const formattedSpots = [
           {
             id: 0,
@@ -76,7 +63,6 @@ function Parking() {
         console.error('Error fetching parking places:', error);
       }
     };
-
     fetchAvailablePlaces();
   }, [spots]);
   

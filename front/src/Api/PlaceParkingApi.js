@@ -24,6 +24,7 @@ const PlaceParkingApi = {
       const response = await axios.get(`${BASE_URL}/PlaceParking`, {
         headers: getAuthHeaders(),
       });
+      console.log(response);
       return response.data;
     } catch (error) {
       handleApiError(error);
@@ -77,7 +78,7 @@ const PlaceParkingApi = {
       const response = await axios.get(`${BASE_URL}/PlaceParking/count`, {
         headers: getAuthHeaders(),
       });
-      return response.data.count; 
+      return response.data.totalPlaces; 
     } catch (error) {
       handleApiError(error);
     }
