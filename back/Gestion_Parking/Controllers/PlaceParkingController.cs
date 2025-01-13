@@ -62,7 +62,7 @@ namespace Gestion_Parking.Controllers
                 {
                     connection.Open();
                     Console.WriteLine("Connexion à la base de données réussie.");
-                    string sql = "SELECT id, numero, etat, etage FROM PlaceParkings";
+                    string sql = "SELECT id, numero, etat, etage, dateFinReservation FROM PlaceParkings";
                     using (var command = new SqlCommand(sql, connection))
                     using (var reader = command.ExecuteReader())
                     {
@@ -73,7 +73,9 @@ namespace Gestion_Parking.Controllers
                                 id = reader.GetInt32(0),
                                 numero = reader.GetInt32(1),
                                 etat = reader.GetString(2),
-                                etage = reader.GetInt32(3)
+                                etage = reader.GetInt32(3),
+                                dateFinReservation = reader.IsDBNull(4) ? (DateTime?)null : reader.GetDateTime(4)
+
                             };
                             placeParkingList.Add(placeParking);
                         }
@@ -105,7 +107,7 @@ namespace Gestion_Parking.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "SELECT id, numero, etat, etage FROM PlaceParkings WHERE id = @Id";
+                    string sql = "SELECT id, numero, etat, etage, dateFinReservation FROM PlaceParkings WHERE id = @Id";
                     using (var command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@Id", id);
@@ -118,13 +120,14 @@ namespace Gestion_Parking.Controllers
                                     id = reader.GetInt32(0),
                                     numero = reader.GetInt32(1),
                                     etat = reader.GetString(2),
-                                    etage = reader.GetInt32(3)
+                                    etage = reader.GetInt32(3),
+                                    dateFinReservation = reader.GetDateTime(4)
                                 };
                                 return Ok(placeParking);
                             }
                             else
                             {
-                                return NotFound("Place de parking non trouvée.");
+                                return NotFound(new { message = "Place de parking non trouvée." });
                             }
                         }
                     }
@@ -132,7 +135,7 @@ namespace Gestion_Parking.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { erreur = "Une erreur est survenue lors de la récupération de la place de parking." });
+                return StatusCode(500, new { erreur = "Une erreur est survenue lors de la récupération de la place de parking.", details = ex.Message });
             }
         }
 

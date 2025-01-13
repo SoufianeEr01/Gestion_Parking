@@ -98,14 +98,14 @@ function EmploisContent() {
   
   
 
-  // const handleShowEmplois = () => {
-  //   if (selectedGroupe) {
-  //     fetchEmploisForGroup(selectedGroupe);
-  //     setViewEmplois(true);
-  //   } else {
-  //     setError("Veuillez sélectionner un groupe.");
-  //   }
-  // };
+  const handleShowEmplois = () => {
+    if (selectedGroupe) {
+      fetchEmploisForGroup(selectedGroupe);
+      setViewEmplois(true);
+    } else {
+      setError("Veuillez sélectionner un groupe.");
+    }
+  };
   
 
   const handleToggleEmploisPersonnel = () => {
@@ -155,19 +155,19 @@ function EmploisContent() {
 
   const handleClose = () => setOpen(false);
 
-  // Fonction pour supprimer un emploi
-  // const handleDelete = async (id) => {
-  //   const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet emploi ?");
-  //   if (!confirmDeletion) return;
+
+  const handleDelete = async (id) => {
+    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet emploi ?");
+    if (!confirmDeletion) return;
   
-  //   try {
-  //     await EmploiApi.deleteEmploi(id, confirmDeletion);
-  //     setEmplois(emplois.filter((emploi) => emploi.id !== id)); // Mettre à jour la liste des emplois
-  //     setSuccessMessage("Emploi supprimé avec succès.");
-  //   } catch (error) {
-  //     setError("Erreur lors de la suppression de l'emploi.");
-  //   }
-  // };
+    try {
+      await EmploiApi.deleteEmploi(id, confirmDeletion);
+      setEmplois(emplois.filter((emploi) => emploi.id !== id)); // Mettre à jour la liste des emplois
+      setSuccessMessage("Emploi supprimé avec succès.");
+    } catch (error) {
+      setError("Erreur lors de la suppression de l'emploi.");
+    }
+  };
 
   // Fonction pour éditer un emploi
   const handleEdit = (emploi) => {

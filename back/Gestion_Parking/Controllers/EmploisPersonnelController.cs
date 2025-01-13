@@ -88,7 +88,7 @@ namespace Gestion_Parking.Controllers
                     string selectSql = @"
                 SELECT Id, Nom, Prenom 
                 FROM Personnes 
-                WHERE Discriminator = 'Personnel' AND Role = 'Administrateur';";
+                WHERE Discriminator = 'Personnel' AND Role = 'administrateur';";
                     var administrateurs = new List<dynamic>();
 
                     using (var selectCommand = new SqlCommand(selectSql, connection))

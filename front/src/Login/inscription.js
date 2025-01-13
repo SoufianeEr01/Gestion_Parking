@@ -294,7 +294,7 @@ const SignUpPage = () => {
                 value={formData.role}
                 onChange={handleInputChange}
               >
-                <MenuItem value="Administrateur">Administrateur</MenuItem>
+                <MenuItem value="administrateur">Administrateur</MenuItem>
                 <MenuItem value="Enseignant">Enseignant</MenuItem>
               </Select>
             </FormControl>

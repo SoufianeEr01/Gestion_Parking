@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import ReservationApi from "../../Api/ReservationApi";
 import SearchIcon from "@mui/icons-material/Search";
+import { green } from "@mui/material/colors";
 
 function Reservation() {
   const [reservations, setReservations] = useState([]);
@@ -129,7 +130,11 @@ function Reservation() {
                   </TableCell>
                   <TableCell>{reservation.numeroPlace}</TableCell>
                   <TableCell>{reservation.lieuReservation}</TableCell>
-                  <TableCell>{reservation.etatReservation}</TableCell>
+                  <TableCell 
+                          style={{ color: reservation.etatReservation === "actif" ? 'green' : 'primary' }}
+                        >
+                          {reservation.etatReservation}
+                        </TableCell>
                 </TableRow>
               ))}
             </TableBody>

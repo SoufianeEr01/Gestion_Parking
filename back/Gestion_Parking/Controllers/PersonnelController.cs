@@ -59,7 +59,7 @@ namespace Gestion_Parking.Controllers
                     }
 
                     // Si le rôle est Administrateur, générer l'emploi
-                    if (personnel.role == "Administrateur")
+                    if (personnel.role == "administrateur")
                     {
                         GenerateEmploiPourAdministrateur(personnel.email);
                     }

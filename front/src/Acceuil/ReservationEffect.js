@@ -74,16 +74,10 @@ const ReservationEffect = ({ personne }) => {
   }, [personne]);
 
   const calculateRemainingTime = (endDate) => {
-    const now = new Date();
-    const end = new Date(endDate);
-    const diff = end - now;
-
-    if (diff <= 0) {
-      return "Temps écoulé";
-    }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    return `${days} jours, ${hours} heures`;
+    
+    const days = reservations.length;
+   
+    return `${days} jours`;
   };
 
   const generatePDF = () => {
@@ -272,9 +266,16 @@ const ReservationEffect = ({ personne }) => {
             </Grid>
           </CardContent>
           <CardContent sx={{ textAlign: 'center',display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-          <Button variant="contained" color="success" onClick={generatePDF} sx={{  }}>
-              Imprimer la Facture
-            </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={generatePDF}
+            sx={{}}
+            disabled={reservations.length === 0}
+          >
+            Imprimer la Facture
+          </Button>
+
             </CardContent>
           <hr></hr>
           <CardContent sx={{ textAlign: 'center'                                                  }}>

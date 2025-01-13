@@ -22,19 +22,16 @@ import {
   Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import PlaceParkingApi from "../../Api/PlaceParkingApi";
 
 const PlaceParking = () => {
   const [places, setPlaces] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const [editingPlace, setEditingPlace] = useState(null);
-  const [placeData, setPlaceData] = useState({ numero: "", etat: "", etage: "" });
   const [feedbackMessage, setFeedbackMessage] = useState({ success: "", error: "" });
   const [page, setPage] = useState(1);
   const placesPerPage = 5;
   const [placeToDelete, setPlaceToDelete] = useState(null);
+  const [placeData, setPlaceData] = useState({ numero: "", etage: "" });
 
   const fetchPlaces = async () => {
     try {
@@ -53,48 +50,31 @@ const PlaceParking = () => {
     const { name, value } = e.target;
     setPlaceData((prevData) => ({
       ...prevData,
-      [name]: name === "numero" || name === "etage" ? String(value) : value,
+      [name]: String(value),
     }));
   };
 
   const handleSubmit = async () => {
-    const { numero, etat, etage } = placeData;
+    const { numero, etage } = placeData;
 
-    if (!String(numero).trim() || !String(etat).trim() || etage === "") {
+    if (!String(numero).trim() || etage === "") {
       setFeedbackMessage({ success: "", error: "Tous les champs sont obligatoires !" });
       return;
     }
 
     try {
-      if (editingPlace) {
-        await PlaceParkingApi.updatePlaceParking(editingPlace.id, { numero, etat, etage });
-        setFeedbackMessage({ success: "Place modifiée avec succès !", error: "" });
-      } else {
-        await PlaceParkingApi.createPlaceParking({ numero, etat, etage });
-        setFeedbackMessage({ success: "Place ajoutée avec succès !", error: "" });
-      }
+      await PlaceParkingApi.createPlaceParking({ numero, etage, etat: "Libre" });
+      setFeedbackMessage({ success: "Place ajoutée avec succès !", error: "" });
       setOpenDialog(false);
-      setPlaceData({ numero: "", etat: "", etage: "" });
+      setPlaceData({ numero: "", etage: "" });
       fetchPlaces();
     } catch {
       setFeedbackMessage({ success: "", error: "Erreur lors de l'opération." });
     }
   };
 
-  const openDialogForEdit = (place) => {
-    setEditingPlace(place);
-    setPlaceData(place || { numero: "", etat: "", etage: "" });
-    setOpenDialog(true);
-  };
-
-  const getEtageFromIndex = (index) => {
-    const etages = ["Rez-de-chaussée", "Étage 1", "Étage 2"];
-    return etages[index] || "Étape inconnue"; // Retourne un message par défaut si l'index est invalide
-  };
-
   const handleDelete = (place) => {
     setPlaceToDelete(place);
-    setOpenConfirmDialog(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -107,11 +87,6 @@ const PlaceParking = () => {
         setFeedbackMessage({ success: "", error: "Erreur lors de la suppression de la place." });
       }
     }
-    setOpenConfirmDialog(false);
-  };
-
-  const handleCancelDelete = () => {
-    setOpenConfirmDialog(false);
     setPlaceToDelete(null);
   };
 
@@ -124,15 +99,13 @@ const PlaceParking = () => {
       <Button
         variant="contained"
         color="success"
-        onClick={() => openDialogForEdit(null)}
+        onClick={() => setOpenDialog(true)}
       >
         + Ajouter une Place
       </Button>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth>
-        <DialogTitle textAlign="center">
-          {editingPlace ? "Modifier une Place" : "Ajouter une Place"}
-        </DialogTitle>
+        <DialogTitle textAlign="center">Ajouter une Place</DialogTitle>
         <DialogContent>
           <TextField
             color="success"
@@ -144,22 +117,7 @@ const PlaceParking = () => {
             fullWidth
             required
             sx={{ mt: 2 }}
-            disabled={!!editingPlace}
           />
-          <FormControl fullWidth required sx={{ mt: 2 }}>
-            <InputLabel>État</InputLabel>
-            <Select
-              color="success"
-              name="etat"
-              value={placeData.etat}
-              onChange={handleChange}
-              label="État"
-              required
-            >
-              <MenuItem value="Libre">Libre</MenuItem>
-              <MenuItem value="Occupée">Occupée</MenuItem>
-            </Select>
-          </FormControl>
           <FormControl fullWidth required sx={{ mt: 2 }}>
             <InputLabel>Étage</InputLabel>
             <Select
@@ -168,8 +126,6 @@ const PlaceParking = () => {
               value={placeData.etage}
               onChange={handleChange}
               label="Étage"
-              required
-              disabled={!!editingPlace}
             >
               <MenuItem value="0">Rez-de-chaussée</MenuItem>
               <MenuItem value="1">Étage 1</MenuItem>
@@ -182,7 +138,7 @@ const PlaceParking = () => {
             Annuler
           </Button>
           <Button onClick={handleSubmit} color="success" variant="contained">
-            {editingPlace ? "Modifier" : "Ajouter"}
+            Ajouter
           </Button>
         </DialogActions>
       </Dialog>
@@ -208,11 +164,8 @@ const PlaceParking = () => {
             <TableRow key={place.id}>
               <TableCell>{place.numero}</TableCell>
               <TableCell>{place.etat}</TableCell>
-              <TableCell>{getEtageFromIndex(place.etage)}</TableCell>
+              <TableCell>{place.etage}</TableCell>
               <TableCell>
-                <IconButton color="primary" onClick={() => openDialogForEdit(place)}>
-                  <EditIcon />
-                </IconButton>
                 <IconButton color="error" onClick={() => handleDelete(place)}>
                   <DeleteIcon />
                 </IconButton>
@@ -231,13 +184,13 @@ const PlaceParking = () => {
         />
       </Box>
 
-      <Dialog open={openConfirmDialog} onClose={handleCancelDelete}>
+      <Dialog open={!!placeToDelete} onClose={() => setPlaceToDelete(null)}>
         <DialogTitle>Confirmation de suppression</DialogTitle>
         <DialogContent>
           <Typography>Êtes-vous sûr de vouloir supprimer cette place ?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelDelete} color="inherit">
+          <Button onClick={() => setPlaceToDelete(null)} color="inherit">
             Annuler
           </Button>
           <Button onClick={handleConfirmDelete} color="error" variant="contained">

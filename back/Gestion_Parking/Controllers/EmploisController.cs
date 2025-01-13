@@ -284,36 +284,65 @@ namespace Gestion_Parking.Controllers
             }
         }
 
-        // Modifier un emploi
         [Authorize(Policy = "Admin")]
-        [HttpPut("{jour}")]
-        public IActionResult UpdateEmploi(Jour jour, [FromBody] Emploi emploi)
+        [HttpPut("{id}")]
+        public IActionResult UpdateEmploi(int id, [FromBody] Emploi emploi)
         {
+            if (emploi == null)
+            {
+                return BadRequest("Les données de l'emploi sont invalides.");
+            }
+
             try
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "UPDATE Emplois SET DateDebut = @DateDebut, DateFin = @DateFin, Groupe_Id = @Groupe_Id WHERE Jour = @Jour";
+
+                    // Requête SQL pour mettre à jour l'emploi en fonction de l'ID
+                    string sql = @"
+                UPDATE Emplois 
+                SET DateDebut = @DateDebut, 
+                    DateFin = @DateFin, 
+                    Groupe_Id = @Groupe_Id, 
+                    Jour = @Jour
+                WHERE Id = @Id";
+
                     using (var command = new SqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@Jour", jour.ToString());
+                        // Ajouter les paramètres à la commande SQL
+                        command.Parameters.AddWithValue("@Id", id);
                         command.Parameters.AddWithValue("@DateDebut", emploi.DateDebut);
                         command.Parameters.AddWithValue("@DateFin", emploi.DateFin);
                         command.Parameters.AddWithValue("@Groupe_Id", emploi.Groupe_Id);
+                        command.Parameters.AddWithValue("@Jour", emploi.Jour.ToString());
 
                         int rowsAffected = command.ExecuteNonQuery();
-                        if (rowsAffected == 0) return NotFound("Emploi non trouvé.");
+
+                        // Vérifier si une ligne a été modifiée
+                        if (rowsAffected == 0)
+                        {
+                            return NotFound("Aucun emploi trouvé avec cet ID.");
+                        }
                     }
                 }
-                return Ok("Emploi modifié avec succès.");
+
+                return Ok("L'emploi a été mis à jour avec succès.");
+            }
+            catch (SqlException ex)
+            {
+                // Gestion des erreurs SQL
+                _logger.LogError(ex, "Erreur SQL lors de la mise à jour de l'emploi.");
+                return StatusCode(500, new { erreur = $"Erreur SQL : {ex.Message}" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la modification.");
-                return StatusCode(500, "Une erreur est survenue.");
+                // Gestion des erreurs générales
+                _logger.LogError(ex, "Erreur lors de la mise à jour de l'emploi.");
+                return StatusCode(500, new { erreur = $"Erreur : {ex.Message}" });
             }
         }
+
 
         // Supprimer un emploi avec confirmation
         [Authorize(Policy = "Admin")]

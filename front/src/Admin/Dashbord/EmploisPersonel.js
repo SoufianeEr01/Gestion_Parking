@@ -35,7 +35,7 @@ const EmploisPersonnel = () => {
   const [selectedPersonnel, setSelectedPersonnel] = useState("");
   const [editingEmploi, setEditingEmploi] = useState(null);
   const [formData, setFormData] = useState({
-    personnelId: "",  // Ajout du champ personnelId
+    personnelId: "",
     heureDebut: "",
     heureFin: "",
     role: "",
@@ -64,28 +64,24 @@ const EmploisPersonnel = () => {
 
   // Récupération des emplois
   const fetchEmplois = async (personnelId) => {
-    setLoading(true);
     try {
+      setLoading(true);
       const data = await EmploiPersonnelApi.getEmploiByPersonnel(personnelId);
-      const joursOrdre = [0, 1, 2, 3, 4, 5];
-      const filteredAndSortedData = data
-        .filter((emploi) => joursOrdre.includes(emploi.jour))
-        .sort((a, b) => a.jour - b.jour);
-      setEmplois(filteredAndSortedData);
+      const sortedEmplois = data
+        .filter((emploi) => emploi.jour >= 0 && emploi.jour <= 5) // Valider les jours
+        .sort((a, b) => a.jour - b.jour); // Trier par ordre des jours
+      setEmplois(sortedEmplois);
     } catch (error) {
-      setError("Erreur lors de la récupération des emplois.");
-      console.error(error);
+      console.error("Acune emploi trouvé pour ce personnel.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Chargement des personnels au montage du composant
   useEffect(() => {
     fetchPersonnels();
   }, []);
 
-  // Gestion du changement de personnel sélectionné
   const handlePersonnelChange = (event) => {
     const personnelId = event.target.value;
     setSelectedPersonnel(personnelId);
@@ -93,16 +89,15 @@ const EmploisPersonnel = () => {
     setError(null);
     setFormData({
       ...formData,
-      personnelId: personnelId,  // Mise à jour du personnelId
+      personnelId,
     });
     if (personnelId) fetchEmplois(personnelId);
   };
 
-  // Gestion de la modification d'un emploi
   const handleEditClick = (emploi) => {
     setEditingEmploi(emploi);
     setFormData({
-      personnelId: emploi.personnelId, // Assignation du personnelId à l'emploi
+      personnelId: emploi.personnelId,
       heureDebut: emploi.heureDebut,
       heureFin: emploi.heureFin,
       role: emploi.role,
@@ -111,7 +106,6 @@ const EmploisPersonnel = () => {
     setDialogOpen(true);
   };
 
-  // Gestion des champs du formulaire
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -120,32 +114,28 @@ const EmploisPersonnel = () => {
     }));
   };
 
-  // Validation et formatage des heures
   const formatTime = (time) => {
     if (time.length === 5) {
-      return `${time}:00`; // Ajoute ":00" si le format est "HH:mm"
+      return `${time}:00`;
     }
-    return time; // Garde le format si déjà correct
+    return time;
   };
 
-  // Fermeture de la boîte de dialogue
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingEmploi(null);
   };
 
-  // Mise à jour d'un emploi
   const handleUpdateEmploi = async () => {
     try {
       const updatedEmploi = {
-        personnelId: formData.personnelId,  // On envoie le personnelId
+        personnelId: formData.personnelId,
         jour: parseInt(formData.jour, 10),
         heureDebut: formatTime(formData.heureDebut),
         heureFin: formatTime(formData.heureFin),
         role: formData.role,
       };
-      console.log("Données mises à jour : ", updatedEmploi);
-      await EmploiPersonnelApi.updateEmploiPersonnel(editingEmploi.id, updatedEmploi);  // On utilise l'ID de l'emploi pour la mise à jour
+      await EmploiPersonnelApi.updateEmploiPersonnel(editingEmploi.id, updatedEmploi);
       setDialogOpen(false);
       setEditingEmploi(null);
       fetchEmplois(selectedPersonnel);
@@ -156,15 +146,7 @@ const EmploisPersonnel = () => {
   };
 
   return (
-    <Box
-      padding={3}
-      sx={{
-        flexDirection: "column",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <Box padding={3} sx={{ flexDirection: "column", display: "flex", alignItems: "center" }}>
       <FormControl margin="normal" sx={{ mb: 2, width: "50%" }}>
         <InputLabel id="select-personnel-label">Sélectionnez un personnel</InputLabel>
         <Select
@@ -182,18 +164,16 @@ const EmploisPersonnel = () => {
         </Select>
       </FormControl>
 
-      {loading && (
+      {loading ? (
         <Box display="flex" justifyContent="center" alignItems="center" marginTop={3}>
           <CircularProgress />
           <Typography variant="h6" color="textSecondary" style={{ marginLeft: "15px" }}>
             Chargement des données...
           </Typography>
         </Box>
-      )}
-
-      {!loading && emplois.length > 0 && (
-        <TableContainer component={Paper} sx={{ mt: 2, width: "80%"}}>
-        <Table aria-label="table des emplois">
+      ) : emplois.length > 0 ? (
+        <TableContainer component={Paper} sx={{ mt: 2, width: "80%" }}>
+          <Table aria-label="table des emplois" size="small">
             <TableHead>
               <TableRow>
                 <TableCell><strong>Jour</strong></TableCell>
@@ -211,8 +191,8 @@ const EmploisPersonnel = () => {
                   <TableCell>{emploi.heureFin}</TableCell>
                   <TableCell>{emploi.role}</TableCell>
                   <TableCell>
-                    <IconButton variant="contained" color="primary" onClick={() => handleEditClick(emploi)}>
-                    <EditIcon/>
+                    <IconButton color="primary" onClick={() => handleEditClick(emploi)}>
+                      <EditIcon />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -220,10 +200,14 @@ const EmploisPersonnel = () => {
             </TableBody>
           </Table>
         </TableContainer>
+      ) : (
+        <Typography variant="h6" align="center" sx={{ mt: 4, color: "gray", fontStyle: "italic" }}>
+          Aucun emploi trouvé pour ce personnel.
+        </Typography>
       )}
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle textAlign='center'>Modifier l'emploi Personnel</DialogTitle>
+        <DialogTitle textAlign="center">Modifier l'emploi Personnel</DialogTitle>
         <DialogContent>
           <TextField
             label="Jour"
@@ -255,15 +239,16 @@ const EmploisPersonnel = () => {
             label="Role"
             name="role"
             value={formData.role}
-            onChange={handleFormChange}
             fullWidth
             margin="dense"
             disabled
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="black">Annuler</Button>
-          <Button onClick={handleUpdateEmploi} color="success" variant='contained'>Modifier</Button>
+          <Button onClick={handleCloseDialog} color="inherit">Annuler</Button>
+          <Button onClick={handleUpdateEmploi} color="success" variant="contained">
+            Modifier
+          </Button>
         </DialogActions>
       </Dialog>
 
