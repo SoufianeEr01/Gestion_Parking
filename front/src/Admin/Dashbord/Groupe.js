@@ -228,8 +228,14 @@ const Groupe = () => {
       />
 
       {/* Group Table */}
-  <Table sx={{ mt: 3.5, width: '70%' }}>
-    <TableHead>
+          <Table sx={{ mt: 4, width: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center', alignContent: 'center' 
+}}
+    >  
+      <TableHead 
+        aria-label="table des groupes" 
+        size="small" 
+        sx={{ textAlign: 'center' }}
+      >
       <TableRow>
         <TableCell style={{ fontWeight: "bold" }}>ID</TableCell>
         <TableCell style={{ fontWeight: "bold" }}>Nom</TableCell>

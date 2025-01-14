@@ -16,13 +16,14 @@ import {
 } from "@mui/material";
 import ReservationApi from "../../Api/ReservationApi";
 import SearchIcon from "@mui/icons-material/Search";
+import { green } from "@mui/material/colors";
 
 function Reservation() {
   const [reservations, setReservations] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); // Number of reservations per page
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Number of reservations per page
   const [filterText, setFilterText] = useState(""); // Filter for name
   const [filterEtat, setFilterEtat] = useState(""); // Filter for status
   const [filterNumeroPlace, setFilterNumeroPlace] = useState(""); // Filter for number place
@@ -94,7 +95,12 @@ const handleFilterHeureDebutChange = (event) => {
     (filterHeureFin ? reservation.heureFin.startsWith(filterHeureFin) : true) // Compare end time
   );
 
-  // Handle page change for pagination
+  const paginatedReservations = filteredReservations.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+
+  // Handle page change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -143,6 +149,13 @@ const handleFilterHeureDebutChange = (event) => {
             onChange={handleFilterEtatChange}
             fullWidth
             color="success"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="success" />
+                </InputAdornment>
+              ),
+            }}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
@@ -155,6 +168,7 @@ const handleFilterHeureDebutChange = (event) => {
                 fontSize: "16px",
               },
             }}
+            
           >
             <MenuItem value="">Tous</MenuItem>
             <MenuItem value="actif">Actif</MenuItem>
@@ -171,6 +185,13 @@ const handleFilterHeureDebutChange = (event) => {
             color="success"
             fullWidth
             onChange={handleFilterNumeroPlaceChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="success" />
+                </InputAdornment>
+              ),
+            }}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
@@ -196,8 +217,12 @@ const handleFilterHeureDebutChange = (event) => {
             color="success"
             fullWidth
             onChange={handleFilterDateChange}
-            InputLabelProps={{
-              shrink: true,
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="success" />
+                </InputAdornment>
+              ),
             }}
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -224,6 +249,13 @@ const handleFilterHeureDebutChange = (event) => {
             color="success"
             fullWidth
             onChange={handleFilterHeureDebutChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="success" />
+                </InputAdornment>
+              ),
+            }}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
@@ -249,6 +281,13 @@ const handleFilterHeureDebutChange = (event) => {
             color="success"
             fullWidth
             onChange={handleFilterHeureFinChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="success" />
+                </InputAdornment>
+              ),
+            }}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
@@ -286,7 +325,7 @@ const handleFilterHeureDebutChange = (event) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredReservations.map((reservation) => (
+              {paginatedReservations.map((reservation) => (
                 <TableRow key={reservation.id}>
                   <TableCell>{reservation.dateReservation}</TableCell>
                   <TableCell>{reservation.heureDebut}</TableCell>
@@ -296,41 +335,45 @@ const handleFilterHeureDebutChange = (event) => {
                   </TableCell>
                   <TableCell>{reservation.numeroPlace}</TableCell>
                   <TableCell>{reservation.lieuReservation}</TableCell>
-                  <TableCell>{reservation.etatReservation}</TableCell>
+                  <TableCell 
+                          style={{ color: reservation.etatReservation === "actif" ? 'green' : 'primary' }}
+                        >
+                          {reservation.etatReservation}
+                        </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
 
-          {/* Pagination */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <Pagination
-              count={Math.ceil(filteredReservations.length / rowsPerPage)}
-              page={page}
-              onChange={handleChangePage}
-              color="success"
-              sx={{ mt: 2 }}
-            />
-          </Box>
-        </>
-      )}
+                {/* Pagination */}
+      <Pagination
+        count={Math.ceil(filteredReservations.length / rowsPerPage)}
+        page={page}
+        onChange={handleChangePage}
+        color="success"
+        sx={{ mt: 2, display: "flex", justifyContent: "center" }}
+      />
+    </>
+  )}
 
-      {/* Snackbar for success and error messages */}
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={6000}
-        onClose={() => setSuccessMessage("")}
-        message={successMessage}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
-      <Snackbar
-        open={!!errorMessage}
-        autoHideDuration={6000}
-        onClose={() => setErrorMessage("")}
-        message={errorMessage}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      />
-    </Box>
+  {/* Success message */}
+  <Snackbar
+    open={!!successMessage}
+    autoHideDuration={3000}
+    onClose={() => setSuccessMessage("")}
+    message={successMessage}
+  />
+
+  {/* Error message */}
+  <Snackbar
+    open={!!errorMessage}
+    autoHideDuration={3000}
+    onClose={() => setErrorMessage("")}
+    message={errorMessage}
+    sx={{ "& .MuiSnackbarContent-root": { backgroundColor: "red" } }}
+  />
+</Box>
+
   );
 }
 

@@ -440,6 +440,22 @@ JOIN
 
                     foreach (var reservation in reservations)
                     {
+                        // Vérifier que la place de parking est libre
+                        string checkSql = "SELECT COUNT(*) FROM PlaceParkings WHERE id = @PlaceParkingId AND etat = 'libre'";
+                        using (var command = new SqlCommand(checkSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            int count = (int)command.ExecuteScalar();
+                            if (count == 0)
+                            {
+                                return BadRequest(new
+                                {
+                                    message = $"La place de parking avec ID {reservation.placeParking_id} n'est pas disponible."
+                                });
+                            }
+                        }
+
                         // Insérer la réservation dans la table Reservations avec l'état
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
@@ -586,6 +602,22 @@ JOIN
 
                     foreach (var reservation in reservations)
                     {
+                        // Vérifier que la place de parking est libre
+                        string checkSql = "SELECT COUNT(*) FROM PlaceParkings WHERE id = @PlaceParkingId AND etat = 'libre'";
+                        using (var command = new SqlCommand(checkSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            int count = (int)command.ExecuteScalar();
+                            if (count == 0)
+                            {
+                                return BadRequest(new
+                                {
+                                    message = $"La place de parking avec ID {reservation.placeParking_id} n'est pas disponible."
+                                });
+                            }
+                        }
+
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
@@ -728,6 +760,22 @@ JOIN
 
                     foreach (var reservation in reservations)
                     {
+                        // Vérifier que la place de parking est libre
+                        string checkSql = "SELECT COUNT(*) FROM PlaceParkings WHERE id = @PlaceParkingId AND etat = 'libre'";
+                        using (var command = new SqlCommand(checkSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+
+                            int count = (int)command.ExecuteScalar();
+                            if (count == 0)
+                            {
+                                return BadRequest(new
+                                {
+                                    message = $"La place de parking avec ID {reservation.placeParking_id} n'est pas disponible."
+                                });
+                            }
+                        }
+
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))

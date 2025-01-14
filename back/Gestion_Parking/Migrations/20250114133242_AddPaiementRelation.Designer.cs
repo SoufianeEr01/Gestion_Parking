@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250111202452_AddPaiementRelation")]
+    [Migration("20250114133242_AddPaiementRelation")]
     partial class AddPaiementRelation
     {
         /// <inheritdoc />
@@ -199,8 +199,8 @@ namespace Gestion_Parking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateOnly?>("dateFinReservation")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("dateFinReservation")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("etage")
                         .HasColumnType("int");
@@ -250,9 +250,6 @@ namespace Gestion_Parking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("Etat")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Etudiantid")
                         .HasColumnType("int");
 
@@ -261,6 +258,10 @@ namespace Gestion_Parking.Migrations
 
                     b.Property<DateOnly>("date")
                         .HasColumnType("date");
+
+                    b.Property<string>("etat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeOnly>("heureDebut")
                         .HasColumnType("time");

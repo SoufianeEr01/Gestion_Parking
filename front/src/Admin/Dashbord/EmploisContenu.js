@@ -21,6 +21,7 @@ import {
   FormControl,
   IconButton,
   Typography,
+  Alert
   
   
 } from "@mui/material";
@@ -34,6 +35,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreationPersonnelEmploi from "./CreateEmploiPersonel";
 import SearchIcon from '@mui/icons-material/Search';
 import  {Grid}  from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+
 
 
 const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
@@ -150,7 +153,7 @@ function EmploisContent() {
       setSuccessMessage("Emploi ajouté avec succès !");
       handleClosed();
     } catch (error) {
-      setError("Erreur lors de l'ajout de l'emploi.");
+      setError("Un emploi existe déjà pour cette journée.");
     }
   };
 
@@ -321,13 +324,31 @@ function EmploisContent() {
     {viewEmplois && (
   <Box sx={{ flexDirection: "column",display: "flex",justifyContent: "center",alignItems: "center",width: "100%" }}>
     <FormControl sx={{ mb: 2, width: "50%", mt: 2 }}>
-      <InputLabel id="select-groupe-label">Sélectionnez un Groupe</InputLabel>
+      <InputLabel id="select-groupe-label" color="black">Sélectionnez un Groupe</InputLabel>
       <Select
         labelId="select-groupe-label"
         value={selectedGroupe}
         onChange={handleGroupeChange}
         fullWidth
         color="success"
+        startAdornment={
+          <InputAdornment position="start">
+            <SearchIcon color="success" />
+          </InputAdornment>
+  }
+  sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: "bold",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 14px",
+                fontSize: "16px",
+              },
+  }}
+
       >
         {groupes.map((groupe) => (
           <MenuItem key={groupe.id} value={groupe.id}>
@@ -423,7 +444,7 @@ function EmploisContent() {
       <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogTitle style={{textAlign:'center'}}>{editEmploi ? "Modifier l'Emploi" : "Ajouter un Emploi"}</DialogTitle>
         <DialogContent>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
           <TextField
             label="Jour"
             value={currentEmploi.jour}

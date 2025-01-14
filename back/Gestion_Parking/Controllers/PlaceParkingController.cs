@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,11 @@ namespace Gestion_Parking.Controllers
     public class PlaceParkingController : ControllerBase
     {
         private readonly string _connectionString;
-
-        public PlaceParkingController(IConfiguration configuration)
+        private readonly AppDbContext _context;
+        public PlaceParkingController(IConfiguration configuration, AppDbContext context)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
+            _context = context;
         }
 
       
@@ -38,7 +40,7 @@ namespace Gestion_Parking.Controllers
                 commandInsert.Parameters.AddWithValue("@Etage", placeParking.etage);
                 commandInsert.Parameters.AddWithValue("@DateFinReservation",
                     placeParking.dateFinReservation.HasValue
-                        ? placeParking.dateFinReservation.Value.ToDateTime(TimeOnly.MinValue)
+                        ? placeParking.dateFinReservation.Value.Date
                         : DBNull.Value);
 
                 commandInsert.ExecuteNonQuery();
@@ -149,6 +151,31 @@ namespace Gestion_Parking.Controllers
             }
         }
 
+        //count Place Parking
+        [Authorize(Policy = "EtudiantOuAdmin")]
+        [HttpGet("count")]
+        public IActionResult GetCountPlaceParking()
+        {
+            try
+            {
+                // Compte le nombre total de places de parking
+                var totalPlaces = _context.PlaceParkings.Count();
+                return Ok(new
+                {
+                    totalPlaces = totalPlaces
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    erreur = "Une erreur est survenue lors du comptage des places de parking.",
+                    details = ex.Message
+                });
+            }
+        }
+
+
         [Authorize(Policy = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult DeletePlaceParking(int id)
@@ -195,7 +222,7 @@ namespace Gestion_Parking.Controllers
                 command.Parameters.AddWithValue("@Etage", placeParking.etage);
                 command.Parameters.AddWithValue("@DateFinReservation",
                     placeParking.dateFinReservation.HasValue
-                        ? placeParking.dateFinReservation.Value.ToDateTime(TimeOnly.MinValue)
+                        ? placeParking.dateFinReservation.Value.Date
                         : DBNull.Value);
 
                 int rowsAffected = command.ExecuteNonQuery();

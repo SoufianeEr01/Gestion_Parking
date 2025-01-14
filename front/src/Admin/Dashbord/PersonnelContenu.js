@@ -267,7 +267,7 @@ const Personnele = () => {
               <TableCell>{personnel.nom}</TableCell>
               <TableCell>{personnel.prenom}</TableCell>
               <TableCell>{personnel.email}</TableCell>
-              <TableCell>{personnel.role}</TableCell>
+              <TableCell>{personnel.role.toUpperCase()}</TableCell>
               <TableCell>
                 <IconButton color="primary" onClick={() => openEditDialog(personnel)}>
                   <EditIcon />

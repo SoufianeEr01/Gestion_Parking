@@ -26,6 +26,10 @@ import {
 import EmploiPersonnelApi from "../../Api/EmploisPersonnelApi";
 import PersonnelApi from "../../Api/PersonnelApi";
 import EditIcon from "@mui/icons-material/Edit";
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from "@mui/icons-material/Search";
+
+
 
 const EmploisPersonnel = () => {
   const [emplois, setEmplois] = useState([]);
@@ -148,13 +152,30 @@ const EmploisPersonnel = () => {
   return (
     <Box padding={3} sx={{ flexDirection: "column", display: "flex", alignItems: "center" }}>
       <FormControl margin="normal" sx={{ mb: 2, width: "50%" }}>
-        <InputLabel id="select-personnel-label">Sélectionnez un personnel</InputLabel>
+        <InputLabel id="select-personnel-label" color="black">Sélectionnez un personnel</InputLabel>
         <Select
           labelId="select-personnel-label"
           value={selectedPersonnel}
           onChange={handlePersonnelChange}
           fullWidth
           color="success"
+          startAdornment={
+          <InputAdornment position="start">
+            <SearchIcon color="success" />
+          </InputAdornment>
+            }
+            sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                        "& .MuiInputLabel-root": {
+                          fontWeight: "bold",
+                        },
+                        "& .MuiOutlinedInput-input": {
+                          padding: "12px 14px",
+                          fontSize: "16px",
+                        },
+            }}
         >
           {personnels.map((personnel) => (
             <MenuItem key={personnel.id} value={personnel.id}>

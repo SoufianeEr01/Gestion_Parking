@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Gestion_Parking.Migrations
 {
     /// <inheritdoc />
-    public partial class firstMigration : Migration
+    public partial class AddPaiementRelation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,7 +49,7 @@ namespace Gestion_Parking.Migrations
                     numero = table.Column<int>(type: "int", nullable: false),
                     etage = table.Column<int>(type: "int", nullable: false),
                     etat = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    dateFinReservation = table.Column<DateOnly>(type: "date", nullable: true)
+                    dateFinReservation = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -147,6 +147,27 @@ namespace Gestion_Parking.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Paiements",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    mode_paiement = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    prix_paye = table.Column<float>(type: "real", nullable: false),
+                    personne_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Paiements", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Paiements_Personnes_personne_id",
+                        column: x => x.personne_id,
+                        principalTable: "Personnes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reservations",
                 columns: table => new
                 {
@@ -156,6 +177,7 @@ namespace Gestion_Parking.Migrations
                     heureDebut = table.Column<TimeOnly>(type: "time", nullable: false),
                     heureFin = table.Column<TimeOnly>(type: "time", nullable: false),
                     lieu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    etat = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     personne_id = table.Column<int>(type: "int", nullable: false),
                     placeParking_id = table.Column<int>(type: "int", nullable: false),
                     Etudiantid = table.Column<int>(type: "int", nullable: true),
@@ -199,6 +221,11 @@ namespace Gestion_Parking.Migrations
                 column: "Groupe_Id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Paiements_personne_id",
+                table: "Paiements",
+                column: "personne_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Personnes_GroupeId",
                 table: "Personnes",
                 column: "GroupeId");
@@ -237,6 +264,9 @@ namespace Gestion_Parking.Migrations
 
             migrationBuilder.DropTable(
                 name: "Emplois");
+
+            migrationBuilder.DropTable(
+                name: "Paiements");
 
             migrationBuilder.DropTable(
                 name: "Reponses");
