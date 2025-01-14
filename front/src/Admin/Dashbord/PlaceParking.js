@@ -32,6 +32,7 @@ const PlaceParking = () => {
   const placesPerPage = 5;
   const [placeToDelete, setPlaceToDelete] = useState(null);
   const [placeData, setPlaceData] = useState({ numero: "", etage: "" });
+  const [filterEtat, setFilterEtat] = useState(""); // État pour le filtre
 
   const fetchPlaces = async () => {
     try {
@@ -52,6 +53,10 @@ const PlaceParking = () => {
       ...prevData,
       [name]: String(value),
     }));
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterEtat(e.target.value);
   };
 
   const handleSubmit = async () => {
@@ -90,7 +95,6 @@ const PlaceParking = () => {
     setPlaceToDelete(null);
   };
 
-  // Fonction de conversion de l'étage
   const getEtageLabel = (etage) => {
     switch (etage) {
       case 0:
@@ -104,9 +108,13 @@ const PlaceParking = () => {
     }
   };
 
+  const filteredPlaces = places.filter((place) =>
+    filterEtat ? place.etat === filterEtat : true
+  );
+
   const indexOfLastPlace = page * placesPerPage;
   const indexOfFirstPlace = indexOfLastPlace - placesPerPage;
-  const currentPlaces = places.slice(indexOfFirstPlace, indexOfLastPlace);
+  const currentPlaces = filteredPlaces.slice(indexOfFirstPlace, indexOfLastPlace);
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -164,7 +172,23 @@ const PlaceParking = () => {
         message={feedbackMessage.success || feedbackMessage.error}
       />
 
-      <Table sx={{ mt: 3.5 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        <Typography variant="h6">Liste des Places</Typography>
+        <FormControl sx={{ width: 200 }}>
+          <InputLabel>Filtrer par état</InputLabel>
+          <Select
+            value={filterEtat}
+            onChange={handleFilterChange}
+            label="Filtrer par état"
+          >
+            <MenuItem value="">Tous</MenuItem>
+            <MenuItem value="libre">Libre</MenuItem>
+            <MenuItem value="occupe">Occupé</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      <Table sx={{ mt: 2 }}>
         <TableHead>
           <TableRow>
             <TableCell style={{ fontWeight: "bold" }}>Numéro</TableCell>
@@ -177,27 +201,36 @@ const PlaceParking = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {currentPlaces.map((place) => (
-            <TableRow key={place.id}>
-              <TableCell>{place.numero}</TableCell>
-              <TableCell>{getEtageLabel(place.etage)}</TableCell> {/* Utilisation de la fonction de conversion */}
-              <TableCell>{place.dateFinReservation || "--------"}</TableCell>
-              <TableCell>{place.nom || "--------"}</TableCell>
-              <TableCell>{place.prenom || "--------"}</TableCell>
-              <TableCell>{place.etat}</TableCell>
-              <TableCell>
-                <IconButton color="error" onClick={() => handleDelete(place)}>
-                  <DeleteIcon />
-                </IconButton>
+          {currentPlaces.length > 0 ? (
+            currentPlaces.map((place) => (
+              <TableRow key={place.id}>
+                <TableCell>{place.numero}</TableCell>
+                <TableCell>{getEtageLabel(place.etage)}</TableCell>
+                <TableCell>{place.dateFinReservation || "--------"}</TableCell>
+                <TableCell>{place.nom || "--------"}</TableCell>
+                <TableCell>{place.prenom || "--------"}</TableCell>
+                <TableCell>{place.etat}</TableCell>
+                <TableCell>
+                  <IconButton color="error" onClick={() => handleDelete(place)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} align="center">
+                Aucun résultat trouvé.
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
+
       </Table>
 
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Pagination
-          count={Math.ceil(places.length / placesPerPage)}
+          count={Math.ceil(filteredPlaces.length / placesPerPage)}
           page={page}
           onChange={(e, newPage) => setPage(newPage)}
           color="success"

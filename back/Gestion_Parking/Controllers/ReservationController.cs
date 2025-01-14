@@ -440,22 +440,6 @@ JOIN
 
                     foreach (var reservation in reservations)
                     {
-                        // Vérifier que la place de parking est libre
-                        string checkSql = "SELECT COUNT(*) FROM PlaceParkings WHERE id = @PlaceParkingId AND etat = 'libre'";
-                        using (var command = new SqlCommand(checkSql, connection))
-                        {
-                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
-
-                            int count = (int)command.ExecuteScalar();
-                            if (count == 0)
-                            {
-                                return BadRequest(new
-                                {
-                                    message = $"La place de parking avec ID {reservation.placeParking_id} n'est pas disponible."
-                                });
-                            }
-                        }
-
                         // Insérer la réservation dans la table Reservations avec l'état
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
@@ -602,22 +586,6 @@ JOIN
 
                     foreach (var reservation in reservations)
                     {
-                        // Vérifier que la place de parking est libre
-                        string checkSql = "SELECT COUNT(*) FROM PlaceParkings WHERE id = @PlaceParkingId AND etat = 'libre'";
-                        using (var command = new SqlCommand(checkSql, connection))
-                        {
-                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
-
-                            int count = (int)command.ExecuteScalar();
-                            if (count == 0)
-                            {
-                                return BadRequest(new
-                                {
-                                    message = $"La place de parking avec ID {reservation.placeParking_id} n'est pas disponible."
-                                });
-                            }
-                        }
-
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
@@ -760,22 +728,6 @@ JOIN
 
                     foreach (var reservation in reservations)
                     {
-                        // Vérifier que la place de parking est libre
-                        string checkSql = "SELECT COUNT(*) FROM PlaceParkings WHERE id = @PlaceParkingId AND etat = 'libre'";
-                        using (var command = new SqlCommand(checkSql, connection))
-                        {
-                            command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
-
-                            int count = (int)command.ExecuteScalar();
-                            if (count == 0)
-                            {
-                                return BadRequest(new
-                                {
-                                    message = $"La place de parking avec ID {reservation.placeParking_id} n'est pas disponible."
-                                });
-                            }
-                        }
-
                         string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
                                            "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
@@ -1079,38 +1031,38 @@ JOIN
 
         [AllowAnonymous]
         [HttpGet("ExistingReservationForPersonne/{personneId}")]
-            public IActionResult ExistingReservationForPersonne(int personneId)
+        public IActionResult ExistingReservationForPersonne(int personneId)
+        {
+            try
             {
-                try
-                {
-                    bool reservationExists = false;
+                bool reservationExists = false;
 
-                    using (var connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Requête pour vérifier l'existence d'une réservation
+                    string query = "SELECT COUNT(*) FROM Reservations WHERE personne_id = @PersonneId and etat = 'actif'";
+
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        connection.Open();
+                        command.Parameters.AddWithValue("@PersonneId", personneId);
 
-                        // Requête pour vérifier l'existence d'une réservation
-                        string query = "SELECT COUNT(*) FROM Reservations WHERE personne_id = @PersonneId and etat = 'actif'";
+                        // Exécution de la requête
+                        int count = (int)command.ExecuteScalar();
 
-                        using (var command = new SqlCommand(query, connection))
-                        {
-                            command.Parameters.AddWithValue("@PersonneId", personneId);
-
-                            // Exécution de la requête
-                            int count = (int)command.ExecuteScalar();
-
-                            reservationExists = count > 0; // Si le nombre de résultats est supérieur à 0, une réservation existe
-                        }
+                        reservationExists = count > 0; // Si le nombre de résultats est supérieur à 0, une réservation existe
                     }
+                }
 
-                    return Ok(reservationExists);
-                }
-                catch (Exception ex)
-                {
-                    // Gestion des erreurs
-                    return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
-                }
+                return Ok(reservationExists);
             }
+            catch (Exception ex)
+            {
+                // Gestion des erreurs
+                return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
+            }
+        }
 
 
         [HttpPost("ArchiverReservations")]

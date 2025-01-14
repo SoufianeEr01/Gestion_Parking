@@ -12,7 +12,7 @@ const Logo = ({ navigate }) => (
     }}
     onClick={() => navigate("/")}
   >
-  Parking
+  Parking EMSI
     {/* Parking EMSI */}
   </Typography>
 );

@@ -102,7 +102,7 @@ const LoginPage = () => {
           gutterBottom
           sx={{ color: 'rgb(29, 125, 61)', marginTop: 4 }}
         >
-          Parking Manager
+          Parking EMSI
         </Typography>
 
         <Typography
@@ -187,12 +187,6 @@ const LoginPage = () => {
             Se connecter
           </Button>
         </form>
-
-        <Box textAlign="center" marginTop={2}>
-          <Link href="#" underline="hover" sx={{ color: 'black', fontWeight: 'bold' }}>
-            Mot de passe oublié ?
-          </Link>
-        </Box>
 
         <Divider sx={{ marginY: 3, color: 'rgb(29, 125, 61)' }}>ou</Divider>
         <Box textAlign="center" marginTop={2}>
