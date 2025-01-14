@@ -83,10 +83,10 @@ const AboutPage = () => {
               Notre Vision
             </Typography>
             <Typography sx={{ marginBottom: '15px', fontSize: '1rem', lineHeight: '1.8', color: '#555' }}>
-              Nous croyons en une expérience de stationnement simplifiée et efficace pour tous. Notre plateforme a
-              été développée avec un objectif clair : réduire le stress des utilisateurs et optimiser la gestion des
-              ressources disponibles. Avec une technologie avancée et une interface intuitive, nous vous offrons un
-              service qui répond à vos besoins.
+            Notre croyance c'est d'assurer une utilisation optimale et équitable des places de stationnement. 
+            En intégrant les emplois du temps des étudiants et du personnel, il vise à réduire les conflits et
+             à améliorer l'organisation. Le système favorise une gestion fluide et efficace en temps réel. 
+             Il contribue ainsi à un environnement mieux structuré et fonctionnel sur le campus
             </Typography>
             {/* <Button
               variant="contained"

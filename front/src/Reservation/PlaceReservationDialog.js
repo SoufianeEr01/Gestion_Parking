@@ -14,7 +14,6 @@ import {
 
 import EmploiTempsStep from "./steps/EmploiTempsStep";
 import PaymentOptionsStep from "./steps/PaymentOptionsStep";
-import ConfirmationStep from "./steps/ConfirmationStep";
 import EmploiApi from "../Api/EmploiApi";
 import ReservationPreviewStep from "./steps/ReservationPreviewStep";
 import ReservationApi from "../Api/ReservationApi";
