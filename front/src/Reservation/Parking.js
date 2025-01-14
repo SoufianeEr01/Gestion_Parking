@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlaceParkingApi from '../Api/PlaceParkingApi';
 import './Parking.css';
 import PlaceReservationDialog from './PlaceReservationDialog';
-import { Tooltip } from 'react-tooltip';  // Assurez-vous de l'importation correcte
+import { Tooltip } from 'react-tooltip'; // Assurez-vous de l'importation correcte
 
 function Parking() {
   const [selectedFloor, setSelectedFloor] = useState(0);
@@ -11,15 +11,11 @@ function Parking() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [reserved, setReserved] = useState([]);
 
-
-  
   // Fetch parking places data from API
   useEffect(() => {
     const fetchAvailablePlaces = async () => {
       try {
         const allPlaces = await PlaceParkingApi.fetchPlaceParkings();
-        
-      // console.log(allPlaces);
         const formattedSpots = [
           {
             id: 0,
@@ -65,7 +61,6 @@ function Parking() {
     };
     fetchAvailablePlaces();
   }, [spots]);
-  
 
   const handleReservation = (placeId) => {
     setSelectedPlace(placeId);
@@ -75,9 +70,9 @@ function Parking() {
   return (
     <div className="parking-container">
       <div className="floor-selector">
-        {spots.map((floor) => (
+        {spots.map((floor, index) => (
           <button
-            key={floor.id}
+            key={`floor-${floor.id}-${index}`} // Clé unique pour chaque étage
             className={`floor-button ${selectedFloor === floor.id ? 'active' : ''}`}
             onClick={() => setSelectedFloor(floor.id)}
           >
@@ -89,24 +84,22 @@ function Parking() {
       {spots[selectedFloor] && (
         <div className="parking-floor">
           <h2>{spots[selectedFloor].name}</h2>
-          <div className="parking-grid" >
-            {spots[selectedFloor].spots.map((spot) => (
+          <div className="parking-grid">
+            {spots[selectedFloor].spots.map((spot, index) => (
               <div
-                key={spot.id}
+                key={`spot-${spot.id}-${index}`} // Clé unique pour chaque place
                 className={`spot ${spot.status === 'Occupé' ? 'occupe' : 'libre'}`}
                 onClick={spot.status === 'Occupé' ? null : () => handleReservation(spot.id)}
                 style={{ cursor: spot.status === 'Occupé' ? 'not-allowed' : 'pointer' }}
-                data-tooltip-id={`tooltip-${spot.id}`}  // Identifiant unique pour chaque tooltip
+                data-tooltip-id={`tooltip-${spot.id}`} // Identifiant unique pour chaque tooltip
               >
                 <span className="spot-number">{spot.number}</span>
                 <span className="spot-status">{spot.status}</span>
-
-                {/* Tooltip pour afficher la date de fin de réservation
                 {spot.status === 'Occupé' && (
                   <Tooltip id={`tooltip-${spot.id}`} place="top" effect="solid">
                     Réservée jusqu'au {spot.reservationEnd}
                   </Tooltip>
-                )} */}
+                )}
               </div>
             ))}
           </div>

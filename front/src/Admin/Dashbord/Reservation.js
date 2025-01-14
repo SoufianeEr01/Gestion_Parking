@@ -41,7 +41,7 @@ function Reservation() {
 
   useEffect(() => {
     fetchReservations();
-  }, []);
+  }, [reservations]);
 
   // Handle filter change for name
   const handleFilterChange = (event) => {

@@ -1,9 +1,10 @@
 ﻿using Gestion_Parking.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Gestion_Parking.Controllers
 {
@@ -11,13 +12,14 @@ namespace Gestion_Parking.Controllers
     [ApiController]
     public class PlaceParkingController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly string _connectionString;
 
-        public PlaceParkingController(AppDbContext context)
+        public PlaceParkingController(IConfiguration configuration)
         {
-            _context = context;
+            _connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
         }
 
+      
         // Create a parking place
         [Authorize(Policy = "Admin")]
         [HttpPost]
@@ -25,8 +27,22 @@ namespace Gestion_Parking.Controllers
         {
             try
             {
-                _context.PlaceParkings.Add(placeParking);
-                _context.SaveChanges();
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
+
+                const string sqlInsert = @"INSERT INTO PlaceParkings (numero, etat, etage, dateFinReservation) 
+                                   VALUES (@Numero, @Etat, @Etage, @DateFinReservation)";
+                using var commandInsert = new SqlCommand(sqlInsert, connection);
+                commandInsert.Parameters.AddWithValue("@Numero", placeParking.numero);
+                commandInsert.Parameters.AddWithValue("@Etat", placeParking.etat);
+                commandInsert.Parameters.AddWithValue("@Etage", placeParking.etage);
+                commandInsert.Parameters.AddWithValue("@DateFinReservation",
+                    placeParking.dateFinReservation.HasValue
+                        ? placeParking.dateFinReservation.Value.ToDateTime(TimeOnly.MinValue)
+                        : DBNull.Value);
+
+                commandInsert.ExecuteNonQuery();
+
                 return Ok(new { message = "Place de parking créée avec succès." });
             }
             catch (Exception ex)
@@ -39,30 +55,46 @@ namespace Gestion_Parking.Controllers
         [HttpGet]
         public IActionResult GetAllPlaceParkings()
         {
+            var placeParkingList = new List<object>(); // Using dynamic object for enriched data
             try
             {
-                var placeParkingList = _context.PlaceParkings
-                    .Include(p => p.Reservations)
-                    .ThenInclude(r => r.Personne)
-                    .Select(p => new
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
+
+                const string sql = @"
+                           SELECT DISTINCT p.id, p.numero, p.etage, p.etat, p.dateFinReservation,
+                       CASE 
+                           WHEN p.dateFinReservation IS NULL THEN NULL 
+                           ELSE pr.nom 
+                       END AS nom,
+                       CASE 
+                           WHEN p.dateFinReservation IS NULL THEN NULL 
+                           ELSE pr.prenom 
+                       END AS prenom
+                FROM PlaceParkings p
+                LEFT JOIN Reservations r ON p.id = r.placeParking_id
+                LEFT JOIN Personnes pr ON r.personne_id = pr.id
+                WHERE r.etat != 'archive' OR r.etat IS NULL or p.etat = 'libre';";
+
+                using var command = new SqlCommand(sql, connection);
+                using var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var placeParking = new
                     {
-                        id = p.id,
-                        numero = p.numero,
-                        etage = p.etage,
-                        etat = p.etat,
-                        dateFinReservation = p.dateFinReservation.HasValue
-                            ? p.dateFinReservation.Value.ToString("yyyy-MM-dd")
-                            : null,
-                        nom = p.Reservations
-                            .Where(r => r.Personne != null)  // S'assurer qu'il y a bien une personne associée
-                            .Select(r => r.Personne.nom)
-                            .FirstOrDefault(), // Sélectionner le premier nom associé
-                        prenom = p.Reservations
-                            .Where(r => r.Personne != null)  // S'assurer qu'il y a bien une personne associée
-                            .Select(r => r.Personne.prenom)
-                            .FirstOrDefault() // Sélectionner le premier prénom associé
-                    })
-                    .ToList();
+                        id = reader.GetInt32(reader.GetOrdinal("id")),
+                        numero = reader.GetInt32(reader.GetOrdinal("numero")),
+                        etage = reader.GetInt32(reader.GetOrdinal("etage")),
+                        etat = reader.GetString(reader.GetOrdinal("etat")),
+                        dateFinReservation = reader.IsDBNull(reader.GetOrdinal("dateFinReservation"))
+                            ? null
+                            : reader.GetDateTime(reader.GetOrdinal("dateFinReservation")).ToString("yyyy-MM-dd"),
+                        nom = reader.IsDBNull(reader.GetOrdinal("nom")) ? null : reader.GetString(reader.GetOrdinal("nom")),
+                        prenom = reader.IsDBNull(reader.GetOrdinal("prenom")) ? null : reader.GetString(reader.GetOrdinal("prenom"))
+                    };
+                    placeParkingList.Add(placeParking);
+                }
 
                 return Ok(placeParkingList);
             }
@@ -73,35 +105,43 @@ namespace Gestion_Parking.Controllers
         }
 
 
+
         [Authorize(Policy = "EtudiantOuAdmin")]
         [HttpGet("{id}")]
         public IActionResult GetPlaceParkingById(int id)
         {
             try
             {
-                var placeParking = _context.PlaceParkings
-                    .Include(p => p.Reservations)
-                    .ThenInclude(r => r.Personne)
-                    .Where(p => p.id == id)
-                    .Select(p => new
-                    {
-                        numero = p.numero,
-                        etage = p.etage,
-                        etat = p.etat,
-                        dateFinReservation = p.dateFinReservation.HasValue
-                            ? p.dateFinReservation.Value.ToString("yyyy-MM-dd")
-                            : null,
-                        nom = p.Reservations.Select(r => r.Personne.nom).FirstOrDefault(),
-                        prenom = p.Reservations.Select(r => r.Personne.prenom).FirstOrDefault()
-                    })
-                    .FirstOrDefault();
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
 
-                if (placeParking == null)
+                const string sql = @"SELECT p.numero, p.etage, p.etat, p.dateFinReservation, pr.nom, pr.prenom
+                             FROM PlaceParkings p
+                             LEFT JOIN Reservations r ON p.id = r.placeParking_id
+                             LEFT JOIN Personnes pr ON r.personne_id = pr.id
+                             WHERE p.id = @Id";
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Id", id);
+
+                using var reader = command.ExecuteReader();
+                if (reader.Read())
                 {
-                    return NotFound(new { message = "Place de parking non trouvée." });
+                    var placeParking = new
+                    {
+                        numero = reader.GetInt32(reader.GetOrdinal("numero")),
+                        etage = reader.GetInt32(reader.GetOrdinal("etage")),
+                        etat = reader.GetString(reader.GetOrdinal("etat")),
+                        dateFinReservation = reader.IsDBNull(reader.GetOrdinal("dateFinReservation"))
+                            ? (DateOnly?)null
+                            : DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("dateFinReservation"))),
+                        nom = reader.IsDBNull(reader.GetOrdinal("nom")) ? null : reader.GetString(reader.GetOrdinal("nom")),
+                        prenom = reader.IsDBNull(reader.GetOrdinal("prenom")) ? null : reader.GetString(reader.GetOrdinal("prenom"))
+                    };
+                    return Ok(placeParking);
                 }
 
-                return Ok(placeParking);
+                return NotFound(new { message = "Place de parking non trouvée." });
             }
             catch (Exception ex)
             {
@@ -115,14 +155,19 @@ namespace Gestion_Parking.Controllers
         {
             try
             {
-                var placeParking = _context.PlaceParkings.Find(id);
-                if (placeParking == null)
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
+
+                const string sql = "DELETE FROM PlaceParkings WHERE id = @Id";
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Id", id);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                if (rowsAffected == 0)
                 {
                     return NotFound(new { message = "Place de parking non trouvée ou déjà supprimée." });
                 }
 
-                _context.PlaceParkings.Remove(placeParking);
-                _context.SaveChanges();
                 return Ok(new { message = "Place de parking supprimée avec succès." });
             }
             catch (Exception ex)
@@ -137,18 +182,28 @@ namespace Gestion_Parking.Controllers
         {
             try
             {
-                var existingPlaceParking = _context.PlaceParkings.Find(id);
-                if (existingPlaceParking == null)
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
+
+                const string sql = @"UPDATE PlaceParkings 
+                             SET numero = @Numero, etat = @Etat, etage = @Etage, dateFinReservation = @DateFinReservation 
+                             WHERE id = @Id";
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Id", id);
+                command.Parameters.AddWithValue("@Numero", placeParking.numero);
+                command.Parameters.AddWithValue("@Etat", placeParking.etat);
+                command.Parameters.AddWithValue("@Etage", placeParking.etage);
+                command.Parameters.AddWithValue("@DateFinReservation",
+                    placeParking.dateFinReservation.HasValue
+                        ? placeParking.dateFinReservation.Value.ToDateTime(TimeOnly.MinValue)
+                        : DBNull.Value);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                if (rowsAffected == 0)
                 {
                     return NotFound(new { message = "Place de parking non trouvée ou non mise à jour." });
                 }
 
-                existingPlaceParking.numero = placeParking.numero;
-                existingPlaceParking.etage = placeParking.etage;
-                existingPlaceParking.etat = placeParking.etat;
-                existingPlaceParking.dateFinReservation = placeParking.dateFinReservation;
-
-                _context.SaveChanges();
                 return Ok(new { message = "Place de parking mise à jour avec succès." });
             }
             catch (Exception ex)
@@ -156,5 +211,6 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, new { erreur = "Une erreur est survenue lors de la mise à jour de la place de parking.", details = ex.Message });
             }
         }
+
     }
 }

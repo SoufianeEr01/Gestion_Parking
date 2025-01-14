@@ -37,7 +37,6 @@ const PlaceParking = () => {
     try {
       const data = await PlaceParkingApi.fetchPlaceParkings();
       setPlaces(data);
-      console.log(data);
     } catch (error) {
       setFeedbackMessage({ success: "", error: "Erreur lors de la récupération des places." });
     }
@@ -45,7 +44,7 @@ const PlaceParking = () => {
 
   useEffect(() => {
     fetchPlaces();
-  }, []);
+  }, [places]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -170,8 +169,10 @@ const PlaceParking = () => {
           <TableRow>
             <TableCell style={{ fontWeight: "bold" }}>Numéro</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Étage</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Date Fin Réservation</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Nom</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Prenom</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>État</TableCell>
-            {/* <TableCell style={{ fontWeight: "bold" }}>Date Fin Réservation</TableCell> */}
             <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -180,8 +181,10 @@ const PlaceParking = () => {
             <TableRow key={place.id}>
               <TableCell>{place.numero}</TableCell>
               <TableCell>{getEtageLabel(place.etage)}</TableCell> {/* Utilisation de la fonction de conversion */}
+              <TableCell>{place.dateFinReservation || "--------"}</TableCell>
+              <TableCell>{place.nom || "--------"}</TableCell>
+              <TableCell>{place.prenom || "--------"}</TableCell>
               <TableCell>{place.etat}</TableCell>
-              {/* <TableCell>{place.dateFinReservation}</TableCell> */}
               <TableCell>
                 <IconButton color="error" onClick={() => handleDelete(place)}>
                   <DeleteIcon />

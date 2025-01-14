@@ -1133,39 +1133,36 @@ JOIN
                 {
                     connection.Open();
 
-                    // Requête pour mettre à jour l'état des réservations d'une personne spécifique
-                    string updateReservationsSql = @"
-                UPDATE Reservations 
-                SET etat = 'archive' 
-                WHERE etat != 'archive' AND personne_id = @IdPersonne";
+                    // Requête pour mettre à jour les places de parking avant de mettre à jour les réservations
+                    string updatePlacesSql = @"
+        UPDATE PlaceParkings 
+        SET etat = 'libre', dateFinReservation = null 
+        WHERE id IN 
+        (SELECT DISTINCT P.id 
+         FROM Reservations R 
+         JOIN PlaceParkings P ON R.placeParking_id = P.id 
+         WHERE R.personne_id = @IdPersonne and R.etat = 'actif')";
 
-                    using (var command = new SqlCommand(updateReservationsSql, connection))
+                    using (var placeCommand = new SqlCommand(updatePlacesSql, connection))
                     {
-                        // Ajouter les paramètres nécessaires
-                        command.Parameters.AddWithValue("@CurrentDate", DateTime.Now.Date);
-                        command.Parameters.AddWithValue("@IdPersonne", idPersonne);
+                        placeCommand.Parameters.AddWithValue("@IdPersonne", idPersonne);
 
-                        int rowsAffected = command.ExecuteNonQuery(); // Exécuter la mise à jour
+                        int placeRowsAffected = placeCommand.ExecuteNonQuery(); // Exécuter la mise à jour des places
 
-                        if (rowsAffected > 0)
+                        // Après avoir mis à jour les places, mettre à jour les réservations
+                        string updateReservationsSql = @"
+        UPDATE Reservations 
+        SET etat = 'archive' 
+        WHERE etat != 'archive' AND personne_id = @IdPersonne";
+
+                        using (var command = new SqlCommand(updateReservationsSql, connection))
                         {
-                            // Mettre à jour les places de parking correspondantes
-                            string updatePlacesSql = @"
-                    UPDATE PlaceParkings 
-                    SET etat = 'libre', dateFinReservation = null 
-                    WHERE id IN 
-                    (SELECT DISTINCT P.id 
-                     FROM Reservations R 
-                     JOIN PlaceParkings P ON R.placeParking_id = P.id 
-                     WHERE R.personne_id = @IdPersonne)";
+                            command.Parameters.AddWithValue("@IdPersonne", idPersonne);
 
-                            using (var placeCommand = new SqlCommand(updatePlacesSql, connection))
+                            int rowsAffected = command.ExecuteNonQuery(); // Exécuter la mise à jour des réservations
+
+                            if (rowsAffected > 0)
                             {
-                                // Réutiliser le paramètre idPersonne
-                                placeCommand.Parameters.AddWithValue("@IdPersonne", idPersonne);
-
-                                int placeRowsAffected = placeCommand.ExecuteNonQuery(); // Exécuter la mise à jour des places
-
                                 if (placeRowsAffected > 0)
                                 {
                                     return Ok(new { message = $"{rowsAffected} réservation(s) ont été annulés et une place libérée." });
@@ -1175,10 +1172,10 @@ JOIN
                                     return Ok(new { message = $"{rowsAffected} réservation(s) ont été annulés, mais aucune place de parking n'a été mise à jour." });
                                 }
                             }
-                        }
-                        else
-                        {
-                            return Ok(new { message = $"Aucune réservation pour la personne {idPersonne} n'a été archivée." });
+                            else
+                            {
+                                return Ok(new { message = $"Aucune réservation pour la personne {idPersonne} n'a été archivée." });
+                            }
                         }
                     }
                 }
@@ -1189,6 +1186,7 @@ JOIN
                 return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
             }
         }
+
 
 
 
