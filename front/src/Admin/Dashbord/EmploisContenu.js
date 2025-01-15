@@ -497,7 +497,7 @@ function EmploisContent() {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="Black">Annuler</Button>
+          <Button onClick={handleClosed} color="Black">Annuler</Button>
           <Button onClick={editEmploi ? handleUpdate : handleSubmit} variant="contained" color="success">
             {editEmploi ? "Mettre à jour" : "Ajouter"}
           </Button>
@@ -518,4 +518,3 @@ function EmploisContent() {
 }
 
 export default EmploisContent;
-

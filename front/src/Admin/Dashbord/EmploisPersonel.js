@@ -26,10 +26,9 @@ import {
 import EmploiPersonnelApi from "../../Api/EmploisPersonnelApi";
 import PersonnelApi from "../../Api/PersonnelApi";
 import EditIcon from "@mui/icons-material/Edit";
-import InputAdornment from '@mui/material/InputAdornment';
+import DeleteIcon from "@mui/icons-material/Delete";
+import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
-
-
 
 const EmploisPersonnel = () => {
   const [emplois, setEmplois] = useState([]);
@@ -38,6 +37,7 @@ const EmploisPersonnel = () => {
   const [error, setError] = useState(null);
   const [selectedPersonnel, setSelectedPersonnel] = useState("");
   const [editingEmploi, setEditingEmploi] = useState(null);
+  const [emploiToDelete, setEmploiToDelete] = useState(null);
   const [formData, setFormData] = useState({
     personnelId: "",
     heureDebut: "",
@@ -46,6 +46,7 @@ const EmploisPersonnel = () => {
     jour: "",
   });
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Récupération des personnels
   const fetchPersonnels = async () => {
@@ -72,11 +73,12 @@ const EmploisPersonnel = () => {
       setLoading(true);
       const data = await EmploiPersonnelApi.getEmploiByPersonnel(personnelId);
       const sortedEmplois = data
-        .filter((emploi) => emploi.jour >= 0 && emploi.jour <= 5) // Valider les jours
-        .sort((a, b) => a.jour - b.jour); // Trier par ordre des jours
+        .filter((emploi) => emploi.jour >= 0 && emploi.jour <= 5)
+        .sort((a, b) => a.jour - b.jour);
       setEmplois(sortedEmplois);
     } catch (error) {
-      console.error("Acune emploi trouvé pour ce personnel.");
+      setError("Erreur lors de la récupération des emplois.");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -91,10 +93,7 @@ const EmploisPersonnel = () => {
     setSelectedPersonnel(personnelId);
     setEmplois([]);
     setError(null);
-    setFormData({
-      ...formData,
-      personnelId,
-    });
+    setFormData({ ...formData, personnelId });
     if (personnelId) fetchEmplois(personnelId);
   };
 
@@ -110,6 +109,23 @@ const EmploisPersonnel = () => {
     setDialogOpen(true);
   };
 
+  const handleDeleteClick = (emploi) => {
+    setEmploiToDelete(emploi);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await EmploiPersonnelApi.deleteEmploiPersonnel(emploiToDelete.id);
+      setDeleteDialogOpen(false);
+      setEmploiToDelete(null);
+      fetchEmplois(selectedPersonnel);
+    } catch (error) {
+      setError("Erreur lors de la suppression de l'emploi.");
+      console.error(error);
+    }
+  };
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -118,16 +134,14 @@ const EmploisPersonnel = () => {
     }));
   };
 
-  const formatTime = (time) => {
-    if (time.length === 5) {
-      return `${time}:00`;
-    }
-    return time;
-  };
-
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingEmploi(null);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setEmploiToDelete(null);
   };
 
   const handleUpdateEmploi = async () => {
@@ -135,8 +149,8 @@ const EmploisPersonnel = () => {
       const updatedEmploi = {
         personnelId: formData.personnelId,
         jour: parseInt(formData.jour, 10),
-        heureDebut: formatTime(formData.heureDebut),
-        heureFin: formatTime(formData.heureFin),
+        heureDebut: formData.heureDebut,
+        heureFin: formData.heureFin,
         role: formData.role,
       };
       await EmploiPersonnelApi.updateEmploiPersonnel(editingEmploi.id, updatedEmploi);
@@ -152,34 +166,16 @@ const EmploisPersonnel = () => {
   return (
     <Box padding={3} sx={{ flexDirection: "column", display: "flex", alignItems: "center" }}>
       <FormControl margin="normal" sx={{ mb: 2, width: "50%" }}>
-        <InputLabel id="select-personnel-label" color="black">Sélectionnez un personnel</InputLabel>
+        <InputLabel id="select-personnel-label">Sélectionnez un personnel</InputLabel>
         <Select
           labelId="select-personnel-label"
           value={selectedPersonnel}
           onChange={handlePersonnelChange}
           fullWidth
-          color="success"
-          startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon color="success" />
-          </InputAdornment>
-            }
-            sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "10px",
-                        },
-                        "& .MuiInputLabel-root": {
-                          fontWeight: "bold",
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          padding: "12px 14px",
-                          fontSize: "16px",
-                        },
-            }}
         >
           {personnels.map((personnel) => (
             <MenuItem key={personnel.id} value={personnel.id}>
-              {personnel.nom}
+              {personnel.nom} {personnel.prenom} - {personnel.role}
             </MenuItem>
           ))}
         </Select>
@@ -194,14 +190,14 @@ const EmploisPersonnel = () => {
         </Box>
       ) : emplois.length > 0 ? (
         <TableContainer component={Paper} sx={{ mt: 2, width: "80%" }}>
-          <Table aria-label="table des emplois" size="small">
-            <TableHead>
+        <Table aria-label="table des emplois" size="small">
+        <TableHead>
               <TableRow>
-                <TableCell><strong>Jour</strong></TableCell>
-                <TableCell><strong>Heure de début</strong></TableCell>
-                <TableCell><strong>Heure de fin</strong></TableCell>
-                <TableCell><strong>Role</strong></TableCell>
-                <TableCell><strong>Action</strong></TableCell>
+                <TableCell>Jour</TableCell>
+                <TableCell>Heure de début</TableCell>
+                <TableCell>Heure de fin</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -215,6 +211,9 @@ const EmploisPersonnel = () => {
                     <IconButton color="primary" onClick={() => handleEditClick(emploi)}>
                       <EditIcon />
                     </IconButton>
+                    <IconButton color="error" onClick={() => handleDeleteClick(emploi)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -222,20 +221,20 @@ const EmploisPersonnel = () => {
           </Table>
         </TableContainer>
       ) : (
-        <Typography variant="h6" align="center" sx={{ mt: 4, color: "gray", fontStyle: "italic" }}>
+        <Typography variant="h6" align="center" sx={{ mt: 4, color: "gray" }}>
           Aucun emploi trouvé pour ce personnel.
         </Typography>
       )}
 
+      {/* Dialog pour l'édition */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle textAlign="center">Modifier l'emploi Personnel</DialogTitle>
+        <DialogTitle>Modifier l'emploi</DialogTitle>
         <DialogContent>
           <TextField
             label="Jour"
             name="jour"
             value={joursParNum(formData.jour)}
             fullWidth
-            margin="dense"
             disabled
           />
           <TextField
@@ -244,7 +243,6 @@ const EmploisPersonnel = () => {
             value={formData.heureDebut}
             onChange={handleFormChange}
             fullWidth
-            margin="dense"
             type="time"
           />
           <TextField
@@ -253,27 +251,31 @@ const EmploisPersonnel = () => {
             value={formData.heureFin}
             onChange={handleFormChange}
             fullWidth
-            margin="dense"
             type="time"
           />
-          <TextField
-            label="Role"
-            name="role"
-            value={formData.role}
-            fullWidth
-            margin="dense"
-            disabled
-          />
+          <TextField label="Role" name="role" value={formData.role} fullWidth disabled />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="inherit">Annuler</Button>
+          <Button onClick={handleCloseDialog}>Annuler</Button>
           <Button onClick={handleUpdateEmploi} color="success" variant="contained">
             Modifier
           </Button>
         </DialogActions>
       </Dialog>
 
-      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+      {/* Dialog pour la suppression */}
+      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirmer la suppression</DialogTitle>
+        <DialogContent>
+          Voulez-vous vraiment supprimer cet emploi ?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="Black">Annuler</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

@@ -986,7 +986,7 @@ JOIN
 
                 // Calcul de la date de début et de la fin
                 DateOnly dateDebut = DateOnly.FromDateTime(DateTime.Now.Date).AddDays(1); // Demain
-                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 20)); // 20 janvier 2025
+                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 26)); // 20 janvier 2025
 
                 var reservations = new List<Reservation>();
 

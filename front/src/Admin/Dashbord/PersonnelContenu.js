@@ -206,7 +206,7 @@ const Personnele = () => {
             <MenuItem value="" disabled>
               Sélectionnez un rôle
             </MenuItem>
-            <MenuItem value="Administrateur">ADMINISTRATEUR</MenuItem>
+            <MenuItem value="administrateur">ADMINISTRATEUR</MenuItem>
             <MenuItem value="Enseignant">ENSEIGNANT</MenuItem>
           </Select>
         </DialogContent>

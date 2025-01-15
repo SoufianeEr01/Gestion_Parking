@@ -205,7 +205,7 @@ const CreationPersonnelEmploi = ({ open, setOpen}) => {
               ) : (
                 personnels.map((personnel) => (
                   <MenuItem key={personnel.id} value={personnel.id}>
-                    {personnel.nom} - {personnel.role}
+                    {personnel.nom} {personnel.prenom}- {personnel.role}
                   </MenuItem>
                 ))
               )}
