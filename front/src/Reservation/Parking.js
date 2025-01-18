@@ -59,8 +59,16 @@ function Parking() {
         console.error('Error fetching parking places:', error);
       }
     };
-    fetchAvailablePlaces();
-  }, [spots]);
+  
+    fetchAvailablePlaces(); // Initial fetch
+  
+    const interval = setInterval(() => {
+      fetchAvailablePlaces();
+    }, 3000); // Fetch every 3 seconds
+  
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []); // Empty dependency array to avoid infinite loops
+  
 
   const handleReservation = (placeId) => {
     setSelectedPlace(placeId);

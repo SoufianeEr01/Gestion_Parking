@@ -1,92 +1,105 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Box, Avatar } from "@mui/material";
-import { Users, ShoppingCart, CreditCard, TrendingUp, Car } from "lucide-react";
+import { Users, Car } from "lucide-react";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import PersonneApi from "../../Api/PersonneApi";
 import PlaceParkingApi from "../../Api/PlaceParkingApi";
 import ReservationApi from "../../Api/ReservationApi";
-import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import PersonnelApi from "../../Api/PersonnelApi";
 
 function TableauDeBord() {
-  const [userCount, setUserCount] = useState("Chargement...");
-  const [parkingCount, setParkingCount] = useState("Chargement...");
-  const [reservCount, setReservCount] = useState("Chargement...");
+  const [data, setData] = useState({
+    userCount: "Chargement...",
+    enseignantCount: "Chargement...",
+    administrateurCount: "Chargement...",
+    parkingCount: "Chargement...",
+    reservCount: "Chargement...",
+    error: null,
+  });
 
-  const [error, setError] = useState(null);
-
-  const fetchUserCount = async () => {
+  const fetchData = async () => {
     try {
-      const count = await PersonneApi.fetchPersonnesCount(); 
-      setUserCount(count); 
+      const [userCount, personnels, parkingCount, reservations] = await Promise.all([
+        PersonneApi.fetchPersonnesCount(), // Récupère le nombre total d'utilisateurs
+        PersonnelApi.fetchPersonnels(),    // Récupère les détails des utilisateurs
+        PlaceParkingApi.fetchPlaceParkingsCount(),
+        ReservationApi.fetchReservations(),
+      ]);
+  
+      // Comparer les rôles
+      const enseignantCount = personnels.filter((p) => p.role === "Enseignant").length;
+      const administrateurCount = personnels.filter((p) => p.role === "administrateur").length;
+  
+      // Calculate the student count
+      const studentCount = userCount - (enseignantCount + administrateurCount);
+  
+      setData({
+        userCount,
+        enseignantCount,
+        administrateurCount,
+        studentCount,  // Add the student count here
+        parkingCount,
+        reservCount: reservations.length,
+        error: null,
+      });
     } catch (err) {
-      setError("Erreur lors du chargement des utilisateurs.");
-      console.error(err);
-    }
-  };
-
-  const fetchtReservCount = async () => {
-    try {
-      const count = await ReservationApi.fetchReservations(); 
-      setReservCount(count.length);  // Correctement orthographié 'length'
-    } catch (err) {
-      setError("Erreur lors du chargement des réservations.");
-      console.error(err);
+      console.error("Erreur lors de la récupération des données :", err);
+      setData((prevState) => ({
+        ...prevState,
+        error: "Erreur lors du chargement des données.",
+      }));
     }
   };
   
-  const fetchParkingCount = async () => {
-
-    try {
-        const count = await PlaceParkingApi.fetchPlaceParkingsCount(); 
-        setParkingCount(count); 
-      } catch (err) {
-        setError("Erreur lors du chargement des places de parking.");
-        console.error(err);
-      }
-  };
-
 
   useEffect(() => {
-    fetchUserCount();
-    fetchParkingCount();
-    fetchtReservCount();
+    fetchData();
   }, []);
 
   const stats = [
     {
       label: "Utilisateurs Total",
-      value: error || userCount, 
-      change: error ? "Erreur" : "+12.5%",
+      value: data.error || data.userCount - 1,
       icon: <Users />,
       color: "#2196F3",
     },
     {
+      label: "Étudiants",  // New entry for students
+      value: data.error || data.studentCount - 1,
+      icon: <Users />,
+      color: "#3F51B5",  // You can change the color
+    },
+    {
+      label: "Enseignants",
+      value: data.error || data.enseignantCount,
+      icon: <Users />,
+      color: "#4CAF50",
+    },
+    {
+      label: "Administrateurs",
+      value: data.error || data.administrateurCount,
+      icon: <Users />,
+      color: "#FFC107",
+    },
+    {
       label: "Places de Parking",
-      value: error || parkingCount, 
-      change: error ? "Erreur" : "+8.2%",
-      icon: <Car />, 
-      color: "#FF5722", 
+      value: data.error || data.parkingCount,
+      icon: <Car />,
+      color: "#FF5722",
     },
-   
     {
-      label: "Nombre de réservations",
-      value: error || reservCount,
-      change: "+23.1%",
+      label: "Nombre de Réservations",
+      value: data.error || data.reservCount,
       icon: <EventAvailableIcon />,
-      color: "#9C27B0", 
-    },
-    {
-      label: "Croissance",
-      value: "15.3%",
-      change: "+4.5%",
-      icon: <TrendingUp />,
-      color: "#FF9800", // Orange
+      color: "#9C27B0",
     },
   ];
+  
 
   return (
     <Box
       display="grid"
-      gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr", lg: "1fr 1fr 1fr 1fr" }}
+      gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr", lg: "1fr 1fr 1fr" }}
       gap={4}
       mb={4}
     >
@@ -94,20 +107,11 @@ function TableauDeBord() {
         <Card key={stat.label} sx={{ boxShadow: 3, borderRadius: 2 }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-              {/* Icône avec couleur */}
-              <Avatar sx={{ bgcolor: stat.color, width: 48, height: 48 }}>
-                {stat.icon}
-              </Avatar>
-              {/* Changement en pourcentage */}
-              <Typography variant="body2" sx={{ color: stat.color, fontWeight: "bold" }}>
-                {stat.change}
-              </Typography>
+              <Avatar sx={{ bgcolor: stat.color, width: 48, height: 48 }}>{stat.icon}</Avatar>
             </Box>
-            {/* Valeur principale */}
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               {stat.value}
             </Typography>
-            {/* Description */}
             <Typography variant="body2" color="textSecondary">
               {stat.label}
             </Typography>
