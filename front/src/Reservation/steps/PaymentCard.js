@@ -3,6 +3,7 @@ import { CreditCard, Lock, Calendar, User, CheckCircle } from 'lucide-react';
 import { Box, TextField, Button, Typography, Card, Grid, InputAdornment, IconButton, Alert } from '@mui/material';
 import { styled } from '@mui/system';
 import ReservationApi from '../../Api/ReservationApi';  
+import PaiementApi from '../../Api/PaiementApi';
 
 // Styled components for card and fields
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -65,7 +66,7 @@ const SuccessBox = styled(Alert)(({ theme }) => ({
 }));
 
 // Payment Component
-function PaymentComponent({ selectedOption, reservationPreview }) {
+function PaymentCard({ selectedOption, reservationPreview, price,modePaiement, onClose }) {
   const [formData, setFormData] = useState({
     cardNumber: '',
     cardHolder: '',
@@ -106,17 +107,37 @@ function PaymentComponent({ selectedOption, reservationPreview }) {
       setSuccessMessage('');
     } else {
       try {
-        // Call payment API
-        const response = await ReservationApi.validatePayment(formData);
-        if (response.status === 200) {
+        // Préparer les données de paiement
+        const paymentData = {
+          mode_paiement: modePaiement,
+          prix_paye: price, 
+          personne_id: JSON.parse(sessionStorage.getItem("userData"))?.id, 
+        };
+
+        // Appeler l'API pour créer un paiement
+        const paymentResponse = await PaiementApi.createPaiement(paymentData);
+        if (paymentResponse) {
           setErrorMessages([]);
           setIsConfirmed(true);
           setSuccessMessage('Paiement confirmé avec succès!');
-          // Once payment is validated, trigger reservation
-          await ReservationApi.confirmReservation(selectedOption, reservationPreview);
+
+          // Une fois le paiement validé, procéder à la confirmation de la réservation
+          if (selectedOption === 0) {
+            await ReservationApi.confirmReservationHebdomadaire(reservationPreview);
+          } else if (selectedOption === 1) {
+            await ReservationApi.confirmReservationMensuelle(reservationPreview);
+          } else if (selectedOption === 2) {
+            await ReservationApi.confirmReservationSemestrielle(reservationPreview);
+          }
+
+          // Simuler une fermeture après une courte période (optionnel)
+          setTimeout(() => {
+            if (onClose) onClose(); // Fermer le dialogue
+          }, 1500);
         } else {
           throw new Error("Échec du paiement. Veuillez réessayer.");
         }
+
       } catch (error) {
         setErrorMessages(["Une erreur est survenue pendant le paiement."]);
       }
@@ -135,23 +156,30 @@ function PaymentComponent({ selectedOption, reservationPreview }) {
 
   return (
     <StyledCard>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h5" component="h1" fontWeight="bold" color="text.primary">
           Paiement Sécurisé
         </Typography>
         <Lock size={24} color="#059669" />
       </Box>
 
+
       <CreditCardSection>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <CreditCard size={32} color="white" />
+          {/* Utiliser la propriété `price` pour afficher le prix dynamique */}
           <Typography variant="h6" component="p">
-            €49.99
+            {price} MAD
           </Typography>
         </Box>
-        <Typography variant="body2">**** **** **** 4242</Typography>
-        <Typography variant="body2">Valide jusqu'à 12/25</Typography>
+        <Typography variant="body2">
+          **** **** **** {formData.cardNumber.slice(-4)}
+        </Typography>
+        <Typography variant="body2">
+          Valide jusqu'à {formData.expiry}
+        </Typography>
       </CreditCardSection>
+
 
       {/* Display error or success messages */}
       {errorMessages.length > 0 && (
@@ -263,4 +291,4 @@ function PaymentComponent({ selectedOption, reservationPreview }) {
   );
 }
 
-export default PaymentComponent;
+export default PaymentCard;

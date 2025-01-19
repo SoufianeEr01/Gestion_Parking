@@ -68,49 +68,50 @@ namespace Gestion_Parking.Controllers
                     connection.Open();
 
                     string sql = @"
-        SELECT 
-            r.id AS ReservationID, 
-            r.date AS DateReservation, 
-            r.heureDebut AS HeureDebut, 
-            r.heureFin AS HeureFin, 
-            r.lieu AS LieuReservation,
-            p.nom AS NomPersonne, 
-            p.prenom AS PrenomPersonne, 
-            g.nom AS NomGroupe, 
-            pr.numero AS NumeroPlace
-        FROM 
-            Reservations r
-        JOIN 
-            Personnes p ON r.personne_id = p.id
-        JOIN 
-            Groupes g ON p.GroupeId = g.id
-        JOIN 
-            PlaceParkings pr ON pr.id = r.placeParking_id";
+SELECT 
+    r.id AS ReservationID, 
+    r.date AS DateReservation, 
+    r.heureDebut AS HeureDebut,
+    r.heureFin AS HeureFin, 
+    r.etat AS EtatReservation,
+    r.lieu AS LieuReservation,
+    p.nom AS NomPersonne, 
+    p.prenom AS PrenomPersonne, 
+    g.nom AS NomGroupe, 
+    pr.numero AS NumeroPlace
+FROM 
+    Reservations r
+JOIN 
+    Personnes p ON r.personne_id = p.id
+JOIN 
+    Groupes g ON p.GroupeId = g.id
+JOIN 
+    PlaceParkings pr ON pr.id = r.placeParking_id";
 
                     using (var command = new SqlCommand(sql, connection))
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            // Construction d'un objet anonyme pour contenir toutes les données
                             var reservation = new
                             {
                                 ReservationID = reader.GetInt32(0),
                                 DateReservation = DateOnly.FromDateTime(reader.GetDateTime(1)),
                                 HeureDebut = TimeOnly.FromTimeSpan(reader.GetTimeSpan(2)),
                                 HeureFin = TimeOnly.FromTimeSpan(reader.GetTimeSpan(3)),
-                                LieuReservation = reader.GetString(4),
-                                NomPersonne = reader.GetString(5),
-                                PrenomPersonne = reader.GetString(6),
-                                NomGroupe = reader.GetString(7),
-                                NumeroPlace = reader.IsDBNull(8) ? null : reader.GetInt32(8).ToString() // Handle the conversion issue
+                                EtatReservation = reader.GetString(4),
+                                LieuReservation = reader.GetString(5),
+                                NomPersonne = reader.GetString(6),
+                                PrenomPersonne = reader.GetString(7),
+                                NomGroupe = reader.GetString(8),
+                                NumeroPlace = reader.IsDBNull(9) ? null : reader.GetInt32(9).ToString()
                             };
                             reservations.Add(reservation);
                         }
                     }
                 }
 
-                _logger.LogInformation("Récupération de toutes les réservations réussie.");
+                _logger.LogInformation("Récupération de {Count} réservations réussie.", reservations.Count);
                 return Ok(reservations);
             }
             catch (Exception ex)
@@ -119,6 +120,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, new { erreur = ex.Message });
             }
         }
+
 
 
         [HttpGet("{id_personne}")]
@@ -147,7 +149,7 @@ namespace Gestion_Parking.Controllers
             LEFT JOIN 
                 PlaceParkings pr ON pr.id = r.placeParking_id
             WHERE 
-                r.personne_id = @id_personne";
+                r.personne_id = @id_personne And r.etat= 'actif'";
 
                     using (var command = new SqlCommand(sql, connection))
                     {
@@ -212,6 +214,7 @@ namespace Gestion_Parking.Controllers
                 r.id AS ReservationID, 
                 r.date AS DateReservation, 
                 r.heureDebut AS HeureDebut, 
+
                 r.heureFin AS HeureFin, 
                 r.lieu AS LieuReservation,
                 p.nom AS NomPersonne, 
@@ -440,9 +443,9 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
-                        // Insérer la réservation dans la table Reservations
-                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
-                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
+                        // Insérer la réservation dans la table Reservations avec l'état
+                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
+                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
                             command.Parameters.AddWithValue("@Date", reservation.date.ToDateTime(TimeOnly.MinValue));
@@ -451,6 +454,7 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@Etat", "actif"); // Ajouter l'état par défaut
 
                             command.ExecuteNonQuery();
                         }
@@ -458,7 +462,7 @@ namespace Gestion_Parking.Controllers
                         // Calculer la date de fin de réservation
                         DateTime dateFinReservation = reservation.date.ToDateTime(reservation.heureFin);
 
-                        // Mettre à jour l'état de la place de parking à "occupee" et ajouter la date de fin de réservation
+                        // Mettre à jour l'état de la place de parking à "occupe" et ajouter la date de fin de réservation
                         string updateSql = "UPDATE PlaceParkings SET etat = 'occupe', dateFinReservation = @DateFinReservation WHERE id = @PlaceParkingId";
                         using (var command = new SqlCommand(updateSql, connection))
                         {
@@ -478,6 +482,7 @@ namespace Gestion_Parking.Controllers
                 return StatusCode(500, "Une erreur est survenue. " + ex.Message);
             }
         }
+
 
 
 
@@ -584,8 +589,8 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
-                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
-                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
+                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
+                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
                             command.Parameters.AddWithValue("@Date", reservation.date.ToDateTime(TimeOnly.MinValue));
@@ -594,6 +599,7 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@Etat", "actif"); // Ajouter l'état par défaut
 
                             command.ExecuteNonQuery();
                         }
@@ -671,7 +677,7 @@ namespace Gestion_Parking.Controllers
 
                 // Calcul de la date de début et de la fin
                 DateOnly dateDebut = DateOnly.FromDateTime(DateTime.Now.Date).AddDays(1); // Demain
-                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 20)); // 20 janvier 2025
+                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 26)); // 26 janvier 2025
 
                 var reservations = new List<Reservation>();
 
@@ -725,8 +731,8 @@ namespace Gestion_Parking.Controllers
 
                     foreach (var reservation in reservations)
                     {
-                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id) " +
-                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId)";
+                        string insertSql = "INSERT INTO Reservations (date, heureDebut, heureFin, lieu, personne_id, placeParking_id, etat) " +
+                                           "VALUES (@Date, @HeureDebut, @HeureFin, @Lieu, @PersonneId, @PlaceParkingId, @Etat)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
                             command.Parameters.AddWithValue("@Date", reservation.date.ToDateTime(TimeOnly.MinValue));
@@ -735,6 +741,7 @@ namespace Gestion_Parking.Controllers
                             command.Parameters.AddWithValue("@Lieu", reservation.lieu);
                             command.Parameters.AddWithValue("@PersonneId", reservation.personne_id);
                             command.Parameters.AddWithValue("@PlaceParkingId", reservation.placeParking_id);
+                            command.Parameters.AddWithValue("@Etat", "actif"); // Ajouter l'état par défaut
 
                             command.ExecuteNonQuery();
                         }
@@ -763,6 +770,338 @@ namespace Gestion_Parking.Controllers
         }
 
 
+        [AllowAnonymous]
+        [HttpPost("ReservationHebdomadaireP/Previsualiser/{personnelId}/{placeParkingId}")]
+        public IActionResult PrevisualiserReservationHebdomadaireP(int personnelId, int placeParkingId, [FromBody] Reservation reservationRequest)
+        {
+            var emploisP = new List<EmploiPersonnel>();
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Récupérer les emplois pour le groupe spécifié
+                    string sql = "SELECT Id, Jour, HeureDebut, HeureFin, PersonnelId FROM EmploiPersonnels WHERE personnelId = @personnelId";
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@personnelId", personnelId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                emploisP.Add(new EmploiPersonnel
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Jour = Enum.Parse<Jour>(reader.GetString(1)),
+                                    HeureDebut = reader.GetTimeSpan(2),
+                                    HeureFin = reader.GetTimeSpan(3),
+                                    PersonnelId = reader.GetInt32(4)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (emploisP.Count == 0)
+                {
+                    return NotFound($"Aucun emploi trouvé pour le personnel avec l'ID {personnelId}.");
+                }
+
+                // Calcul de la date de début : le prochain lundi
+                DateOnly dateDebutSemaine = DateOnly.FromDateTime(DateTime.Now.Date);
+                while (dateDebutSemaine.DayOfWeek != DayOfWeek.Monday)
+                {
+                    dateDebutSemaine = dateDebutSemaine.AddDays(1);
+                }
+
+                var reservations = new List<Reservation>();
+
+                // Créer une réservation pour chaque emploi
+                foreach (var emploi in emploisP)
+                {
+                    // Décalage entre le lundi et le jour de l'emploi
+                    int jourOffset = (int)emploi.Jour;
+                    DateOnly dateReservation = dateDebutSemaine.AddDays(jourOffset);
+
+                    var reservation = new Reservation
+                    {
+                        date = dateReservation,
+                        heureDebut = TimeOnly.FromTimeSpan(emploi.HeureDebut),
+                        heureFin = TimeOnly.FromTimeSpan(emploi.HeureFin),
+                        lieu = reservationRequest.lieu,
+                        personne_id = reservationRequest.personne_id,
+                        placeParking_id = placeParkingId
+                    };
+
+                    reservations.Add(reservation);
+                }
+
+                // Retourne les réservations triées
+                reservations = reservations.OrderBy(r => r.date).ToList();
+                return Ok(new { message = "Prévisualisation des réservations hebdomadaires réussie.", reservations });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la prévisualisation des réservations hebdomadaires.");
+                return StatusCode(500, "Une erreur est survenue. " + ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ReservationMensuelleP/Previsualiser/{personnelId}/{placeParkingId}")]
+        public IActionResult PrevisualiserReservationMensuelleP(int personnelId, int placeParkingId, [FromBody] Reservation reservationRequest)
+        {
+            var emploisP = new List<EmploiPersonnel>();
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Récupérer les emplois pour le personnel spécifié
+                    string sql = "SELECT Id, Jour, HeureDebut, HeureFin, PersonnelId FROM EmploiPersonnels WHERE PersonnelId = @PersonnelId";
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@PersonnelId", personnelId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var jour = Enum.Parse<Jour>(reader.GetString(1));
+                                if (jour == Jour.Dimanche)
+                                {
+                                    _logger.LogWarning($"Un emploi avec le jour {jour} a été ignoré.");
+                                    continue;
+                                }
+
+                                emploisP.Add(new EmploiPersonnel
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Jour = jour,
+                                    HeureDebut = reader.GetTimeSpan(2),
+                                    HeureFin = reader.GetTimeSpan(3),
+                                    PersonnelId = reader.GetInt32(4)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (emploisP.Count == 0)
+                {
+                    return NotFound($"Aucun emploi trouvé pour le personnel avec l'ID {personnelId}.");
+                }
+
+                // Calcul de la date de début (lendemain de la requête)
+                DateOnly dateDebut = DateOnly.FromDateTime(DateTime.Now.Date).AddDays(1);
+                DateOnly dateFin = dateDebut.AddMonths(1); // Fin de la période mensuelle
+
+                var reservations = new List<Reservation>();
+
+                // Créer des réservations pour chaque emploi, sur une période mensuelle
+                foreach (var emploi in emploisP)
+                {
+                    DateOnly currentDate = dateDebut;
+
+                    while (currentDate < dateFin)
+                    {
+                        int jourOffset = ((int)emploi.Jour + 1) % 7;
+                        if ((int)currentDate.DayOfWeek == jourOffset)
+                        {
+                            var reservation = new Reservation
+                            {
+                                date = currentDate,
+                                heureDebut = TimeOnly.FromTimeSpan(emploi.HeureDebut),
+                                heureFin = TimeOnly.FromTimeSpan(emploi.HeureFin),
+                                lieu = reservationRequest.lieu,
+                                personne_id = reservationRequest.personne_id,
+                                placeParking_id = placeParkingId
+                            };
+
+                            reservations.Add(reservation);
+                        }
+
+                        currentDate = currentDate.AddDays(1); // Avancer au jour suivant
+                    }
+                }
+                reservations = reservations.OrderBy(r => r.date).ToList();
+
+                return Ok(new { message = "Prévisualisation des réservations mensuelles réussie.", reservations });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la prévisualisation des réservations mensuelles.");
+                return StatusCode(500, "Une erreur est survenue.");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ReservationSemestrielleP/Previsualiser/{personnelId}/{placeParkingId}")]
+        public IActionResult PrevisualiserReservationSemestrielleP(int personnelId, int placeParkingId, [FromBody] Reservation reservationRequest)
+        {
+            var emploisP = new List<EmploiPersonnel>();
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Récupérer les emplois pour le personnel spécifié
+                    string sql = "SELECT Id, Jour, HeureDebut, HeureFin, PersonnelId FROM EmploiPersonnels WHERE PersonnelId = @PersonnelId";
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@PersonnelId", personnelId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var jour = Enum.Parse<Jour>(reader.GetString(1));
+                                if (jour == Jour.Dimanche)
+                                {
+                                    _logger.LogWarning($"Un emploi avec le jour {jour} a été ignoré.");
+                                    continue;
+                                }
+
+                                emploisP.Add(new EmploiPersonnel
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Jour = jour,
+                                    HeureDebut = reader.GetTimeSpan(2),
+                                    HeureFin = reader.GetTimeSpan(3),
+                                    PersonnelId = reader.GetInt32(4)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (emploisP.Count == 0)
+                {
+                    return NotFound($"Aucun emploi trouvé pour le personnel avec l'ID {personnelId}.");
+                }
+
+                // Calcul de la date de début et de la fin
+                DateOnly dateDebut = DateOnly.FromDateTime(DateTime.Now.Date).AddDays(1); // Demain
+                DateOnly dateFin = DateOnly.FromDateTime(new DateTime(2025, 1, 20)); // 20 janvier 2025
+
+                var reservations = new List<Reservation>();
+
+                // Créer des réservations pour chaque emploi, sur la période semestrielle
+                foreach (var emploi in emploisP)
+                {
+                    DateOnly currentDate = dateDebut;
+
+                    while (currentDate <= dateFin)
+                    {
+                        // Calcul du décalage entre les jours (ajustement pour correspondre à DayOfWeek)
+                        int jourOffset = ((int)emploi.Jour + 1) % 7; // Ajuster l'indice pour correspondre à DayOfWeek
+                        if ((int)currentDate.DayOfWeek == jourOffset)
+                        {
+                            var reservation = new Reservation
+                            {
+                                date = currentDate,
+                                heureDebut = TimeOnly.FromTimeSpan(emploi.HeureDebut),
+                                heureFin = TimeOnly.FromTimeSpan(emploi.HeureFin),
+                                lieu = reservationRequest.lieu,
+                                personne_id = reservationRequest.personne_id,
+                                placeParking_id = placeParkingId
+                            };
+
+                            reservations.Add(reservation);
+                        }
+
+                        currentDate = currentDate.AddDays(1); // Avancer au jour suivant
+                    }
+                }
+
+                reservations = reservations.OrderBy(r => r.date).ToList();
+                // Retourner les réservations calculées
+                return Ok(new { message = "Prévisualisation des réservations semestrielles réussie.", reservations });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la prévisualisation des réservations semestrielles.");
+                return StatusCode(500, "Une erreur est survenue. " + ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ExistingReservationForPersonne/{personneId}")]
+            public IActionResult ExistingReservationForPersonne(int personneId)
+            {
+                try
+                {
+                    bool reservationExists = false;
+
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        // Requête pour vérifier l'existence d'une réservation
+                        string query = "SELECT COUNT(*) FROM Reservations WHERE personne_id = @PersonneId and etat = 'actif'";
+
+                        using (var command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@PersonneId", personneId);
+
+                            // Exécution de la requête
+                            int count = (int)command.ExecuteScalar();
+
+                            reservationExists = count > 0; // Si le nombre de résultats est supérieur à 0, une réservation existe
+                        }
+                    }
+
+                    return Ok(reservationExists);
+                }
+                catch (Exception ex)
+                {
+                    // Gestion des erreurs
+                    return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
+                }
+            }
+        [HttpPost("ArchiverReservations")]
+        public IActionResult ArchiverReservations()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Requête pour mettre à jour l'état à 'archive' si la date actuelle est supérieure à la date de la réservation
+                    string updateSql = "UPDATE Reservations SET etat = 'archive' WHERE date < @CurrentDate AND etat != 'archive'";
+
+                    using (var command = new SqlCommand(updateSql, connection))
+                    {
+                        // Ajouter la date actuelle comme paramètre
+                        command.Parameters.AddWithValue("@CurrentDate", DateTime.Now.Date); // Utilisez Date pour ne comparer que la date
+
+                        int rowsAffected = command.ExecuteNonQuery(); // Exécuter la mise à jour
+
+                        if (rowsAffected > 0)
+                        {
+                            return Ok(new { message = $"{rowsAffected} réservation(s) ont été archivées." });
+                        }
+                        else
+                        {
+                            return Ok(new { message = "Aucune réservation n'a été archivée." });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Gestion des erreurs
+                return StatusCode(500, new { message = "Une erreur est survenue.", error = ex.Message });
+            }
+        }
 
 
 

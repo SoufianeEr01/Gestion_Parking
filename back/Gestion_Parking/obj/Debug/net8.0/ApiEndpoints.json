@@ -543,6 +543,48 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Gestion_Parking.Controllers.PaiementController",
+    "Method": "GetPaiements",
+    "RelativePath": "api/Paiement",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.PaiementController",
+    "Method": "PostPaiement",
+    "RelativePath": "api/Paiement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "paiement",
+        "Type": "Gestion_Parking.Models.Paiement",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.PaiementController",
+    "Method": "GetPaiementById",
+    "RelativePath": "api/Paiement/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Gestion_Parking.Controllers.PersonnelController",
     "Method": "CreatePersonnel",
     "RelativePath": "api/Personnel",
@@ -859,6 +901,32 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ArchiverReservations",
+    "RelativePath": "api/Reservation/ArchiverReservations",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "ExistingReservationForPersonne",
+    "RelativePath": "api/Reservation/ExistingReservationForPersonne/{personneId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personneId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
     "Method": "GetReservationsByNom",
     "RelativePath": "api/Reservation/nom/{nom_personne}",
     "HttpMethod": "GET",
@@ -899,6 +967,32 @@
     "Parameters": [
       {
         "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "placeParkingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "reservationRequest",
+        "Type": "Reservation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "PrevisualiserReservationHebdomadaireP",
+    "RelativePath": "api/Reservation/ReservationHebdomadaireP/Previsualiser/{personnelId}/{placeParkingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personnelId",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -959,6 +1053,32 @@
   },
   {
     "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "PrevisualiserReservationMensuelleP",
+    "RelativePath": "api/Reservation/ReservationMensuelleP/Previsualiser/{personnelId}/{placeParkingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personnelId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "placeParkingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "reservationRequest",
+        "Type": "Reservation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
     "Method": "ConfirmerReservationSemestrielle",
     "RelativePath": "api/Reservation/ReservationSemestrielle/Confirmer",
     "HttpMethod": "POST",
@@ -983,6 +1103,32 @@
     "Parameters": [
       {
         "Name": "groupeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "placeParkingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "reservationRequest",
+        "Type": "Reservation",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gestion_Parking.Controllers.ReservationController",
+    "Method": "PrevisualiserReservationSemestrielleP",
+    "RelativePath": "api/Reservation/ReservationSemestrielleP/Previsualiser/{personnelId}/{placeParkingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "personnelId",
         "Type": "System.Int32",
         "IsRequired": true
       },

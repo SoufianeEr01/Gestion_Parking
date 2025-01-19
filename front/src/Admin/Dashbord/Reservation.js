@@ -114,10 +114,9 @@ function Reservation() {
                 <TableCell style={{ fontWeight: "bold" }}>Heure Fin</TableCell>
                 <TableCell style={{ fontWeight: "bold" }}>Nom & Prénom</TableCell>
                 <TableCell style={{ fontWeight: "bold" }}>Groupe</TableCell>
-                <TableCell style={{ fontWeight: "bold" }}>
-                  Numéro du Place
-                </TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Numéro du Place</TableCell>
                 <TableCell style={{ fontWeight: "bold" }}>Lieu</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Etat</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -132,6 +131,7 @@ function Reservation() {
                   <TableCell>{reservation.nomGroupe}</TableCell>
                   <TableCell>{reservation.numeroPlace}</TableCell>
                   <TableCell>{reservation.lieuReservation}</TableCell>
+                  <TableCell>{reservation.etatReservation}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

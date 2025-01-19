@@ -31,6 +31,8 @@ import TableauDeBord from './TableauDeBord';
 import Logout from '@mui/icons-material/Logout';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import PaiementDashbord from './PaiementDashbord';
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 const theme = createTheme({
   palette: {
@@ -124,8 +126,11 @@ function Dashboard() {
         return <Groupe />;
       case 'Réservation':
         return <Reservation />;
+      case 'Paiement':
+        return <PaiementDashbord />;
       case 'Contact':
           return <ContactManagement />;
+      
       default:
         return <TableauDeBord />;
     }
@@ -166,6 +171,8 @@ function Dashboard() {
     { label: 'Groupes', icon: <GroupIcon /> },
     { label: 'Contact', icon: <CommentIcon/> },
     { label: 'Réservation', icon: <SettingsIcon /> },
+    { label: 'Paiement', icon: <CreditScoreIcon /> },
+
 
 
   ].map((item, index) => (
@@ -189,7 +196,7 @@ function Dashboard() {
           </Typography>
         )}
       </Button>
-      {index < 7 && <Divider sx={{ width: '80%', mx: 'auto' }} />}
+      {index < 8 && <Divider sx={{ width: '80%', mx: 'auto' }} />}
     </React.Fragment>
   ))}
 

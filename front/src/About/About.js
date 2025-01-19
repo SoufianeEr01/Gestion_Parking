@@ -222,7 +222,7 @@ const AboutPage = () => {
               }}
             >
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgb(8, 151, 66)', marginBottom: '10px' }}>
-              Trimestriel
+              Semestrielle
               </Typography>
               <Typography sx={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
               199.99 MAD / trimestre

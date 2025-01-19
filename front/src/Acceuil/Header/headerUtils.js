@@ -3,7 +3,7 @@ import PersonnelApi from '../../Api/PersonnelApi'
 export const navigationLinks = [
   { name: "Accueil", id: "acceuil", path: "/" },
   { name: "À propos", id: "about", path: "/about" },
-  { name: "Réservation", id: "reservation", path: "/parking" },
+  { name: "Parking", id: "parking", path: "/parking" },
   { name: "Emploi", id: "emploi", path: "/emploi" },
   { name: "Contact", id: "contact", path: "/contact" },
 ];

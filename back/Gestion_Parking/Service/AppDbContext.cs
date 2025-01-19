@@ -17,7 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<Contact> Contacts { get; set; }
     public DbSet<Reponse> Reponses { get; set; }
     public DbSet<EmploiPersonnel> EmploiPersonnels { get; set; }
-
+    public DbSet<Paiement> Paiements { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Configuration de la relation entre Reservation et Personne
@@ -62,6 +62,12 @@ public class AppDbContext : DbContext
             .HasForeignKey(ep => ep.PersonnelId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Relation entre Personne et Paiement (une personne peut effectuer plusieurs paiements)
+        modelBuilder.Entity<Paiement>()
+            .HasOne(p => p.Personne) // Paiement a une personne
+            .WithMany(pe => pe.Paiements) // Une personne a plusieurs paiements
+            .HasForeignKey(p => p.personne_id)
+            .OnDelete(DeleteBehavior.Restrict);
         // Autres configurations personnalisées ici...
 
         base.OnModelCreating(modelBuilder);

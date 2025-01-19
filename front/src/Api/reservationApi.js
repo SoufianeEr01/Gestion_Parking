@@ -105,6 +105,27 @@ const ReservationApi = {
       return response.data;
     } catch (error) {
       console.error(`Erreur lors de la récupération de la réservation avec l'ID du persoone ${nomPersonne} :`, error);
+
+    }
+  },
+  // Fonction pour vérifier si une réservation existe pour une personne donnée
+  existingReservation: async (personneId) => {
+    try {
+      const url = `${BASE_URL}/reservation/ExistingReservationForPersonne/${personneId}`;
+      const response = await axios.get(url, { headers: getAuthHeaders() });
+      return response.data; // Renvoie vrai ou faux en fonction de l'existence de la réservation
+    } catch (error) {
+      console.error("Erreur lors de la vérification de la réservation:", error);
+      throw error.response?.data || "Erreur inconnue";
+    }
+  },
+  archiverReservations: async () => {
+    try {
+      const url = `${BASE_URL}/reservation/ArchiverReservations`; // Appel à l'endpoint de l'API qui effectue l'archivage
+      const response = await ReservationApi.post(url, {}); // Pas de données à envoyer, juste l'appel de l'API
+      return response.message; // Message de succès ou d'erreur renvoyé par l'API
+    } catch (error) {
+      console.error("Erreur lors de l'archivage des réservations:", error);
       throw error.response?.data || "Erreur inconnue";
     }
   },

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Parking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250111202452_AddPaiementRelation")]
+    partial class AddPaiementRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,6 +250,9 @@ namespace Gestion_Parking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int>("Etat")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Etudiantid")
                         .HasColumnType("int");
 
@@ -255,10 +261,6 @@ namespace Gestion_Parking.Migrations
 
                     b.Property<DateOnly>("date")
                         .HasColumnType("date");
-
-                    b.Property<string>("etat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeOnly>("heureDebut")
                         .HasColumnType("time");
